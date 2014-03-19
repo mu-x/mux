@@ -1,4 +1,0 @@
-mux
-===
-
-MU Executables

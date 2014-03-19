@@ -1,0 +1,6 @@
+#
+# mux: MU Executables
+#
+
+mux/
++ scripts -- some usefull scripts (bash, python, etc)
