@@ -2,7 +2,7 @@
 #
 # mux: Runs QEMU virtual machine
 #
-set -e -x
+set -e
 
 HD=$PWD/${HD:-`echo *.qcow2 | cut -d' ' -f1`}
 SYSTEM=qemu-system
@@ -17,5 +17,5 @@ do
     fi
 done
 
-# Run qemu-system-XXX
+echo Running $SYSTEM ... $HD
 $SYSTEM $DEFAULT "$HD" $@
