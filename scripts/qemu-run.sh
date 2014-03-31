@@ -6,7 +6,7 @@ set -e
 
 HD=$PWD/${HD:-`echo *.qcow2 | cut -d' ' -f1`}
 SYSTEM=qemu-system
-DEFAULT="-cpu host -net user -m 2G" # -curses"
+DEFAULT="-cpu host -m 2G" # -net user -curses
 
 for EXT in x86_64 x86
 do

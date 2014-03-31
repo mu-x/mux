@@ -4,11 +4,14 @@
 #
 set -e
 
-LOCAL=/usr/local/bin
-PREFIX=mux-
+LOCAL=${LOCAL:-/usr/local/bin}
+PREFIX=${PREFIX:-mux-}
 
 SELF=$(basename "${BASH_SOURCE[0]}")
 cd "$(dirname "${BASH_SOURCE[0]}")"
+
+MUXRC=/home/$SUDO_USER/.muxrc
+BASHRC=/home/$SUDO_USER/.bashrc
 
 for SCRIPT in `echo *`
 do
@@ -18,7 +21,13 @@ do
     if [[ $SCRIPT != $SELF ]]
     then
         ln -sf $PWD/$SCRIPT $LOCAL/$PREFIX$LINK
-        echo install $SCRIPT ... done
+        echo Install $SCRIPT ... done
     fi
 done
+
+if [ ! -f $MUXRC ]
+then
+    echo MUX=true > $MUXRC
+    echo . .muxrc >> $BASHRC
+fi
 
