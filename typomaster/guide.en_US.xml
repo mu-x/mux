@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<guide>
+    <level new="fj" />
+    <level new="dk" />
+    <level new="sl" />
+    <level new="a;" />
+    <level include="1,2,3,4" />
+
+    <level new="gh" />
+    <level include="5,6" />
+
+    <level new="ru" />
+    <level new="ei" />
+    <level new="wo" />
+    <level new="qp" />
+    <level include="8,9,10,11" />
+
+    <level new="ty" />
+    <level include="12,13" />
+
+    <level new="vm" />
+    <level new="c," />
+    <level new="x." />
+    <level new="z/" />
+    <level include="15,16,17,18" />
+
+    <level new="bn" />
+    <level include="19,20" />
+    <level include="7,14,21" /> <!--letters-->
+
+    <level new="47" />
+    <level new="38" />
+    <level new="29" />
+    <level new="10" />
+    <level include="23,24,25,26" />
+
+    <level new="56" />
+    <level include="27,28" />   <!--numbers-->
+
+    <level include="22,29" />   <!--l_&_n-->
+    <level upper="22" />        <!--LETTERS-->
+    <level include="22,31" />   <!--LeTtErS-->
+    <level include="32,29" />   <!--L_&_n-->
+
+    <level new="$&amp;" />
+    <level new="#*" />
+    <level new="@(" />
+    <level new="!)" />
+    <level include="34,35,36,37" />
+
+    <level new="%^" />
+    <level include="38,39" />   <!--NUMBERS-->
+
+    <level include="29,40" />   <!--NuMbErS-->
+    <level include="32,41" />   <!--L_&_N-->
+
+    <level new="`-=" />
+    <level new="[]\'" />
+    <level include="43,44" />   <!--special-->
+
+    <level new=":~_+" />
+    <level new="{}|&quot;" />
+    <level include="46,47" />   <!--SPECIAL-->
+    <level include="45,48" />   <!--SpEcIaL-->
+
+    <level include="41,49" />   <!--S_&_N-->
+    <level include="32,50" />   <!--ALL-->
+</guide>
