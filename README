@@ -1,7 +1,0 @@
-#
-# mux: MU eXecutables
-#
-
-mux/
-+ scripts -- some usefull scripts (bash, python, etc)
-+ typomaster -- python module/program helps you improve your typing skills
