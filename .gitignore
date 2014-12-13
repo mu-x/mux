@@ -1,2 +1,6 @@
+# python
 *.pyc
 *.pyo
+
+# vim
+*.swp
