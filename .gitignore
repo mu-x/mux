@@ -1,6 +1,17 @@
+# binaries
+a.out
+build_x86
+build_x86_64
+
 # python
 *.pyc
 *.pyo
 
 # vim
 *.swp
+
+# qtcreator
+*.config
+*.creator*
+*.files
+*.includes
