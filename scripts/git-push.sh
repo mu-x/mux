@@ -2,6 +2,7 @@
 #
 # mux: Git commit+fetch+rebase+push
 #
+
 set -e -x
 
 BRANCH=${1:-${MUX_BRANCH:-master}}

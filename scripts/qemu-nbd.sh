@@ -2,6 +2,7 @@
 #
 # mux: Mounts qcow2 HHD image over NBD
 #
+
 set -e
 modprobe nbd
 

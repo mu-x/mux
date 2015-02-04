@@ -2,6 +2,7 @@
 #
 # mux: Runs QEMU virtual machine
 #
+
 set -e
 
 HD=$PWD/${HD:-`echo *.qcow2 | cut -d' ' -f1`}

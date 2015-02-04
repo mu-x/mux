@@ -2,11 +2,11 @@
 #
 # mux: Runs Qt Creator for some dir in home
 #
+
 set -e
 
-PROJ=${1:-$MUX_PROJECT}
-DIR=`echo ~/$PROJ* | cut -d' ' -f1`
-NAME=`basename $DIR`
+DIR=$(readlink -f ${1:-.})
+NAME=$(basename $DIR)
 CUR_DIR="$PWD"
 cd $DIR
 

@@ -2,6 +2,7 @@
 #
 # mux: Creates symlinks to all scripts but itself
 #
+
 set -e
 
 LOCAL=${LOCAL:-/usr/local/bin}
