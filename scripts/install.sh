@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# mux: Creates symlinks to all scripts but itself
+# mux-install
+#   Creates symlinks to all scripts but itself
 #
 
 set -e

@@ -1,13 +1,11 @@
 #!/bin/bash
 #
-# mux: Configurates laptop devices
-#
-# Usage:
-#   <script> [<PARAM>=<VALUE> ...]
+# mux-dev-conf [<PARAM>=<VALUE> ...]
+#   Configurates laptop devices
 #
 # Params:
-#   TP - touchpad (enabled/disabled)
-#   VOL - audiom volume (%)
+#   T - touchpad (enabled/disabled), default=1
+#   V - audiom volume (%), default=120
 #
 
 set -e
@@ -17,8 +15,8 @@ do
     eval $PARAM
 done
 
-TOUCHPAD=${T:-${MUX_TOUCHPAD:-1}}
-VOLUME=${V:-${MUX_VOLUME:-120}}
+TOUCHPAD=${T:-${TP:-${TOUCHPAD:-${MUX_TOUCHPAD:-1}}}}
+VOLUME=${V:-${VOL:-${VOLUME:-${MUX_VOLUME:-120}}}}
 
 echo Touchpad, set enabled: $TOUCHPAD
 xinput set-prop 12 "Device Enabled" $TOUCHPAD

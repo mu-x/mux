@@ -12,4 +12,5 @@
 
 ## Tools Usage
 
-`config/status.sh` -- check differences with stored configs
+- `$ config/status.sh` -- check differences with stored configs
+- `$ scripts/install.sh` -- installs script symlinks into /usr/local/bin

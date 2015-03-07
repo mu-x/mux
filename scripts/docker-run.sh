@@ -1,23 +1,35 @@
 #!/bin/bash
 #
-# mux: Runs docker container, mounts current directory inside
+# [I=IMAGE] [CU=USER] mux-docker-run [COMMAND]
+#   Runs docker container, mounts current directory inside
+#
+# Defaults:
+#   IMAGE=ubuntu, USER=builder, COMMAND=bash
 #
 
-set -e ### Preconfig
+set -e
 
-# If stdout is not a terminal, send Ctrl+D to stdin and redirect stderr to
-# stdout (to prevent docker to be waiting on stdin)
+IMAGE=${I:-${IMG:-${MUX_DOCKER_IMAGE:-ubuntu}}}
+COMMAND=${@:-${MUX_DOCKER_COMMAND:-bash}}
+CUSER=${CU:-${MUX_DOCKER_CUSER:-}}
+CMOUNTS=".ivy .cache .m $CM"
+
+# Forward terminal to container and redirect std in otherwise
 if [ -t 1 ]
 then
-    PRE=; POST=;
+    FLAGS=-it
+    TAIL=
+
+    # Reattach tty for screen inside container support
+    # https://github.com/docker/docker/issues/728
+    PRECONF="exec >/dev/tty 2>/dev/tty </dev/tty"
 else
-    if [ ! -t 0 ]; then PRE='echo |'; fi
-    if [ ! -t 2 ]; then POST='2>&1'; fi
+    FLAGS=-i
+    TAIL=" 2>&1"
+    PRECONF=
 fi
 
 # Transfer home cache if container user is specified
-CUSER=${CU:-${MUX_DOCKER_CUSER:-}}
-CMOUNTS=".ivy .cache .m $CM"
 if [ $CUSER ]
 then
     for LOCAL in $HOME/.*
@@ -31,11 +43,7 @@ then
     done
 fi
 
-
-set -x ### Docker Run
-
-IMAGE=${IMG:-${MUX_DOCKER_IMAGE:-ubuntu}}
-COMMAND=${@:-${MUX_DOCKER_COMMAND:-bash}}
-
-$PRE docker run $MOUNTS -v $PWD:/code -it $IMAGE \
-        bash -c "cd /code && $COMMAND" $POST
+# Run
+set -x
+docker run $FLAGS $MOUNTS -v $PWD:/code $IMAGE \
+    bash -c "cd /code && $PRECONF && $COMMAND$TAIL"
