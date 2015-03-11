@@ -4,9 +4,8 @@
 
 ## Directory
 
-- *algorithm* -- algorithm implementations and tests
 - *config* -- configuration files stash
-- *demo_cpp* -- c++ demo code folder (for CV :)
+- *sandbox* -- demo code and examples stash
 - *scripts* -- some usefull scripts (bash, python, etc)
 - *typomaster* -- python module/program helps you improve your typing skills
 
@@ -14,3 +13,5 @@
 
 - `$ config/status.sh` -- check differences with stored configs
 - `$ scripts/install.sh` -- installs script symlinks into /usr/local/bin
+- `$ python -m typomaster` -- run typomaster (use `--help` for more info)
+
