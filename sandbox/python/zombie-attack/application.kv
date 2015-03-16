@@ -1,0 +1,82 @@
+#:kivy 1.0.9
+
+# --- Hero -------------------------------------------------------------------
+
+<Unit>:
+    allow_stretch: True
+
+<Bullet>:
+    cooldown: 20
+    damage: 10
+    speed: 10
+    source: 'bullet.png'
+
+<Hero>:
+    hp: 100
+    speed: 5
+    source: 'soldier.png'
+
+# --- Enemies ----------------------------------------------------------------
+
+<Zombie>:
+    cost: 20
+    damage: 2
+    hp: 10
+    speed: 1
+    source: 'zombie.png'
+
+<Vampire>:
+    cost: 20
+    damage: 3
+    hp: 15
+    speed: 2
+    source: 'vampire.png'
+
+# --- Controls ---------------------------------------------------------------
+
+<Control>:
+    allow_stretch: True
+
+<Arrows>:
+    source: 'arrows.png'
+
+<Actions>:
+    source: 'actions.png'
+
+# --- Levels -----------------------------------------------------------------
+
+<Level>:
+    arrows: arrows_id
+    actions: actions_id
+    label: label_id
+
+    canvas:
+        Rectangle:
+            source: 'background.png'
+            pos: self.pos
+            size: self.size
+        Rectangle:
+            source: 'road.png'
+            pos: self.x, self.center_y - self.height / 10
+            size: self.width, self.height / 7
+
+    Arrows:
+        id: arrows_id
+        size: self.parent.width / 5, self.parent.width / 2.5
+        pos: self.parent.pos
+
+    Actions:
+        id: actions_id
+        size: self.parent.width / 5, self.parent.width / 2.5
+        pos: self.parent.x + self.parent.width * 4 / 5, self.parent.y
+
+    Label:
+        id: label_id
+        size: self.parent.width / 5, self.parent.width / 2
+        font_size: '%spx' % (self.parent.width / 20)
+        x: self.parent.x + self.parent.width / 10
+        top: self.parent.top
+
+
+# ----------------------------------------------------------------------------
+
