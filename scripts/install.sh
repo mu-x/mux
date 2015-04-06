@@ -10,10 +10,9 @@ LOCAL=${LOCAL:-/usr/local/bin}
 PREFIX=${PREFIX:-mux-}
 
 SELF=$(basename "${BASH_SOURCE[0]}")
+HOME=/home/$SUDO_USER
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-MUXRC=/home/$SUDO_USER/.muxrc
-BASHRC=/home/$SUDO_USER/.bashrc
 
 for SCRIPT in `echo *`
 do
@@ -22,14 +21,31 @@ do
 
     if [[ $SCRIPT != $SELF ]]
     then
-        ln -sf $PWD/$SCRIPT $LOCAL/$PREFIX$LINK
-        echo Install $SCRIPT ... done
+        SYMLINK=$LOCAL/$PREFIX$LINK
+        ln -sf $PWD/$SCRIPT $SYMLINK
+        echo Install $SYMLINK ... done
     fi
 done
 
-if [ ! -f $MUXRC ]
+
+if [ -f $HOME/.bashrc ]
 then
-    echo MUX=true > $MUXRC
-    echo . .muxrc >> $BASHRC
+    BASHRC=$HOME/.bashrc
+else
+    BASHRC=$HOME/.bash_profile
 fi
+
+if [ "$(grep .muxrc $BASHRC)" ]
+then
+    echo Update $BASHRC ... no need
+    exit 0 # dont need an update
+fi
+
+echo Update $BASHRC ... done
+echo -e "
+# MU eXecutables config
+if [ -f ~/.muxrc ]
+then
+    . ~/.muxrc
+fi" >> $BASHRC
 
