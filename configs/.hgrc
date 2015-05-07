@@ -1,0 +1,21 @@
+[ui]
+username = Mikhail Uskov <muskov@networkoptix.com>
+merge = meld
+
+[extensions]
+color =
+eol =
+pager =
+purge =
+shelve =
+hgext.extdiff =
+hgext.hgk =
+
+[pager]
+pager = LESS='FRX' less
+
+[extdiff]
+cmd.vdiff = meld
+
+[merge-tools]
+meld.args = $local $base $other

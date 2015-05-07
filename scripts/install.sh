@@ -13,8 +13,13 @@ SELF=$(basename "${BASH_SOURCE[0]}")
 HOME=/home/$SUDO_USER
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
+echo Remove old "$LOCAL/$PREFIX*" ... done
+for LINK in $(echo $LOCAL/$PREFIX*)
+do
+    unlink $LINK 2>/dev/null || true
+done
 
-for SCRIPT in `echo *`
+for SCRIPT in $(echo *)
 do
     chmod +x $SCRIPT
     LINK=$(echo $SCRIPT | cut -d. -f1)
