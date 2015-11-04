@@ -38,9 +38,9 @@ function list_files() {
         if [ -d .git ]; then git ls-files && return 0; fi
         if [ -d .svn ]; then svn ls && return 0; fi
         if [ -d .cvs ]; then cvs ls && return 0; fi
+        if [ -d .hg ];  then hg st -A | awk '{print$2}' && return 0; fi
     fi
 
-    echo -- list files by echo...
     shopt -s globstar
     for FILE in $(echo **)
     do

@@ -8,3 +8,13 @@ function svi() {
     sudo chmod +x $@
     sudo vi $@
 }
+
+# QT Creator aliases
+QTC_FIND="find -name *.pro | grep x64 | grep -v 'specifics\|template'"
+QTC_RUN="xargs qtcreator >/dev/null 2>&1 &"
+alias aqtcreator="$QTC_FIND | $QTC_RUN"
+
+# Maven aliases
+alias mvn-compile-debug="mvn compile -Dbuild.configuration=debug"
+alias mvn-package-debug="mvn package -Dbuild.configuration=debug"
+

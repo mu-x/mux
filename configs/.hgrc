@@ -8,6 +8,7 @@ eol =
 pager =
 purge =
 shelve =
+rebase =
 hgext.extdiff =
 hgext.hgk =
 
