@@ -8,9 +8,12 @@ eol =
 pager =
 purge =
 shelve =
-rebase =
+share =
+strip =
 hgext.extdiff =
 hgext.hgk =
+graphlog =
+rebase =
 
 [pager]
 pager = LESS='FRX' less
@@ -19,4 +22,6 @@ pager = LESS='FRX' less
 cmd.vdiff = meld
 
 [merge-tools]
+meld.priority = 1
+meld.premerge = False
 meld.args = $local $base $other

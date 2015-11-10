@@ -13,6 +13,7 @@
 ## Mercurial (hg) for git user
 
 ```
+    hg pull --rebase        # git pull && get rebase NEW_HEAD
     hg branches             # git branch
     hg update BRANCH        # git checkout BRANCH
     hg branch NEW_BRANCH    # git checkout -b NEW_BRANCH

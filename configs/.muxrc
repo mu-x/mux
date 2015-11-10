@@ -1,20 +1,31 @@
 # ~/.muxrc shell be included in ~/.bashrc
 MUX=true
 
-# Bash config
-PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+# Bash custom prompt
+PS1='\[\033[01;32m\]\u@\D{%H%M%S}\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
+# Bash set terminal title to command
+trap 'echo -ne "\033]0;$BASH_COMMAND\007"' DEBUG
+
+# Maven debug aliases
+alias mvn-compile-debug="mvn compile -Dbuild.configuration=debug"
+alias mvn-package-debug="mvn package -Dbuild.configuration=debug"
+
+# QtCreator find and run projects
+function aqtcreator() {
+    local EXCLUDE="$aqtcreator_EXCLUDE $@"
+    local FILES=$(find -name '*.pro' | grep -v "$(echo $EXCLUDE | sed 's/ /\\|/g')")
+
+    echo Running QtCreator for:
+    for FILE in $FILES; do echo - $FILE; done
+
+    qtcreator $(echo $FILES) 1>/dev/null 2>&1 &
+}
+
+# Vim super developer mode
 function svi() {
     sudo chmod +x $@
     sudo vi $@
 }
 
-# QT Creator aliases
-QTC_FIND="find -name *.pro | grep x64 | grep -v 'specifics\|template'"
-QTC_RUN="xargs qtcreator >/dev/null 2>&1 &"
-alias aqtcreator="$QTC_FIND | $QTC_RUN"
-
-# Maven aliases
-alias mvn-compile-debug="mvn compile -Dbuild.configuration=debug"
-alias mvn-package-debug="mvn package -Dbuild.configuration=debug"
 
