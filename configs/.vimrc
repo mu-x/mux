@@ -11,3 +11,15 @@ set cindent tabstop=4 shiftwidth=4 expandtab
 autocmd InsertLeave * :%s/\s\+$//ge
 autocmd InsertLeave * :%s/\t/    /ge
 
+" extra functions
+
+function SyntaxExtraHi()
+  syn match Operators display '[{}()<>\[\]\+\-\*\=\&\*\$\^\:\~\,\.\;]'
+  hi Operators ctermfg=3
+
+  syn match Tabs display '\t'
+  hi Tabs ctermbg=3
+endfunction
+
+autocmd Syntax * :call SyntaxExtraHi()
+
