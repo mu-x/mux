@@ -1,13 +1,15 @@
 #!/bin/bash
-#
-# [I=IMAGE] [CU=USER] mux-docker-run [COMMAND]
-#   Runs docker container, mounts current directory inside
-#
-# Defaults:
-#   IMAGE=ubuntu, USER=builder, COMMAND=bash
-#
+
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Runs docker container, mounts current directory inside
+Usage: [I=IMAGE] [CU=USER] mux-docker-run [COMMAND]
+Defaults:
+    IMAGE=ubuntu, USER=builder, COMMAND=bash
+END
+exit 0; fi
 
 set -e
+[ "$X" ] && set -x
 
 IMAGE=${I:-${IMG:-${MUX_DOCKER_IMAGE:-ubuntu}}}
 COMMAND=${@:-${MUX_DOCKER_COMMAND:-bash}}

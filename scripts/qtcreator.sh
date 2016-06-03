@@ -1,8 +1,10 @@
 #!/bin/bash
-#
-# [NOVC=1] [NOUPDATE=1] mux-qtcreator [PROJECT_DIRECTORY]
-#   Runs Qt Creator for some dir in home
-#
+
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Runs Qt Creator for some dir in home
+[NOVC=1] [NOUPDATE=1] mux-qtcreator [PROJECT_DIRECTORY]
+END
+exit 0; fi
 
 set -e
 

@@ -1,14 +1,16 @@
 #!/bin/bash
-#
-# mux-dev-conf [<PARAM>=<VALUE> ...]
-#   Configurates laptop devices
-#
-# Params:
-#   T - touchpad (enabled/disabled), default=1
-#   V - audiom volume (%), default=120
-#
+
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Configurates laptop devices
+Usage: mux-dev-conf [<PARAM>=<VALUE> ...]
+Params:
+    T - touchpad (enabled/disabled), default=1
+    V - audiom volume (%), default=120
+END
+exit 0; fi
 
 set -e
+[ "$X" ] && set -x
 
 for PARAM in $@
 do

@@ -1,8 +1,10 @@
 #!/bin/bash
-#
-# mux-git-push [BRANCH] [SERVER] [ORIGIN]
-#   Git commit+fetch+rebase+push
-#
+
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Git commit+fetch+rebase+push
+Usage: mux-git-push [BRANCH] [SERVER] [ORIGIN]
+END
+exit 0; fi
 
 set -e -x
 

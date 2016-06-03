@@ -1,8 +1,10 @@
 #!/bin/bash
-#
-# [F=json] mux-format [TEXT...]
-#   Formats input text as F
-#
+
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Formats input text as JSON or smth else
+Usage: [F=json] mux-format [TEXT...] [< FILE_NAME]
+END
+exit 0; fi
 
 set -e
 [ "$X" ] && set -x

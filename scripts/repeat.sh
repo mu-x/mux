@@ -1,10 +1,13 @@
 #!/bin/bash
-#
-# [L=inf] [D=1s] mux-repeat COMMAND [ARGS...]
-#   Repeats command every second until Ctrl+C
-#
+
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Repeats command every second until Ctrl+C
+[L=inf] [D=1s] mux-repeat COMMAND [ARGS...]
+END
+exit 0; fi
 
 set -e
+[ "$X" ] && set -x
 
 COMMAND=$@
 LIMIT=${L:-inf}

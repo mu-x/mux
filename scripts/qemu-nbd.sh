@@ -1,8 +1,10 @@
 #!/bin/bash
-#
-# [HDD=PATH] [NBD=nbdX] mux-qemu-nbd [help|c|connect|d|disconnect]
-#   Mounts qcow2 HHD image over NBD
-#
+
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Mounts qcow2 HHD image over NBD
+Usage: [HDD=PATH] [NBD=nbdX] mux-qemu-nbd [c|connect|d|disconnect]
+END
+exit 0; fi
 
 set -e
 modprobe nbd
@@ -10,7 +12,7 @@ modprobe nbd
 HDD=$PWD/${HDD:-`echo *.qcow2 | cut -d' ' -f1`}
 NBD=/dev/${NBD:-nbd7}
 
-case ${1-help} in
+case ${1:-error} in
 c|connect)
     echo Connect $HDD to $NBD
     qemu-nbd -c $NBD $HDD
@@ -37,7 +39,9 @@ d|disconnect)
     ;;
 
 *)
-    echo "Usage: [HDD=*.qcow] [NBD=nbd7] $0 [connect|disconnect]"
+    echo Error usage, use --help for more info >&2
+    exit 1
+    ;;
 
 esac
 

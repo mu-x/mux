@@ -1,10 +1,12 @@
 #!/bin/bash
-#
-# mux-redirect EXECUTABLE [STDOUT] [STDERR]
-#   Redirects running process stdout and stderr
-#
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Redirects running process stdout and stderr
+Usage: mux-redirect EXECUTABLE|PID [STDOUT] [STDERR]
+END
+exit 0; fi
 
 set -e
+[ "$X" ] && set -x
 
 TARGET=$1
 if [ ! "$TARGET" ]

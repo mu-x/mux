@@ -1,8 +1,10 @@
 #!/bin/bash
-#
-# [S=1000] [T=1000000000] mux-test-hdd
-#   Tests hdd for performance
-#
+
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Tests hdd for performance
+[S=1000] [T=1000000000] mux-test-hdd
+END
+exit 0; fi
 
 set -e
 [ "$X" ] && set -x

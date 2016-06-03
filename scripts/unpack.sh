@@ -1,10 +1,13 @@
 #!/bin/bash
-#
-# mux-unpack ARCHIVE [-f]
-#   Unpacks files from known archive format to neighbour directory
-#
+
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Unpacks files from known archive format to neighbour directory
+Usage: mux-unpack ARCHIVE [-f]
+END
+exit 0; fi
 
 set -e
+[ "$X" ] && set -x
 
 ARCHIVE=$(readlink -f "$1")
 DIRECTORY=$(dirname "$ARCHIVE")

@@ -1,8 +1,13 @@
 #!/bin/bash
-#
-# mux-install
-#   Creates symlinks to all scripts but itself
-#
+
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Creates symlinks to all scripts but itself
+Usage: [PARAM=VALUE ...] mux-install
+Defaults:
+    LOCAL   = /usr/local/bin
+    PREFIX  = mux-
+END
+exit 0; fi
 
 set -e
 

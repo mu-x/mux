@@ -1,10 +1,13 @@
 #!/bin/bash
-#
-# [HDD=PATH] mux-qemu-run
-#   Runs QEMU virtual machine
-#
+
+if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+Runs QEMU virtual machine
+Usage: [HDD=PATH] mux-qemu-run
+END
+exit 0; fi
 
 set -e
+[ "$X" ] && set -x
 
 HDD=$PWD/${HDD:-$(echo *.qcow2 | cut -d' ' -f1)}
 SYSTEM=qemu-system
