@@ -16,10 +16,10 @@ function each_rc {
 for ARG in ${@:-status}
 do
     case $ARG in
-        -h|*help)   echo <script> [help|status|push|pull]   ;;
-        save|push)  each_rc 'cp $LOCAL $REMOTE'            ;;
-        load|pull)  each_rc 'cp $REMOTE $LOCAL'            ;;
-        *)          each_rc 'diff $LOCAL $REMOTE'         ;;
+        -h|*help)   echo "<script> [help|status|push|pull]" ;;
+        save|push)  each_rc 'cp $LOCAL $REMOTE'             ;;
+        load|pull)  each_rc 'cp $REMOTE $LOCAL'             ;;
+        *)          each_rc 'diff $LOCAL $REMOTE'           ;;
     esac
 done
 

@@ -1,26 +1,14 @@
-# ~/.muxrc shell be included in ~/.bashrc
+# ~/.muxrc to be included in ~/.bashrc
 MUX=true
 
-# Bash custom prompt
-PS1='\[\033[01;32m\]\u@\D{%H%M%S}\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-
-# Bash set terminal title to command
-trap 'echo -ne "\033]0;$BASH_COMMAND\007"' DEBUG
+# Bash config
+if [ $(basename $SHELL) == bash ]; then
+    PS1='\n\[\033[01;32m\]\u@\D{%H%M%S}\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\]\n\$ '
+fi
 
 # Maven debug aliases
 alias mvn-compile-debug="mvn compile -Dbuild.configuration=debug"
 alias mvn-package-debug="mvn package -Dbuild.configuration=debug"
-
-# QtCreator find and run projects
-function aqtcreator() {
-    local EXCLUDE="$aqtcreator_EXCLUDE $@"
-    local FILES=$(find -name '*.pro' | grep -v "$(echo $EXCLUDE | sed 's/ /\\|/g')")
-
-    echo Running QtCreator for:
-    for FILE in $FILES; do echo - $FILE; done
-
-    qtcreator $(echo $FILES) 1>/dev/null 2>&1 &
-}
 
 # QtCreator silentl run
 function sqtcreator() {
@@ -35,4 +23,8 @@ function svi() {
     sudo vi $@
 }
 
-
+# Start tmux or screen as main terminal emulator
+TERMINAL_MULTIPLEXER=$(which tmux || whish screen)
+if [[ $TERMINAL_MULTIPLEXER ]] && [[ $TERM != "screen" ]]; then
+    exec $TERMINAL_MULTIPLEXER
+fi
