@@ -10,17 +10,32 @@ fi
 alias mvn-compile-debug="mvn compile -Dbuild.configuration=debug"
 alias mvn-package-debug="mvn package -Dbuild.configuration=debug"
 
-# QtCreator silentl run
+# QtCreator silent run [PROJECT.pro]
 function sqtcreator() {
     CMD="qtcreator ${@:-$(echo *.pro)}"
     echo $CMD
     $CMD >/dev/null 2>&1 &
 }
 
-# Vim super developer mode
+# Vim super developer mode FILE
 function svi() {
-    sudo chmod +x $@
-    sudo vi $@
+    sudo chmod +x "$1"
+    sudo vi "$@"
+}
+
+# Find NAME [DIR]
+function f() {
+    find "${2:-.}" -name "$1"
+}
+
+# Grep PATTERN [DIR]
+function g() {
+    DIR=${2:-$(if [ ! -t 1 ]; then echo .; fi)}
+    if [[ "$DIR" ]]; then
+        grep -rI "$1" "$DIR"
+    else
+        grep "$1"
+    fi
 }
 
 # Start tmux or screen as main terminal emulator
@@ -28,3 +43,4 @@ TERMINAL_MULTIPLEXER=$(which tmux || whish screen)
 if [[ $TERMINAL_MULTIPLEXER ]] && [[ $TERM != "screen" ]]; then
     exec $TERMINAL_MULTIPLEXER
 fi
+
