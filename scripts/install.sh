@@ -56,6 +56,7 @@ echo -e "
 # MU eXecutables config
 if [ -f ~/.muxrc ]
 then
+    export MUX_HOME=$(dirname $PWD)
     . ~/.muxrc
 fi" >> $BASHRC
 
