@@ -4,7 +4,7 @@ cd $(dirname "${BASH_SOURCE[0]}")
 
 function each_rc {
     ACTION="$1"
-    for CONF in $(ls .*rc)
+    for CONF in $(ls .*rc *.conf .*.conf)
     do
         LOCAL=$HOME/$CONF
         REMOTE=$PWD/$CONF
