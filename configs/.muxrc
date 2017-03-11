@@ -42,7 +42,7 @@ function g() {
 }
 
 # Start tmux or screen as main terminal emulator
-TERMINAL_MULTIPLEXER=$(which tmux || whish screen)
+TERMINAL_MULTIPLEXER=$(which tmux || which screen)
 if [[ $TERMINAL_MULTIPLEXER ]] && [[ $TERM != "screen" ]]; then
     exec $TERMINAL_MULTIPLEXER
 fi

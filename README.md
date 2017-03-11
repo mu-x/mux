@@ -11,8 +11,11 @@
 
 ## Tools Usage
 
-- `$ config/status.sh` -- check differences with stored configs
-- `$ config/status.sh pull` -- update all local configs
+- `$ config/manage.sh` -- check differences with stored configs
+- `$ config/manage.sh pull` -- update all local configs
 - `$ scripts/install.sh` -- installs script symlinks into /usr/local/bin
 - `$ cd sandbox/python; python -m typomaster [--help]` -- run typomaster
 
+## Fast start
+
+- `$ mux/fast-start.sh` -- installs tools and some ubuntu packages
