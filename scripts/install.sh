@@ -19,19 +19,17 @@ HOME=/home/$SUDO_USER
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 echo Remove old "$LOCAL/$PREFIX*" ... done
-for LINK in $(echo $LOCAL/$PREFIX*)
+for SYMLINK in $(echo $LOCAL/$PREFIX*)
 do
-    unlink $LINK 2>/dev/null || true
+    unlink $SYMLINK 2>/dev/null || true
 done
 
 for SCRIPT in $(echo *)
 do
-    chmod +x $SCRIPT
-    LINK=$(echo $SCRIPT | cut -d. -f1)
-
-    if [[ $SCRIPT != $SELF ]]
+    if [[ $SCRIPT != $SELF && $SCRIPT != resources ]]
     then
-        SYMLINK=$LOCAL/$PREFIX$LINK
+        chmod +x $SCRIPT
+        SYMLINK=$LOCAL/$PREFIX$(echo $SCRIPT | cut -d. -f1)
         ln -sf $PWD/$SCRIPT $SYMLINK
         echo Install $SYMLINK ... done
     fi
