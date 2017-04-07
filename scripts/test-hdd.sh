@@ -2,46 +2,33 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Tests hdd for performance
-[S=1000] [T=1000000000] mux-test-hdd
+[MIN=100M] [MAX=1G] [STEP=10] [BS=4M] [RUNS=3] [DIR=.] mux-test-hdd
 END
 exit 0; fi
 
 set -e
 [ "$X" ] && set -x
 
-STEP=$(numfmt --from=iec ${S:-10K})
-TOTAL=$(numfmt --from=iec ${T:-100M})
-DIR=${D:-$( uuidgen )}
+MIN=$(numfmt --from=iec ${MIN:-100M})
+MAX=$(numfmt --from=iec ${MAX:-1G})
+STEP=$(numfmt --from=iec ${STEP:-10})
+BS=$(numfmt --from=iec ${BS:-4M})
+RUNS=${RUNS:-3}
+DIR=${DIR:-.}/$(uuidgen)
 
-echo Test directory $DIR, total size $(numfmt --to=iec $TOTAL)
-mkdir -p $DIR/copies
-cd $DIR
+echo Test directory $DIR for sizes $(numfmt --to=iec $MIN)-$(numfmt --to=iec $MAX)
+mkdir $DIR
+trap "rm -rf $DIR" EXIT
 
-function mk {
-    local size=$1
-    local total=0
-    while (( total < TOTAL )); do
-        dd if=/dev/urandom of=f$((total/size)) \
-           bs=$SIZE count=$((size/SIZE)) \
-              1>/dev/null 2>&1
-        (( total += size ))
+size=$MIN
+while (( size <= MAX )); do
+    echo
+    for run in $(seq 1 $RUNS); do
+        fileName=$DIR/f$(uuidgen)
+        dd if=/dev/urandom of=$fileName bs=$BS count=$(( size / BS )) \
+            2>&1 | grep -v records #1>/dev/null 2>&1
+        rm $fileName
     done
-}
-
-function timer_exec {
-    local timer=$(date +%s%N)
-    $@
-    local elapsed=$(( $(date +%s%N)  - timer ))
-    echo $((elapsed/1000000)) msec for $1 $(numfmt --to=iec $2)
-}
-
-SIZE=$TOTAL
-while (( SIZE >= STEP )); do
-    timer_exec mk $SIZE
-    rm -rf *
-    (( SIZE /= STEP ))
+    (( size *= STEP ))
 done
-
-cd ..
-rmdir $DIR
 
