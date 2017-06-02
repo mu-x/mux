@@ -9,7 +9,8 @@ OPTIONS="-std=c++$STD -fPIC -W -Wall -Wextra $O"
 LIBS="-pthread $L"
 
 if [ "$B" ]; then
-    OPTIONS+=" -DBOOST"
+    OPTIONS+=" -DBOOST -I/usr/include/boost"
+    LIBS+="-lboost_system"
 fi
 
 if [ "$Q" ]; then
