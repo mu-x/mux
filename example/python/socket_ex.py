@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import socket
+import struct
 
 IP_VERSIONS = {
     4: socket.AF_INET,
@@ -34,6 +35,7 @@ class Socket(object):
     def set_option(self, option, value):
         self.socket.setsockopt(socket.SOL_SOCKET, option, value)
 
+
 class TcpSocket(Socket):
     def __init__(self, ipVersion = 4, fd = None, remote_address = None):
         if not fd: fd = socket.socket(IP_VERSIONS[ipVersion], socket.SOCK_STREAM)
@@ -58,7 +60,7 @@ class TcpSocket(Socket):
     def recv(self, size = 1024): return self.socket.recv(size)
 
     # Options
-    def setKeepAlive(self, value=True, idle=10, interval=10, count=3):
+    def set_keep_alive(self, value=True, idle=10, interval=10, count=3):
         if value:
             self.set_option(socket.SO_KEEPALIVE, 1)
             self.set_tcp_option(socket.TCP_KEEPIDLE, idle)
@@ -69,6 +71,29 @@ class TcpSocket(Socket):
 
     def set_tcp_option(self, option, value):
         self.socket.setsockopt(socket.SOL_TCP, option, value)
+
+class UdpSocket(Socket):
+    def __init__(self, ipVersion = 4):
+        fd = socket.socket(IP_VERSIONS[ipVersion], socket.SOCK_DGRAM)
+        super(TcpSocket, self).__init__(fd)
+
+    # Multicasts
+    def join_group(self, group, iface=''):
+        ip, port = parse_endpoint(group)
+        self.socket.bind((iface, port))
+        r = struct.pack("4sl", socket.inet_aton(ip), socket.INADDR_ANY)
+        self.socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, r)
+
+    def set_multicast_ttl(self, value):
+        self.socket.setoption(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, value)
+
+    # Datagram
+    def send_to(self, data, endpoint):
+        return self.socket.sendto(data, parse_endpoint(endpoint))
+
+    def recv_from(self, size=1024):
+        data, endpoint = self.socket.recvfrom(size)
+        return data, pack_endpoint(endpoint)
 
 def main():
     import sys
@@ -97,7 +122,7 @@ def main():
         thread.start()
 
         with TcpSocket() as client:
-            client.setKeepAlive(idle=5, interval=5, count=1)
+            client.set_keep_alive(idle=5, interval=5, count=1)
             client.connect(address)
 
             log('Client connected')

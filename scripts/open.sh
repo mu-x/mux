@@ -13,6 +13,7 @@ set -e
 
 USER_URL="$1"
 URL="$(echo "$USER_URL" | sed 's/\\/\//g')"
+[[ "$USER_URL" =~ '\\'* ]] && URL="smb:$URL"
 
 SMB_TOOLS="$T konqueror nautilus"
 OPEN_TOOLS="$T xdg-open kde-open"
@@ -27,8 +28,7 @@ function select_tool()
     exit 1
 }
 
-if [[ "$USER_URL" =~ '\\'* ]]; then
-    URL="smb:$URL"
+if [[ "$URL" =~ 'smb'* ]]; then
     OPEN=$(select_tool $SMB_TOOLS)
 else
     OPEN=$(select_tool $OPEN_TOOLS)

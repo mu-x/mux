@@ -9,13 +9,19 @@ if [ $(basename $SHELL) == bash ]; then
     PS1='\n\[\033[01;32m\]\u \[\033[01;34m\]@\h \[\033[01;32m\]\D{%H:%M:%S} \[\033[01;34m\]\w\[\033[00m\]\n\$ '
 fi
 
-# Maven debug aliases
-alias mvn-compile-debug="mvn compile -Dbuild.configuration=debug"
-alias mvn-package-debug="mvn package -Dbuild.configuration=debug"
+# Prints first existing file from arguments
+function first_existing_file() {
+    for file in $@; do
+        if [ -f "$file" ]; then
+            echo "$file"
+            return 0
+        fi
+    done
+}
 
 # QtCreator silent run [PROJECT.pro]
 function sqtcreator() {
-    CMD="qtcreator ${@:-$(echo *.pro)}"
+    CMD="qtcreator ${@:-$(first_existing_file CMakeLists.txt *.pro)}"
     echo $CMD
     $CMD >/dev/null 2>&1 &
 }
