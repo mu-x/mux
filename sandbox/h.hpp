@@ -19,6 +19,8 @@
 
 #if defined(QT)
     #include <QtCore/QMutex>
+    #include <QtCore/QByteArray>
+    #include <QtCore/QString>
 #endif // defined(QT)
 
 #define PRINT(out) std::cout << out << std::endl
