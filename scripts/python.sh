@@ -16,7 +16,7 @@ set -e
 
 PYTHON=${P:-python}
 MODULES="sys os $M"
-INCLUDES=${P:-math}
+INCLUDES="math datetime $P"
 
 IMPORTS=
 for module in $MODULES; do
