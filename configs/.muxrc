@@ -19,25 +19,24 @@ function first_existing_file() {
     done
 }
 
-# QtCreator silent run [PROJECT.pro]
+# QtCreator silent run [PROJECT_FILE]
 function sqtcreator() {
-    CMD="qtcreator ${@:-$(first_existing_file CMakeLists.txt *.pro)}"
+    CMD="qtcreator ${@:-$(first_existing_file *.pro CMakeLists.txt)}"
     echo $CMD
     $CMD >/dev/null 2>&1 &
 }
 
-# Vim super developer mode FILE
-function svi() {
-    sudo chmod +x "$1"
-    sudo vi "$@"
+# Colorfull less output of COMMAND [ARGS...]
+function cless() {
+    "$@" --color=always | LESS=FRX less
 }
 
-# Find NAME [DIR]
+# Find NAME in [DIR] or . and [TYPE]
 function f() {
     find "${2:-.}" -name "$1" $([ "$3" ] && echo -type "$3")
 }
 
-# Grep PATTERN [DIR]
+# Grep PATTERN [DIR] or stdin
 function g() {
     DIR=${2:-$(if [ ! -t 1 ]; then echo .; fi)}
     if [[ "$DIR" ]]; then

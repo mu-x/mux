@@ -1,0 +1,7 @@
+[user]
+	email = uskov.mikhail@gmail.com
+	name = mu-x
+[push]
+	default = simple
+[alias]
+	st = status
