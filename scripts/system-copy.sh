@@ -2,37 +2,53 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Copies corrently running system into new HDD
-Usage: [NO_GRUB=1] $0 HDD_DEVICE
+Usage: [NO_COPY=1] [GRUB=/dev/sda] $0 DEVICE_OR_DIRECTORY
 END
 exit 0; fi
 
 set -e
 [ "$X" ] && set -x
 
-DEVICE=$1
-if [ -z "$DEVICE" ]; then
-    echo 'Error: device argument is required.' >&2
-    exit 1
-fi
+: ${1?"Error: you must specify device or mount point."}
+if file "$1" | grep directory; then
+    # Directory means mount point
+    MOUNT="$1"
+else
+    MOUNT=/tmp/hdd_$(date +%s)
+    mkdir -p "$MOUNT"
 
-mkdir -p $MOUNT
-umount $DEVICE || true
-mount $DEVICE $MOUNT
+    # Otherwise it is supposed to be a block device
+    DEVICE="$1"
+    [ -z $NO_COPY ] && mkfs.ext4 "$DEVICE"
+    mount "$DEVICE" "$MOUNT"
+fi
 
 # Copy entire root partition with preserved permisions
-rsync -ax --progress / $MOUNT
-
-if [ -z $NO_GRUB ]; then
-    for DIR in sys proc dev; do
-        mount -o bind /$DIR $MOUNT/$DIR
-    done
-
-    chroot $MOUNT
-    blkid
-    grub-install $MOUNT
-    update-grub
+if [ -z $NO_COPY ]; then
+    rsync -ax --progress / "$MOUNT"
 fi
 
-umount $MOUNT
-rmdir $MOUNT
+# Install boot loader
+if [ "$GRUB" ]; then
+    for DIR in sys proc dev; do
+        mount -o bind "/$DIR" "$MOUNT/$DIR"
+    done
+
+    # TODO: fix /etc/fstab
+    chroot "$MOUNT" <<EOF
+        set -e
+        blkid
+        grub-install "$GRUB"
+        update-grub
+EOF
+fi
+
+# Unmount device if it was mounted
+for DIR in sys proc dev; do
+    umount "$MOUNT/$DIR"
+done
+if [ $DEVICE ]; then
+    umount $DEVICE
+    rmdir $MOUNT
+fi
 
