@@ -3,7 +3,7 @@
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Tests hdd for performance
 Usage: [MIN=100M] [MAX=10G] [STEP=10] [RUNS=3] [DIR=.] \\
-     [BS=4M] [DEV=zero] [IF=/dev/\$DEV] mux-test-hdd
+     [BS=4M] [DEV=zero] [IF=/dev/\$DEV] $0
 END
 exit 0; fi
 

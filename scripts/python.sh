@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Performs math operations by python from arguments or std in.
-Usage: [CONF=VALUE] mux-python [EXPRESSION]
+Usage: [CONF=VALUE] $0 [EXPRESSION]
 Configuration:
     P interpretator, default: python
     M import modules (import M), default: sys, os

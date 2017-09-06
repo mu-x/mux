@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Runs docker container, mounts current directory inside
-Usage: [I=IMAGE] [CU=USER] mux-docker-run [COMMAND]
+Usage: [I=IMAGE] [CU=USER] $0 [COMMAND]
 Defaults:
     IMAGE=ubuntu, USER=builder, COMMAND=bash
 END

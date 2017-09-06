@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Configurates laptop devices
-Usage: mux-dev-conf [<PARAM>=<VALUE> ...]
+Usage: $0 [<PARAM>=<VALUE> ...]
 Params:
     T - touchpad (enabled/disabled), default=1
     V - audiom volume (%), default=120

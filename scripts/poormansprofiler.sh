@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ "$1" == --help ]] || [[ "$1" == -h ]] || [[ ! "$1" ]]; then cat <<END
 Poor man's profiler: https://poormansprofiler.org
-Usage: [C=COUNT] [S=SLEEP] mux-poormansprofiler COMMAND
+Usage: [C=COUNT] [S=SLEEP] $0 COMMAND
 END
 exit 0; fi
 

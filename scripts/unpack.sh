@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Unpacks files from known archive format to neighbour directory
-Usage: mux-unpack ARCHIVE [-f]
+Usage: $0 unpack ARCHIVE [-f]
 END
 exit 0; fi
 

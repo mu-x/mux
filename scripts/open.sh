@@ -3,8 +3,8 @@
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Opens local or remote URLs by native applications.
 Usage:
-    [T=xdg-open] mux-open ~/path/to/some/local/file.ext
-    [T=nautilus] mux-open '\\\\path\to\wondows\share'
+    [T=xdg-open] $0 ~/path/to/some/local/file.ext
+    [T=nautilus] $0 '\\path\to\wondows\share'
 END
 exit 0; fi
 

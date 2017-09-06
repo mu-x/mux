@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Formats input text as JSON or smth else
-Usage: [F=yaml|json|xml] mux-format [TEXT...] [< FILE_NAME]
+Usage: [F=yaml|json|xml] $0 [TEXT...] [< FILE_NAME]
 END
 exit 0; fi
 

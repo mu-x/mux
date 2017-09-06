@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Forwards local ports to remote ports for remapping, etc.
-Usage: [P=tcp] mux-port-forwad LOCAL_IP REMOTE_IP PORT[-REMOTE_PORT][,OTHER_PORTS]
+Usage: [P=tcp] $0 LOCAL_IP REMOTE_IP PORT[-REMOTE_PORT][,OTHER_PORTS]
 END
 exit 0; fi
 

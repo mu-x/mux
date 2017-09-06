@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Download youtube audio into directory
-Usage: [OPTION=VALUE ...] mux-youtube-audio URL
+Usage: [OPTION=VALUE ...] $0 URL
 Options:
     V - version of youtube-dl (if not exist)
     L - local binary path

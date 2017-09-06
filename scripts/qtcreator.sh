@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Runs Qt Creator for some dir in home
-[NOVC=1] [NOUPDATE=1] mux-qtcreator [PROJECT_DIRECTORY]
+[NOVC=1] [NOUPDATE=1] $0 [PROJECT_DIRECTORY]
 END
 exit 0; fi
 

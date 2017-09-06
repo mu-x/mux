@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Creates symlinks to all scripts but itself
-Usage: [PARAM=VALUE ...] mux-install
+Usage: [PARAM=VALUE ...] $0
 Defaults:
     LOCAL   = /usr/local/bin
     PREFIX  = mux-

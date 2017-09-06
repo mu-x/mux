@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Diffs charaters by blocks in strings
-Usage: [C=2] mux-cdiff [SRING1] [STRING2]
+Usage: [C=2] $0 [SRING1] [STRING2]
 END
 exit 0; fi
 

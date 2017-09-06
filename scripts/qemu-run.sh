@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Runs QEMU virtual machine
-Usage: [HDD=PATH] mux-qemu-run
+Usage: [HDD=PATH] $0
 END
 exit 0; fi
 

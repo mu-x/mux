@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Mounts qcow2 HHD image over NBD
-Usage: [HDD=PATH] [NBD=nbdX] mux-qemu-nbd [c|connect|d|disconnect]
+Usage: [HDD=PATH] [NBD=nbdX] $0 [c|connect|d|disconnect]
 END
 exit 0; fi
 

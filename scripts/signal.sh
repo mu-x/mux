@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Plays ready sound until Ctrl+C
-Usage: [FILE=SOUND] mux-signal
+Usage: [FILE=SOUND] $0
 END
 exit 0; fi
 

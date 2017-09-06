@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Redirects running process stdout and stderr
-Usage: mux-redirect EXECUTABLE|PID [STDOUT] [STDERR]
+Usage: $0 EXECUTABLE|PID [STDOUT] [STDERR]
 END
 exit 0; fi
 
