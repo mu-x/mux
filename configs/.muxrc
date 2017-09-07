@@ -31,6 +31,16 @@ function cless() {
     "$@" --color=always | LESS=FRX less
 }
 
+# CD to windows path (assuming drives are mounted to /)
+function wcd() {
+    local path=${1/\\/\/}
+    if [ $(cut -c2-2 <<< "$path") == ":" ]; then
+        local drive=/$(cut -c1-1 <<< "$path")
+        path=${drive,,}$(cut -c3- <<< "$path")
+    fi
+    cd "$path"
+}
+
 # Find NAME in [DIR] or . and [TYPE]
 function f() {
     find "${2:-.}" -name "$1" $([ "$3" ] && echo -type "$3")
@@ -38,16 +48,16 @@ function f() {
 
 # Grep PATTERN [DIR] or stdin
 function g() {
-    DIR=${2:-$(if [ ! -t 1 ]; then echo .; fi)}
-    if [[ "$DIR" ]]; then
-        grep -rI "$1" "$DIR"
+    local dir=${2:-$(if [ ! -t 1 ]; then echo .; fi)}
+    if [[ "$dir" ]]; then
+        grep -rI "$1" "$dir"
     else
         grep "$1"
     fi
 }
 
 # Start tmux or screen as main terminal emulator
-TERMINAL_MULTIPLEXER=$(which tmux || which screen)
+TERMINAL_MULTIPLEXER=$(which tmux 2>/dev/null || which screen 2>/dev/null)
 if [[ $TERMINAL_MULTIPLEXER ]] && [[ $TERM != "screen" ]]; then
     exec $TERMINAL_MULTIPLEXER
 fi
