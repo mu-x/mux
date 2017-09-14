@@ -3,6 +3,11 @@
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 echo
+echo ">>> Update repository"
+echo
+git pull
+
+echo
 echo ">>> Installing scripts"
 echo
 sudo scripts/install.sh

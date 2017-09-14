@@ -15,8 +15,8 @@ set -e
 [ "$X" ] && set -x
 
 PYTHON=${P:-python}
-MODULES="sys os $M"
-INCLUDES="math datetime $P"
+MODULES="sys os json $M"
+INCLUDES="math datetime $I"
 
 IMPORTS=
 for module in $MODULES; do
@@ -31,7 +31,7 @@ done
 [[ "$F" == *u* ]] && IMPORTS="from __future__ import unicode_literals; $IMPORTS"
 
 if [[ "$@" ]]; then
-    python -c "$IMPORTS print $@"
+    $PYTHON -c "$IMPORTS print($@)"
 else
-    cat <(echo -n "print ") <(cat) | python
+    cat <(echo -n "print(") <(cat) <(echo -n ")") | $PYTHON
 fi
