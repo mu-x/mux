@@ -1,7 +1,8 @@
 #include "h.hpp"
 
-int main()
+int main(int, const char** argv)
 {
-    PRINT("Hello world");
+    for (const auto& arg: Args(argv).args)
+        print(arg);
 }
 
