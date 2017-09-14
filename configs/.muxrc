@@ -19,11 +19,20 @@ function first_existing_file() {
     done
 }
 
+# Silent run COMMAND [ARGS...]
+function silent_run() {
+    echo $@
+    $@ >/dev/null 2>&1 &
+}
+
 # QtCreator silent run [PROJECT_FILE]
 function sqtcreator() {
-    CMD="qtcreator ${@:-$(first_existing_file *.pro CMakeLists.txt)}"
-    echo $CMD
-    $CMD >/dev/null 2>&1 &
+    silent_run qtcreator ${@:-$(first_existing_file *.pro CMakeLists.txt)}
+}
+
+# VisualStudio silent run [SOLUTION_FILE]
+function sdevenv() {
+    silent_run devenv ${@:-$(first_existing_file *.sln build/*.sln)}
 }
 
 # Colorfull less output of COMMAND [ARGS...]
