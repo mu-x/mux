@@ -5,7 +5,8 @@
 ## Directory
 
 - *config* -- configuration files stash
-- *sandbox* -- demo code and examples stash
+- *example* -- demo code and examples stash
+- *sandbox* -- playground for fast tests
 - *scripts* -- some usefull scripts (bash, python, etc)
 - *NOTE.md* -- just a working notebook
 
