@@ -10,31 +10,28 @@ git pull
 echo
 echo ">>> Installing scripts"
 echo
-sudo scripts/install.sh
+if uname -a | grep -q Linux; then
+    sudo scripts/install.sh
+else
+    scripts/install.sh
+fi
 
 echo
 echo ">>> Pulling configs"
 echo
 configs/manage.sh pull
 
-echo
-echo ">>> Git Hub configuration"
-echo
-set -x
-git config --global user.name "mu-x"
-git config --global user.email "uskov.mikhail@gmail.com"
-git config --global push.default simple
-set +x
+if uname -a | grep -q Ubuntu; then
+    echo
+    echo ">>> Installing basic packages"
+    echo
+    sudo apt-get install tmux build-essential vim-gtk
 
-echo
-echo ">>> Installing basic packages"
-echo
-sudo apt-get install tmux build-essential vim-gtk
-
-echo
-echo ">>> Install development packages"
-echo
-sudo apt-get install qtcreator konqueror
+    echo
+    echo ">>> Install development packages"
+    echo
+    sudo apt-get install qtcreator konqueror
+fi
 
 echo
 echo ">>> Done"

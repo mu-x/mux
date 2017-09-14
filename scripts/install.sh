@@ -8,33 +8,25 @@ Defaults:
     PREFIX  = mux-
 END
 exit 0; fi
+echo $HOME
 
 set -e
+[ $X ] && set -x
 
 LOCAL=${LOCAL:-/usr/local/bin}
 PREFIX=${PREFIX:-mux-}
 
 SELF=$(basename "${BASH_SOURCE[0]}")
-HOME=/home/$SUDO_USER
+[ $SUDO_USER ] && HOME=/home/$SUDO_USER
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-echo Remove old "$LOCAL/$PREFIX*" ... done
-for SYMLINK in $(echo $LOCAL/$PREFIX*)
-do
-    unlink $SYMLINK 2>/dev/null || true
-done
-
-for SCRIPT in $(echo *)
-do
-    if [[ $SCRIPT != $SELF && $SCRIPT != resources ]]
-    then
-        chmod +x $SCRIPT
-        SYMLINK=$LOCAL/$PREFIX$(echo $SCRIPT | cut -d. -f1)
-        ln -sf $PWD/$SCRIPT $SYMLINK
-        echo Install $SYMLINK ... done
-    fi
-done
-
+if [ "$SUDO_USER" ]; then
+    echo Remove old "$LOCAL/$PREFIX*" ... done
+    for SYMLINK in $(echo $LOCAL/$PREFIX*)
+    do
+        unlink $SYMLINK 2>/dev/null || true
+    done
+fi
 
 if [ -f $HOME/.bashrc ]
 then
@@ -42,6 +34,23 @@ then
 else
     BASHRC=$HOME/.bash_profile
 fi
+
+for SCRIPT in $(echo *)
+do
+    if [[ $SCRIPT != $SELF && $SCRIPT != resources ]]
+    then
+        chmod +x $SCRIPT
+        LINK=$PREFIX$(echo $SCRIPT | cut -d. -f1)
+        if [ "$SUDO_USER" ]; then
+            SYMLINK=$LOCAL/$PREFIX$(echo $SCRIPT | cut -d. -f1)
+            ln -sf $PWD/$SCRIPT $LOCAL/$LINK
+        else
+            [ ! "$(grep $PWD/$SCRIPT $BASHRC)" ] && \
+                echo "alias $LINK=$PWD/$SCRIPT" >> $BASHRC
+        fi
+        echo Install $LINK ... done
+    fi
+done
 
 if [ "$(grep .muxrc $BASHRC)" ]
 then
