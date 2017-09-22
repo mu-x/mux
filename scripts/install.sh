@@ -28,8 +28,7 @@ if [ "$SUDO_USER" ]; then
     done
 fi
 
-if [ -f $HOME/.bashrc ]
-then
+if [ -f $HOME/.bashrc ] || uname -a | grep -q MINGW; then
     BASHRC=$HOME/.bashrc
 else
     BASHRC=$HOME/.bash_profile
