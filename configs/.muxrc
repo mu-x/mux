@@ -1,8 +1,11 @@
 # ~/.muxrc to be included in ~/.bashrc
 MUX=true
 
-# Initialize own tools
+# Setup own python modules
 export PYTHONPATH="$PYTHONPATH:$MUX_HOME/examples/python"
+
+# Unix tools configuration
+export LESS=FRX
 
 # Bash config
 if [ $(basename $SHELL) == bash ]; then

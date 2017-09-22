@@ -16,7 +16,7 @@ graphlog =
 rebase =
 
 [pager]
-pager = LESS='FRX' less
+pager = less
 
 [extdiff]
 cmd.vdiff = meld
