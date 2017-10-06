@@ -2,7 +2,7 @@
 
 int main(int, const char** argv)
 {
-    for (const auto& arg: Args(argv).args)
-        print(arg);
+    for (const auto& arg: mux::Args(argv).args)
+        mux::print(arg);
 }
 

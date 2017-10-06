@@ -12,6 +12,18 @@
 #include <type_traits>
 #include <vector>
 
+#if defined(__linux__)
+    #include <pwd.h>
+    #include <sys/prctl.h>
+    #include <sys/types.h>
+    #include <unistd.h>
+#endif // defined(__linux__)
+
+#if defined(_WIN32)
+    #include <winsock2.h>
+    #include <windows.h>
+#endif // defined(__linux__)
+
 #if defined(BOOST)
     #include <boost/thread.hpp>
     #include <boost/optional.hpp>
@@ -25,7 +37,7 @@
     #include <QtCore/QString>
 #endif // defined(QT)
 
-#define PRINT(out) std::cout << out << std::endl
+namespace mux {
 
 template<typename Value>
 void print(const Value& value)
@@ -59,4 +71,8 @@ struct Args
         return list;
     }
 };
+
+} // namespace mux
+
+#define MUX_TRACE(EXPRESSION) mux::print(#EXPRESSION, "=", EXPRESSION)
 
