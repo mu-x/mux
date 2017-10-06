@@ -14,10 +14,8 @@ DIRECTORY=$(dirname "$ARCHIVE")
 NAME=$(basename "$ARCHIVE")
 
 EXTRACT="$DIRECTORY/${NAME:0:$(expr index "$NAME" .)-1}"
-if [ -d "$EXTRACT" ]
-then
-    if [[ "$2" == *-f* ]]
-    then
+if [ -d "$EXTRACT" ]; then
+    if [[ "$2" == *-f* ]]; then
         rm -rf $EXTRACT
     else
         echo error: Directory "$EXTRACT" already exists, use -f to override

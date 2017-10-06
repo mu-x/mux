@@ -9,7 +9,15 @@ exit 0; fi
 set -e
 [ "$X" ] && set -x
 
-FORMAT=${F:-yaml}
+defaultFormat() {
+    if python -c 'import yaml' 2>/dev/null; then
+        echo yaml
+    else
+        echo json
+    fi
+}
+
+FORMAT=${F:-$(defaultFormat)}
 LINES=${L:-$(tput lines)}
 
 IN="$@"

@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ "$1" == --help ]] || [[ "$1" == -h ]] || [[ ! "$1" ]]; then cat <<END
 Poor man's profiler: https://poormansprofiler.org
-Usage: [C=COUNT] [S=SLEEP] $0 COMMAND
+Usage: [C=COUNT] [S=SLEEP] $0 PID|PGREP
 END
 exit 0; fi
 
@@ -18,11 +18,11 @@ else
 fi
 
 for N in $(seq 1 $COUNT)
-    do
-        printf '\rAnalyzing process %s ... %s/%s' "$PID" "$N" "$COUNT" >&2
-        gdb -ex "set pagination 0" -ex "thread apply all bt" -batch -p $PID || exit $?
-        sleep $SLEEP
-    done \
+do
+    printf '\rAnalyzing process %s ... %s/%s' "$PID" "$N" "$COUNT" >&2
+    gdb -ex "set pagination 0" -ex "thread apply all bt" -batch -p $PID || exit $?
+    sleep $SLEEP
+done \
 | awk '
     BEGIN { s = ""; }
     /^Thread/ { print s; s = ""; }

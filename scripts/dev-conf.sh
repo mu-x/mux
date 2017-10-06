@@ -5,7 +5,7 @@ Configurates laptop devices
 Usage: $0 [<PARAM>=<VALUE> ...]
 Params:
     T - touchpad (enabled/disabled), default=1
-    V - audiom volume (%), default=120
+    V - audio volume (%), default=120
 END
 exit 0; fi
 

@@ -9,7 +9,7 @@ exit 0; fi
 set -e
 [ "$X" ] && set -x
 
-COUNT=${C:-2}
+COUNT=${C:-1}
 
 LEFT=/tmp/mux-cdiff-$(uuidgen)
 RIGHT=/tmp/mux-cdiff-$(uuidgen)

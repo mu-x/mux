@@ -34,10 +34,8 @@ else
     BASHRC=$HOME/.bash_profile
 fi
 
-for SCRIPT in $(echo *)
-do
-    if [[ $SCRIPT != $SELF && $SCRIPT != resources ]]
-    then
+for SCRIPT in $(echo *); do
+    if [[ $SCRIPT != $SELF && $SCRIPT != resources ]]; then
         chmod +x $SCRIPT
         LINK=$PREFIX$(echo $SCRIPT | cut -d. -f1)
         if [ "$SUDO_USER" ]; then
@@ -51,10 +49,9 @@ do
     fi
 done
 
-if [ "$(grep .muxrc $BASHRC)" ]
-then
+if [ "$(grep .muxrc $BASHRC)" ]; then
     echo Update $BASHRC ... no need
-    exit 0 # dont need an update
+    exit 0
 fi
 
 echo Update $BASHRC ... done

@@ -17,8 +17,7 @@ c|connect)
     echo Connect $HDD to $NBD
     qemu-nbd -c $NBD $HDD
 
-    for PT in ${NBD}p*
-    do
+    for PT in ${NBD}p*; do
         DIR=$PWD/`basename $PT`
         mkdir -p -m 777 $DIR
         if ! mount -v $PT $DIR
@@ -29,8 +28,7 @@ c|connect)
     ;;
 
 d|disconnect)
-    for PT in ${NBD}p*
-    do
+    for PT in ${NBD}p*; do
         DIR=$PWD/`basename $PT`
         umount $DIR || true
         rm -rf $DIR || true

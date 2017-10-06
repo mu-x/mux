@@ -9,14 +9,12 @@ set -e
 [ "$X" ] && set -x
 
 TARGET=$1
-if [ ! "$TARGET" ]
-then
+if [ ! "$TARGET" ]; then
     echo "Usage: <script> executable|pid [stdout] [stderr]"
     exit 1
 fi
 
-if [[ $TARGET =~ ^-?[0-9]+$ ]]
-then
+if [[ $TARGET =~ ^-?[0-9]+$ ]]; then
     PID=$TARGET
     EXE=$(ps --pid=$PID -o cmd | tail -1 | awk '{print$1}')
 else
@@ -32,8 +30,7 @@ ERR=${3:-$OUT}
 
 REDIR="stdout to $OUT, stderr to $ERR"
 
-if [ ! "$PID" ]
-then
+if [ ! "$PID" ]; then
     echo Process does not exist, start $EXE with $REDIR
     $EXE >$OUT 2>$ERR &
 

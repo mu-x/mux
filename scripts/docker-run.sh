@@ -17,8 +17,7 @@ CUSER=${CU:-${MUX_DOCKER_CUSER:-}}
 CMOUNTS=".ivy .cache .m $CM"
 
 # Forward terminal to container and redirect std in otherwise
-if [ -t 1 ]
-then
+if [ -t 1 ]; then
     FLAGS=-it
     TAIL=
 
@@ -32,10 +31,8 @@ else
 fi
 
 # Transfer home cache if container user is specified
-if [ $CUSER ]
-then
-    for LOCAL in $HOME/.*
-    do
+if [ $CUSER ]; then
+    for LOCAL in $HOME/.*; do
         NAME=$(basename "$LOCAL")
         if [[ "$CMOUNTS" == *"$NAME"* ]]
         then
