@@ -51,7 +51,7 @@ function cless() {
 
 # CD to windows path (assuming drives are mounted to /)
 function wcd() {
-    local path=${1/\\/\/}
+    local path=${1//\\/\/}
     if [ $(cut -c2-2 <<< "$path") == ":" ]; then
         local drive=/$(cut -c1-1 <<< "$path")
         path=${drive,,}$(cut -c3- <<< "$path")

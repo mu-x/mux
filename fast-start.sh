@@ -22,7 +22,7 @@ fi
 title Pulling configs
 configs/manage.sh pull
 
-if uname -a | grep -q Ubuntu; then
+if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
     title Installing basic packages
     sudo apt-get install tmux build-essential vim-gtk p7zip
 
