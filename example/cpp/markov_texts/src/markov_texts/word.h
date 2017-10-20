@@ -1,13 +1,9 @@
 #pragma once
 
-#include <stdexcept>
-#include <deque>
-
 #include <boost/optional.hpp>
-
+#include <deque>
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
-#include <QtCore/QRegExp>
 
 namespace markov_texts {
 
@@ -17,75 +13,52 @@ using Word = QString;
 // TODO: Custom class with optimized hash calculation is prefered.
 using Sequence = std::deque<Word>;
 
+/** Makes sequence from string. */
+Sequence parseSequence(const Word& word);
+
 /** Word adapter for STL IO streams. */
 class WordStream
 {
 public:
-    template<typename StlStream>
-    WordStream(StlStream& stream)
-    : mStream(stream)
-    {
-    }
+    static const Word kWordDelimiter;
+    static const Word kLineDelimiter;
+
+    template<typename Stream>
+    WordStream(Stream& stream);
 
     /** @return nullopt in case of stream end. */
     template<typename T = Word>
-    boost::optional<T> read()
-    {
-        T word;
-        mStream >> word;
-
-        if (mStream.status() == QTextStream::ReadPastEnd)
-            return boost::none;
-
-        if (mStream.status() != QTextStream::Ok)
-            throw std::runtime_error("Input from stream has failed");
-
-        return word;
-    }
+    boost::optional<T> read();
 
     /** Reads up to first valid token.
      *  @return nullopt in case of stream end. */
-    inline
-    boost::optional<Word> readToken()
-    {
-        // TODO: Move to cpp.
-        while (auto word = read())
-        {
-            // TODO: Remove some other simbols as well?
-            static const QRegExp kPunctuation("[()[]{}.,!:;]");
-            word->remove(kPunctuation);
-            if (!word->isEmpty())
-                return word->toLower();;
-        }
-
-        return boost::none;
-    }
+    boost::optional<Word> readToken();
 
     /** Reads up words up to end of stream. */
-    inline
-    Sequence readSequence()
-    {
-        // TODO: Move to cpp.
-        Sequence sequence;
-        while(auto word = readToken())
-            sequence.push_back(std::move(*word));
-        return sequence;
-    }
+    Sequence readSequence();
 
     template<typename T>
-    void write(const T& value)
-    {
-        mStream << value;
-        if (mStream.status() != QTextStream::Ok)
-            throw std::runtime_error("Write to stream has failed");
-    }
+    void write(const T& value);
+
+    template<typename T, typename ... Args>
+    void write(const T& value, const Args& ... moreValues);
 
 private:
+    bool checkStream() const;
     QTextStream mStream;
 };
 
-} // namespace markov_texts
+WordStream* debugStream();
+void setDebugStream(WordStream* stream = nullptr);
 
+template<typename ... Args>
+void debug(const Args& ... args)
+{
+    if (const auto stream = debugStream())
+        stream->write(args ..., WordStream::kLineDelimiter);
+}
+
+} // namespace markov_texts
 namespace std {
 
 template<>
@@ -111,3 +84,35 @@ struct hash<markov_texts::Sequence>
 };
 
 } // namespace std
+namespace markov_texts {
+
+template<typename Stream>
+WordStream::WordStream(Stream& stream)
+    : mStream(stream)
+{
+}
+
+/** @return nullopt in case of stream end. */
+template<typename T>
+boost::optional<T> WordStream::read()
+{
+    T item;
+    mStream >> item;
+    return checkStream() ? item : boost::optional<T>();
+}
+
+template<typename T>
+void WordStream::write(const T& value)
+{
+    mStream << value;
+    checkStream();
+}
+
+template<typename T, typename ... Args>
+void WordStream::write(const T& value, const Args& ... moreValues)
+{
+    write(value);
+    write(moreValues ...);
+}
+
+} // namespace markov_texts

@@ -2,14 +2,22 @@
 
 namespace markov_texts {
 
+const Word kSequenceEndToken(":");
+const Word kCountersEndToken("|");
+
 void DictionaryBuilder::add(const Sequence& sequence, const Word& nextWord)
 {
-    // TODO: Check that all sequencees are equal order.
+    if ((mOrder && sequence.size() != mOrder) || sequence.empty())
+        throw std::logic_error("Unexpected sequence length");
+
+    mOrder = sequence.size();
     ++mData[sequence][nextWord];
 }
 
-void DictionaryBuilder::parse(std::istream& stream, size_t order)
+void DictionaryBuilder::parse(FILE* stream, size_t order)
 {
+    debug("Parsing stream with order ", order, "...");
+
     Sequence sequence;
     WordStream reader(stream);
     for (size_t i = 0; i < order; ++i)
@@ -17,7 +25,7 @@ void DictionaryBuilder::parse(std::istream& stream, size_t order)
         if (auto word = reader.readToken())
             sequence.push_back(std::move(*word));
         else
-            throw std::logic_error("Input stream is too short");
+            throw std::logic_error("Input stream is too short for selected order");
     }
 
     while (const auto word = reader.readToken())
@@ -28,32 +36,32 @@ void DictionaryBuilder::parse(std::istream& stream, size_t order)
     }
 }
 
-void DictionaryBuilder::save(std::ostream& stream) const
+void DictionaryBuilder::save(FILE* stream) const
 {
+    debug("Saving dictionary to stream...");
+
     WordStream writer(stream);
     for (const auto& data: mData)
     {
         for (const auto& word: data.first)
-        {
-            writer.write(word);
-            writer.write(" ");
-        }
+            writer.write(word, WordStream::kWordDelimiter);
 
-        writer.write(":");
+        writer.write(kSequenceEndToken);
         for (const auto& count: data.second)
         {
-            writer.write(" ");
-            writer.write(count.first);
-            writer.write(" ");
-            writer.write(count.second);
+            writer.write(WordStream::kWordDelimiter, count.first);
+            writer.write(WordStream::kWordDelimiter, count.second);
         }
 
-        writer.write(" |\n");
+        writer.write(WordStream::kWordDelimiter, kCountersEndToken, WordStream::kLineDelimiter);
     }
 }
 
 boost::optional<const Word&> DictionaryGenerator::next(const Sequence& sequence) const
 {
+    if (mOrder && sequence.size() != mOrder)
+        throw std::logic_error("Unexpected sequence length");
+
     auto countsIt = mData.find(sequence);
     if (countsIt == mData.end())
         return boost::none;
@@ -70,43 +78,73 @@ boost::optional<const Word&> DictionaryGenerator::next(const Sequence& sequence)
     return counts.lower_bound(select)->second;
 }
 
-void DictionaryGenerator::load(std::istream& stream)
+void DictionaryGenerator::generate(const Sequence& start, FILE* stream, size_t newWords) const
 {
-    WordReader reader(stream);
+    debug("Generating ", newWords, " new words...");
+
+    WordStream writer(stream);
+    for (const auto& word: start)
+        writer.write(word, WordStream::kWordDelimiter);
+
+    Sequence sequence(start);
+    for (size_t i = 0; i < newWords; ++i)
+    {
+        auto word = next(sequence);
+        if (!word)
+            return;
+
+        writer.write(*word, WordStream::kWordDelimiter);
+        sequence.pop_front();
+        sequence.push_back(std::move(*word));
+    }
+}
+
+void DictionaryGenerator::load(FILE* stream)
+{
+    debug("Loading dictionary from stream...");
+
+    WordStream reader(stream);
     while (true)
     {
         Sequence sequence;
         while (true)
         {
             auto word = reader.read();
-            if (word.empty()) return;
-            if (word == ":") break;
-            sequence.push_back(std::move(word));
+            if (!word)
+                return;
+
+            if (*word == kSequenceEndToken)
+                break;
+
+            sequence.push_back(std::move(*word));
         }
 
-        if (sequence.empty())
-            throw std::logic_error("Empty sequence in input stream");
+        if ((mOrder && sequence.size() != mOrder) || sequence.empty())
+            throw std::logic_error("Unexpected sequence length in input stream");
+        mOrder = sequence.size();
 
         Counts counts;
         size_t baseCount = 0;
         while (true)
         {
             const auto word = reader.read();
-            if (word.empty()) return;
-            if (word == "|") break;
+            if (!word)
+                return;
 
-            const auto count = reader.read()
+            if (*word == kCountersEndToken)
+                break;
+
+            const auto count = reader.read<size_t>();
             if (!count)
-                throw std::runtime_error("Syntax error");
+                throw std::runtime_error("Syntax error in input stream");
 
             baseCount += *count;
             counts.emplace(baseCount, std::move(*word));
         }
 
         if (counts.empty())
-            throw std::runtime_error("Empty counts in data stream");
+            throw std::runtime_error("Empty counts in input stream");
 
-        // TODO: Check that all sequencees are equal order.
         mData.emplace(std::move(sequence), std::move(counts));
     }
 }

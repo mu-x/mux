@@ -17,16 +17,17 @@ public:
     void add(const Sequence& sequence, const Word& nextWord);
 
     /** Parses stream to find files. */
-    void parse(std::istream& istream, size_t order);
+    void parse(FILE* stream, size_t order);
 
     /** Writes data to a stream. */
-    void save(std::ostream& stream) const;
+    void save(FILE* stream) const;
 
     // TODO: Some generic methods.
 
 private:
     using Counts = std::unordered_map<Word, size_t>;
     std::unordered_map<Sequence, Counts> mData;
+    boost::optional<size_t> mOrder;
 
 };
 
@@ -38,10 +39,10 @@ public:
     boost::optional<const Word&> next(const Sequence& sequence) const;
 
     /** Generates continuation of start and prints it to stream. */
-    void generate(const Sequence& start, std::ostream& stream, size_t newWords) const;
+    void generate(const Sequence& start, FILE* stream, size_t newWords) const;
 
     /** Loads dictionary from stream. */
-    void load(std::istream& stream);
+    void load(FILE* stream);
 
     // TODO: More generic methods.
 
@@ -49,6 +50,7 @@ private:
     // TODO: vector with binary search would be a little more eficient.
     using Counts = std::map<size_t, Word>;
     std::unordered_map<Sequence, Counts> mData;
+    boost::optional<size_t> mOrder;
 };
 
-} namespace markov_texts
+} // namespace markov_texts

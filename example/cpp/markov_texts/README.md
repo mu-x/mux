@@ -2,14 +2,20 @@
 
 ## Dependency
 
-* GCC with C++17 (tested on XXX)
-* QT 5.6+ (tested on XXX)
+* CLang with C++14 (tested on 4.0.0-1ubuntu1~16.04.2)
+* Boost System (tested on 1.58.0+dfsg-5ubuntu3.1)
+* QT for UTF8 support (tested on 5.5.1-2ubuntu6)
+
+Instalation on Ubuntu 16.04.02:
+```
+```
+sudo apt install clang-4.0 libboost-system1.58-dev qtdeclarative5-dev
+```
 
 ## Build
 
-NOTE: tested on ubuntu 16.04 only
 ```
-[CXX=g++] ./build.sh [--build_and_run_ut]
+[CXX=clang++-40] ./build.sh [--skip-build] [--run-tests]
 ```
 
 ## Usage
@@ -24,11 +30,11 @@ cat TEXT_FILE_PATH | ./parser ORDER | DICTIONARY_FILE_PATH
 curl URL | ./parser ORDER | DICTIONARY_FILE_PATH
 
 # Generate text by dictionary:
-cat DICTIONARY_FILE_PATH | ./generator START_SEQUENCE
+cat DICTIONARY_FILE_PATH | ./generator START_SEQUENCE LENGTH
 ```
 
 ## Examples
 
 ```
-curl https://www.ietf.org/rfc/rfc2616.txt | ./parser 1 | ./generator "http"
+curl https://www.ietf.org/rfc/rfc2616.txt | ./parser 1 | ./generator "http" 1
 ```

@@ -1,17 +1,33 @@
 set -e -x
+
 : ${CXX:=clang++-4.0}
+: ${FLAGS:="-std=c++11 -Wall -fPIC -O0 -ggdb"}
 
-FLAGS="-std=c++1z -Wall"
-LIBS="-I/usr/include/x86_64-linux-gnu/qt5 -L/usr/lib/x86_64-linux-gnu -lQt5Core"
+LIB="markov_texts"
+APPS="parser generator"
 
-mkdir -p build
-$CXX $FLAGS $LIBS src/markov_texts/*.cpp -shared -fPIC -o build/libmarkov_texts.so
+if [[ "$@" != *--skip-build* ]]; then
+    mkdir -p build
+    rm -rf build/*
 
-LIBS+="-Isrc -L./build -lmarkov_texts"
-$CXX $FLAGS src/parser.cpp $LIBS -o build/parser
-$CXX $FLAGS src/generator.cpp $LIBS -o build/generator
+    FLAGS+=" -I/usr/include/x86_64-linux-gnu/qt5 -L/usr/lib/x86_64-linux-gnu -lQt5Core"
+    $CXX $FLAGS $LIBS src/$LIB/*.cpp -shared -o build/lib$LIB.so
 
-if [ "$1" == "--build_and_run_ut" ]; then
-    $CXX $FLAGS src/tests/*.cpp $LIBS -o build/tests
-    LD_LIBRARY_PATH=./build build/tests
+    LIBS+=" -I./src -L./build -l$LIB"
+    for APP in $APPS; do
+        $CXX $FLAGS src/$APP.cpp $LIBS -o build/$APP
+    done
+fi
+
+# TODO: Make a lot more tests with args...
+if [[ "$@" == *--run-tests* ]]; then
+    for APP in parser generator; do
+        for TEST in "tests/$APP*test"; do
+            if cat $TEST | LD_LIBRARY_PATH=./build build/$APP >/tmp/ok 2>/tmp/error; then
+                diff $TEST.ok /tmp/ok
+            else
+                diff $TEST.error /tmp/error
+            fi
+        done
+    done
 fi
