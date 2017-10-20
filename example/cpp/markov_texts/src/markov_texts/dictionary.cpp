@@ -5,17 +5,17 @@ namespace markov_texts {
 void DictionaryBuilder::add(const Sequence& sequence, const Word& nextWord)
 {
     // TODO: Check that all sequencees are equal order.
-    ++m_counts[sequence][nextword];
+    ++mData[sequence][nextWord];
 }
 
-void DictionaryBuilder::parse(istream& stream, size_t order)
+void DictionaryBuilder::parse(std::istream& stream, size_t order)
 {
-    Sequence sequense;
+    Sequence sequence;
     WordStream reader(stream);
     for (size_t i = 0; i < order; ++i)
     {
         if (auto word = reader.readToken())
-            sequense.push_back(std::move(*word));
+            sequence.push_back(std::move(*word));
         else
             throw std::logic_error("Input stream is too short");
     }
@@ -23,46 +23,54 @@ void DictionaryBuilder::parse(istream& stream, size_t order)
     while (const auto word = reader.readToken())
     {
         add(sequence, *word);
-        sequense.pop_front();
-        sequense.push_back();
+        sequence.pop_front();
+        sequence.push_back(std::move(*word));
     }
 }
 
-void DictionaryBuilder::save(ostream& stream) const
+void DictionaryBuilder::save(std::ostream& stream) const
 {
-    WordStream writer(stream)
+    WordStream writer(stream);
     for (const auto& data: mData)
     {
         for (const auto& word: data.first)
-            writer << word << " ";
-        writer << ":";
+        {
+            writer.write(word);
+            writer.write(" ");
+        }
 
+        writer.write(":");
         for (const auto& count: data.second)
-            writer << " " << count.first << " " count.second;
-        writer << " |\n";
+        {
+            writer.write(" ");
+            writer.write(count.first);
+            writer.write(" ");
+            writer.write(count.second);
+        }
+
+        writer.write(" |\n");
     }
 }
 
-const Word& DictionaryGenerator::next(const Sequeuence& sequence)
+boost::optional<const Word&> DictionaryGenerator::next(const Sequence& sequence) const
 {
-    static const Word kEmpty;
     auto countsIt = mData.find(sequence);
     if (countsIt == mData.end())
-        return kEmpty;
+        return boost::none;
 
-    const auto& counts = countsIt.second;
-    const auto& maxSelect = counts.back().second;
+    const auto& counts = countsIt->second;
+    const auto& maxSelect = counts.rbegin()->first;
 
     // TODO: make these generators thread safe?
-    static const std::random_device device;
-    static const std::mt19937 generator(device())
+    static std::random_device device;
+    static std::mt19937 generator(device());
     std::uniform_int_distribution<size_t> distribution(0, maxSelect);
 
     const auto select = distribution(generator);
-    return counts.lower_bound(select);
+    return counts.lower_bound(select)->second;
 }
 
-void DictionaryGenerator::load(istream& stream)
+void DictionaryGenerator::load(std::istream& stream)
 {
     WordReader reader(stream);
     while (true)
