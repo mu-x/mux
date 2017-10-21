@@ -23,10 +23,10 @@ sudo apt install clang-4.0 libboost-system1.58-dev qtdeclarative5-dev
 cd build
 
 # Generate dictionary by file:
-cat TEXT_FILE_PATH | ./parser ORDER | DICTIONARY_FILE_PATH
+cat TEXT_FILE_PATH | ./parser [--verbose] ORDER | DICTIONARY_FILE_PATH
 
 # Generate dictianary by url:
-curl URL | ./parser ORDER | DICTIONARY_FILE_PATH
+curl URL | ./parser [--verbose] ORDER | DICTIONARY_FILE_PATH
 
 # Generate text by dictionary:
 cat DICTIONARY_FILE_PATH | ./generator START_SEQUENCE LENGTH

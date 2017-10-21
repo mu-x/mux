@@ -17,7 +17,7 @@ using Sequence = std::deque<Word>;
 /** Makes sequence from string. */
 Sequence parseSequence(const Word& word);
 
-/** Word adapter for c-style IO streams. */
+/** Stream adapter for c-style IO streams. */
 class WordStream
 {
 public:
@@ -99,7 +99,7 @@ template<typename T>
 void WordStream::write(const T& value)
 {
     mStream << value;
-    mStream.flush(); // TODO: do it less often.
+    mStream.flush(); //< TODO: Do it less often.
     checkStream();
 }
 

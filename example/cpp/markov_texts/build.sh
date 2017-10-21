@@ -1,7 +1,7 @@
 set -e -x
 
 : ${CXX:=clang++-4.0}
-: ${FLAGS:="-std=c++11 -Wall -fPIC -O0 -ggdb"}
+: ${FLAGS:="-std=c++11 -Wall -fPIC"}
 
 LIB="markov_texts"
 APPS="parser generator"
@@ -19,7 +19,7 @@ if [[ "$@" != *--skip-build* ]]; then
     done
 fi
 
-# TODO: Make a lot more tests with args...
+# TODO: Make a lot more tests with args.
 if [[ "$@" == *--run-tests* ]]; then
     for APP in parser generator; do
         for TEST in "tests/$APP*test"; do

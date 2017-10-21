@@ -22,7 +22,7 @@ public:
     /** Writes data to a stream. */
     void save(FILE* stream) const;
 
-    // TODO: Some generic methods.
+    // TODO: Methods clean, size, order.
 
 private:
     using Counts = std::unordered_map<Word, size_t>;
@@ -44,10 +44,10 @@ public:
     /** Loads dictionary from stream. */
     void load(FILE* stream);
 
-    // TODO: More generic methods.
+    // TODO: Methods clean, size, order.
 
 private:
-    // TODO: vector with binary search would be a little more eficient.
+    // TODO: vector with binary search would be a little more eficient by memnory.
     using Counts = std::map<size_t, Word>;
     std::unordered_map<Sequence, Counts> mData;
     boost::optional<size_t> mOrder;
