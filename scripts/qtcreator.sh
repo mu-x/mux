@@ -7,6 +7,7 @@ END
 exit 0; fi
 
 set -e
+[ "$X" ] && set -x
 
 write_empty() {
     FILE=$1
