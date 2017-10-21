@@ -36,5 +36,6 @@ cat DICTIONARY_FILE_PATH | ./generator START_SEQUENCE LENGTH
 ## Examples
 
 ```
-curl https://www.ietf.org/rfc/rfc2616.txt | ./parser 1 | ./generator "http" 1
+curl https://www.ietf.org/rfc/rfc2616.txt | ./parser 3 >rfc2616.mt
+./generator "hypertext transfer protocol" 100 <rfc2616.mt
 ```

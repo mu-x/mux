@@ -2,8 +2,8 @@
 
 namespace markov_texts {
 
-const Word kSequenceEndToken(":");
-const Word kCountersEndToken("|");
+const Word kCountersBeginToken("{");
+const Word kCountersEndToken("}");
 
 void DictionaryBuilder::add(const Sequence& sequence, const Word& nextWord)
 {
@@ -16,7 +16,7 @@ void DictionaryBuilder::add(const Sequence& sequence, const Word& nextWord)
 
 void DictionaryBuilder::parse(FILE* stream, size_t order)
 {
-    debug("Parsing stream with order ", order, "...");
+    debug("Parsing stream with order ", order);
 
     Sequence sequence;
     WordStream reader(stream);
@@ -38,7 +38,7 @@ void DictionaryBuilder::parse(FILE* stream, size_t order)
 
 void DictionaryBuilder::save(FILE* stream) const
 {
-    debug("Saving dictionary to stream...");
+    debug("Saving dictionary to stream");
 
     WordStream writer(stream);
     for (const auto& data: mData)
@@ -46,7 +46,7 @@ void DictionaryBuilder::save(FILE* stream) const
         for (const auto& word: data.first)
             writer.write(word, WordStream::kWordDelimiter);
 
-        writer.write(kSequenceEndToken);
+        writer.write(kCountersBeginToken);
         for (const auto& count: data.second)
         {
             writer.write(WordStream::kWordDelimiter, count.first);
@@ -80,7 +80,13 @@ boost::optional<const Word&> DictionaryGenerator::next(const Sequence& sequence)
 
 void DictionaryGenerator::generate(const Sequence& start, FILE* stream, size_t newWords) const
 {
-    debug("Generating ", newWords, " new words...");
+    debug("Generating ", newWords, " new words");
+
+    if (!mOrder)
+        throw std::logic_error("Unable to generate from empty dictionary");
+
+    if (start.size() != mOrder)
+        throw std::logic_error("Start sequence has incorrect size");
 
     WordStream writer(stream);
     for (const auto& word: start)
@@ -91,17 +97,23 @@ void DictionaryGenerator::generate(const Sequence& start, FILE* stream, size_t n
     {
         auto word = next(sequence);
         if (!word)
+        {
+            writer.write(WordStream::kLineDelimiter);
+            debug("Warning: unable to find sequence, only ", i, " words generated");
             return;
+        }
 
         writer.write(*word, WordStream::kWordDelimiter);
         sequence.pop_front();
         sequence.push_back(std::move(*word));
     }
+
+    writer.write(WordStream::kLineDelimiter);
 }
 
 void DictionaryGenerator::load(FILE* stream)
 {
-    debug("Loading dictionary from stream...");
+    debug("Loading dictionary from stream");
 
     WordStream reader(stream);
     while (true)
@@ -113,14 +125,17 @@ void DictionaryGenerator::load(FILE* stream)
             if (!word)
                 return;
 
-            if (*word == kSequenceEndToken)
+            if (*word == kCountersBeginToken)
                 break;
 
             sequence.push_back(std::move(*word));
         }
 
         if ((mOrder && sequence.size() != mOrder) || sequence.empty())
+        {
+            debug("Sequence size ", sequence.size(), " line ", mData.size() - 1);
             throw std::logic_error("Unexpected sequence length in input stream");
+        }
         mOrder = sequence.size();
 
         Counts counts;

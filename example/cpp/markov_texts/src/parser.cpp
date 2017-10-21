@@ -7,8 +7,11 @@ int main(int, char** argv)
     try
     {
         markov_texts::WordStream debugStream(stderr);
-        if (*argv && *(argv++) == std::string("--verbose"))
+        if (*argv && *argv == std::string("--verbose"))
+        {
             markov_texts::setDebugStream(&debugStream);
+            ++argv;
+        }
 
         int order = *argv ? std::stoi(*(argv++)) : 1;
         if (order <= 0)

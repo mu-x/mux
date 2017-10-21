@@ -2,6 +2,7 @@
 
 #include <boost/optional.hpp>
 #include <deque>
+#include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
 
@@ -16,15 +17,14 @@ using Sequence = std::deque<Word>;
 /** Makes sequence from string. */
 Sequence parseSequence(const Word& word);
 
-/** Word adapter for STL IO streams. */
+/** Word adapter for c-style IO streams. */
 class WordStream
 {
 public:
     static const Word kWordDelimiter;
     static const Word kLineDelimiter;
 
-    template<typename Stream>
-    WordStream(Stream& stream);
+    WordStream(FILE* stream);
 
     /** @return nullopt in case of stream end. */
     template<typename T = Word>
@@ -86,12 +86,6 @@ struct hash<markov_texts::Sequence>
 } // namespace std
 namespace markov_texts {
 
-template<typename Stream>
-WordStream::WordStream(Stream& stream)
-    : mStream(stream)
-{
-}
-
 /** @return nullopt in case of stream end. */
 template<typename T>
 boost::optional<T> WordStream::read()
@@ -105,6 +99,7 @@ template<typename T>
 void WordStream::write(const T& value)
 {
     mStream << value;
+    mStream.flush(); // TODO: do it less often.
     checkStream();
 }
 
