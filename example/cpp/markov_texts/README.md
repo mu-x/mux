@@ -8,7 +8,6 @@
 
 Instalation on Ubuntu 16.04.02:
 ```
-```
 sudo apt install clang-4.0 libboost-system1.58-dev qtdeclarative5-dev
 ```
 
