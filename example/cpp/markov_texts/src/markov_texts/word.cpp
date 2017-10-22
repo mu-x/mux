@@ -5,7 +5,7 @@
 
 namespace markov_texts {
 
-// TODO: Remove some other simbols as well?
+// TODO: Add some other simbols as well?
 static const QRegExp kPunctuation(R"re([\(\)\[\]\{\}\"\'\`\.\,\!\:\;])re");
 
 Sequence parseSequence(const Word& word)
@@ -55,7 +55,6 @@ bool WordStream::checkStream() const
     return true;
 }
 
-// TODO: Make is thread safe?
 static WordStream* gDebugStream;
 
 WordStream* debugStream()

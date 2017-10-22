@@ -3,7 +3,7 @@
 
 int main(int, char** argv)
 {
-    ++argv; // Binary;
+    ++argv; //< Binary path.
     try
     {
         markov_texts::WordStream debugStream(stderr);
