@@ -6,6 +6,8 @@
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
 
+#include <iostream>
+
 namespace markov_texts {
 
 // TODO: Global string table with pointers would be a lot more efficient.
@@ -66,7 +68,15 @@ struct hash<markov_texts::Word>
 {
     size_t operator()(const markov_texts::Word& w) const
     {
-        return static_cast<size_t>(qHash(w));
+        size_t result = 0;
+        for (const auto& c: w)
+        {
+            // TODO: Not the best hash function, but it's good enouth as long
+            // as qt doesn't provide it's own. Also: it's better to do some quality testing.
+            result = (result << 8) | (result & 0xFF);
+            result ^= static_cast<size_t>(c.unicode());
+        }
+        return result;
     }
 };
 
@@ -99,7 +109,7 @@ template<typename T>
 void WordStream::write(const T& value)
 {
     mStream << value;
-    mStream.flush(); // TODO: do it less often.
+    mStream.flush(); // TODO: do it less often, may be once every newline?
     checkStream();
 }
 

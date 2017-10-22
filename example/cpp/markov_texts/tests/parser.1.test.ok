@@ -1,5 +1,0 @@
-blue : fish 1 |
-one : fish 1 |
-fish : blue 1 red 1 two 1 |
-two : fish 1 |
-red : fish 1 |
