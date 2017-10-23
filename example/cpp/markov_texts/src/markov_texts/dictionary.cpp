@@ -72,7 +72,7 @@ boost::optional<const Word&> DictionaryGenerator::next(const Sequence& sequence)
     // TODO: make these generators thread safe?
     static std::random_device device;
     static std::mt19937 generator(device());
-    std::uniform_int_distribution<size_t> distribution(0, maxSelect);
+    std::uniform_int_distribution<size_t> distribution(1, maxSelect);
 
     const auto select = distribution(generator);
     return counts.lower_bound(select)->second;
