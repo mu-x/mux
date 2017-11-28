@@ -36,7 +36,7 @@ function silent_run() {
 
 # QtCreator silent run [PROJECT_FILE]
 function sqtcreator() {
-    silent_run qtcreator ${@:-$(first_existing_file *.pro CMakeLists.txt)}
+    silent_run qtcreator ${@:-$(first_existing_file CMakeLists.txt *.pro)}
 }
 
 # VisualStudio silent run [SOLUTION_FILE]
@@ -75,8 +75,12 @@ function g() {
 }
 
 # Start tmux or screen as main terminal emulator
-TERMINAL_MULTIPLEXER=$(which tmux 2>/dev/null || which screen 2>/dev/null)
-if [[ $TERMINAL_MULTIPLEXER ]] && [[ $TERM != "screen" ]]; then
-    exec $TERMINAL_MULTIPLEXER
+if [ "$TERM" != "screen" ]; then
+    if which tmux 2>/dev/null; then
+        SESSION=$(tmux list-sessions | grep -v '(attached)' | head -1 | cut -f1 -d':')
+        exec tmux $([ "$SESSION" ] && echo attach -t $SESSION)
+    elif which screen 2>/dev/null; then
+        exec screen
+    fi
 fi
 
