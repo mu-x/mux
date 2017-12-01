@@ -34,6 +34,7 @@ else
     BASHRC=$HOME/.bash_profile
 fi
 
+IS_BASHRC_UPDATED=
 for SCRIPT in $(echo *); do
     if [[ $SCRIPT != $SELF && $SCRIPT != resources ]]; then
         chmod +x $SCRIPT
@@ -42,12 +43,16 @@ for SCRIPT in $(echo *); do
             SYMLINK=$LOCAL/$PREFIX$(echo $SCRIPT | cut -d. -f1)
             ln -sf $PWD/$SCRIPT $LOCAL/$LINK
         else
-            [ ! "$(grep $PWD/$SCRIPT $BASHRC)" ] && \
+            if [ ! "$(grep $PWD/$SCRIPT $BASHRC)" ]; then
                 echo "alias $LINK=$PWD/$SCRIPT" >> $BASHRC
+                [ ! "$IS_BASHRC_UPDATED" ] && echo >> $BASHRC
+                IS_BASHRC_UPDATED=1
+            fi
         fi
         echo Install $LINK ... done
     fi
 done
+[ "$IS_BASH_RC_UPDATED" ] && echo >> $BASHRC
 
 if [ "$(grep .muxrc $BASHRC)" ]; then
     echo Update $BASHRC ... no need
@@ -61,5 +66,6 @@ if [ -f ~/.muxrc ]
 then
     export MUX_HOME=$(dirname $PWD)
     . ~/.muxrc
-fi" >> $BASHRC
+fi
+" >> $BASHRC
 
