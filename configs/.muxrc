@@ -1,71 +1,41 @@
 # ~/.muxrc to be included in ~/.bashrc
 MUX=true
 
+# Setup MUX tools
+source $MUX_HOME/scripts/resources/tools.sh
+export PYTHONPATH="$PYTHONPATH:$MUX_HOME/examples/python"
+
 # MUX related aliases
 alias g=mux-grep
 alias p=mux-python
-
-# Setup own python modules
-export PYTHONPATH="$PYTHONPATH:$MUX_HOME/examples/python"
+alias wcd=mux_windows_cd
 
 # Unix tools configuration
 export LESS=FRX
 
-# Bash config
 if [ $(basename $SHELL) == bash ]; then
     PS1='\n\[\033[01;32m\]\u \[\033[01;34m\]@\h \[\033[01;32m\]\D{%H:%M:%S} \[\033[01;34m\]\w\[\033[00m\]\n\$ '
-
-    export HISTCONTROL=ignoredups:erasedups
-    export HISTSIZE=1000000000
-    export HISTFILESIZE=1000000000
-    shopt -s histappend
-    export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+    mux_bash_history 1000000000
 fi
 
-# Prints first existing file from arguments
-function first_existing_file() {
-    for file in $@; do
-        if [ -f "$file" ]; then
-            echo "$file"
-            return 0
-        fi
-    done
-}
-
-# Silent run COMMAND [ARGS...]
-function silent_run() {
-    echo $@
-    $@ >/dev/null 2>&1 &
-}
-
-# QtCreator silent run [PROJECT_FILE]
 function sqtcreator() {
-    silent_run qtcreator ${@:-$(first_existing_file CMakeLists.txt *.pro)}
+    mux_silent_run qtcreator ${@:-$(mux_first_existing_file CMakeLists.txt *.pro)}
 }
 
-# VisualStudio silent run [SOLUTION_FILE]
 function sdevenv() {
-    silent_run devenv ${@:-$(first_existing_file *.sln build/*.sln)}
+    mux_silent_run devenv ${@:-$(mux_first_existing_file *.sln build/*.sln)}
 }
 
-# Colorfull less output of COMMAND [ARGS...]
 function cless() {
     "$@" --color=always | LESS=FRX less
 }
 
-# CD to windows path (assuming drives are mounted to /)
-function wcd() {
-    local path=${1//\\/\/}
-    if [ $(cut -c2-2 <<< "$path") == ":" ]; then
-        local drive=/$(cut -c1-1 <<< "$path")
-        path=${drive,,}$(cut -c3- <<< "$path")
-    fi
-    cd "$path"
-}
-
-# Find NAME in [DIR] or . and [TYPE]
 function f() {
     find "${2:-.}" -name "$1" $([ "$3" ] && echo -type "$3")
+}
+
+function e() {
+    mux_first_gui_tool "tool in gedit kate notepad++ notepad" "$@"
 }
 
 # Start tmux or screen as main terminal emulator

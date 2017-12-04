@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Manages configs in user's home directory and repository
-Usage: $0 [status|push|pull]
+Usage: $0 [status|push|pull|merge]
 END
 exit 0; fi
 
@@ -23,9 +23,10 @@ function each_rc {
 
 for ARG in ${@:-status}; do
     case $ARG in
-        save|push)  each_rc 'cp $LOCAL $REMOTE'             ;;
-        load|pull)  each_rc 'cp $REMOTE $LOCAL'             ;;
-        *)          each_rc 'diff $LOCAL $REMOTE'           ;;
+        save|push)  each_rc 'cp $LOCAL $REMOTE'                             ;;
+        load|pull)  each_rc 'cp $REMOTE $LOCAL'                             ;;
+        meld|merge) each_rc 'diff $LOCAL $REMOTE || meld $LOCAL $REMOTE'    ;;
+        *)          each_rc 'diff $LOCAL $REMOTE'                           ;;
     esac
 done
 
