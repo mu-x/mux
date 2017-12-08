@@ -1,22 +1,13 @@
 # ~/.muxrc to be included in ~/.bashrc
+[ ! "$MUX_HOME" ] && exit 0
 MUX=true
 
-# Setup MUX tools
 source $MUX_HOME/scripts/resources/tools.sh
 export PYTHONPATH="$PYTHONPATH:$MUX_HOME/examples/python"
-
-# MUX related aliases
-alias g=mux-grep
-alias p=mux-python
-alias wcd=mux_windows_cd
-
-# Unix tools configuration
 export LESS=FRX
 
-if [ $(basename $SHELL) == bash ]; then
-    PS1='\n\[\033[01;32m\]\u \[\033[01;34m\]@\h \[\033[01;32m\]\D{%H:%M:%S} \[\033[01;34m\]\w\[\033[00m\]\n\$ '
-    mux_bash_history 1000000000
-fi
+alias g=mux-grep
+alias p=mux-python
 
 function sqtcreator() {
     mux_silent_run qtcreator ${@:-$(mux_first_existing_file CMakeLists.txt *.pro)}
@@ -35,10 +26,18 @@ function f() {
 }
 
 function e() {
-    mux_first_gui_tool "tool in gedit kate notepad++ notepad" "$@"
+    mux_first_gui_tool "gedit kate notepad++ notepad" "$@"
 }
 
-# Start tmux or screen as main terminal emulator
+function wcd() {
+    cd $(mux_wundows_path "$@")
+}
+
+if [ $(basename $SHELL) == bash ]; then
+    PS1='\n\[\033[01;32m\]\u \[\033[01;34m\]@\h \[\033[01;32m\]\D{%H:%M:%S} \[\033[01;34m\]\w\[\033[00m\]\n\$ '
+    mux_bash_history 1000000000
+fi
+
 if [ "$TERM" != "screen" ]; then
     if which tmux 2>/dev/null; then
         SESSION=$(tmux list-sessions | grep -v '(attached)' | head -1 | cut -f1 -d':')
