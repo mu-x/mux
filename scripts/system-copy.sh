@@ -34,19 +34,21 @@ if [ "$GRUB" ]; then
         mount -o bind "/$DIR" "$MOUNT/$DIR"
     done
 
-    # TODO: fix /etc/fstab
     chroot "$MOUNT" <<EOF
         set -e
         blkid
         grub-install "$GRUB"
         update-grub
 EOF
+
+    for DIR in sys proc dev; do
+        umount "$MOUNT/$DIR"
+    done
+
+    echo Do not forget to edit "$MOUNT/etc/fstab"
 fi
 
 # Unmount device if it was mounted
-for DIR in sys proc dev; do
-    umount "$MOUNT/$DIR"
-done
 if [ $DEVICE ]; then
     umount $DEVICE
     rmdir $MOUNT
