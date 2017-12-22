@@ -38,12 +38,6 @@ if [ $(basename $SHELL) == bash ]; then
     mux_bash_history 1000000000
 fi
 
-if [ "$TERM" != "screen" ]; then
-    if which tmux 2>/dev/null; then
-        SESSION=$(tmux list-sessions | grep -v '(attached)' | head -1 | cut -f1 -d':')
-        exec tmux $([ "$SESSION" ] && echo attach -t $SESSION)
-    elif which screen 2>/dev/null; then
-        exec screen
-    fi
-fi
+mux_use_ssh_keys $HOME/.ssh/* >/dev/null 2>&1
+mux_terminal_multiplexer
 

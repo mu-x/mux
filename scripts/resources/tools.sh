@@ -37,6 +37,28 @@ function mux_first_gui_tool() {
     done
 }
 
+# Adds SSH keys if publics are avaliable
+function mux_use_ssh_keys() {
+    for key in "$@"; do
+        if [ -f "$key".pub ]; then
+            eval $(ssh-agent -s)
+            ssh-add "$key"
+        fi
+    done
+}
+
+# Execute avaliable terminal multiplexer
+function mux_terminal_multiplexer() {
+    if [ "$TERM" != "screen" ]; then
+        if which tmux 2>/dev/null; then
+            SESSION=$(tmux list-sessions | grep -v '(attached)' | head -1 | cut -f1 -d':')
+            exec tmux $([ "$SESSION" ] && echo attach -t $SESSION)
+        elif which screen 2>/dev/null; then
+            exec screen
+        fi
+    fi
+}
+
 # Prints windows [path] as UNIX (assuming drives are mounted to /)
 function mux_windows_path() {
     local path="${1//\\/\/}"
@@ -46,5 +68,4 @@ function mux_windows_path() {
     fi
     echo "$path"
 }
-
 

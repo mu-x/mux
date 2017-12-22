@@ -13,7 +13,7 @@ set -e
 PATTERN=$1
 shift
 
-if [ "$1" ] && [[ "$1" != --* ]]; then
+if [ "$1" ] && [[ "$1" != -* ]]; then
     DIR=$1
     shift
 else
