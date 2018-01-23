@@ -24,12 +24,9 @@ else
     fi
 fi
 
+OPTIONS="$@ --color=always"
 if [[ "$DIR" ]]; then
-    if which ag 2>/dev/null; then
-        ag "$PATTERN"
-    else
-        grep -rI "$PATTERN" "$DIR" "$@" --exclude-dir=".hg" --exclude-dir=".git"
-    fi
+    grep -rI "$PATTERN" "$DIR" $OPTIONS --exclude-dir=".hg" --exclude-dir=".git"
 else
-    echo grep "$PATTERN"
+    grep "$PATTERN" $OPTIONS
 fi

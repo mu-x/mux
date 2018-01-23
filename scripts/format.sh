@@ -46,7 +46,7 @@ esac
 OUT=$(echo $IN | $FORMATER "$ARG")
 LENGTH=$(echo "$OUT" | wc -l)
 
-if [ "$LENGTH" -ge "$LINES" ]; then
+if [ -t 1 ] && [ "$LENGTH" -ge "$LINES" ]; then
     echo "$OUT" | vi -
 else
     echo "$OUT"

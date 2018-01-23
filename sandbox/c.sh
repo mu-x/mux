@@ -30,7 +30,9 @@ if [ "$B" ]; then
 fi
 
 if [ "$Q" ]; then
-    OPTIONS+=" -DQT -I/usr/include/qt$Q"
+    OPTIONS+=" -DQT"
+    [ -d /usr/include/qt$Q ] && OPTIONS+=" -I/usr/include/qt$Q"
+    [ -d /usr/include/x86_64-linux-gnu/qt$Q ] && OPTIONS+=" -I/usr/include/x86_64-linux-gnu/qt$Q"
     LIBS+=" -lQt${Q}Core -lQt${Q}Network"
 fi
 

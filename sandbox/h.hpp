@@ -35,6 +35,8 @@
     #include <QtCore/QMutex>
     #include <QtCore/QByteArray>
     #include <QtCore/QString>
+    #include <QtCore/QUrl>
+    #include <QtCore/QSize>
 #endif // defined(QT)
 
 namespace mux {

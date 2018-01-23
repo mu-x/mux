@@ -23,7 +23,7 @@ function mux_bash_history() {
     export HISTSIZE=$1
     export HISTFILESIZE=$1
     shopt -s histappend
-    export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+    export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 }
 
 # Run first avalible GUI tool from space separated [list] with [args...]

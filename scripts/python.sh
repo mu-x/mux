@@ -7,7 +7,7 @@ Configuration:
     P interpretator, default: python
     M import modules (import M), default: sys, os
     I included modules (from I import *), default: math
-    F from __future__ import {d=devision,w=with,u=unicode}
+    F from __future__ import {d=devision,w=with,u=unicode}, default: d
 END
 exit 0; fi
 
@@ -17,6 +17,7 @@ set -e
 PYTHON=${P:-python}
 MODULES="sys os json $M"
 INCLUDES="math datetime $I"
+FUTURE=${F:-d}
 
 IMPORTS=
 for module in $MODULES; do
@@ -26,12 +27,16 @@ for module in $INCLUDES; do
     IMPORTS="from $module import *; $IMPORTS"
 done
 
-[[ "$F" == *d* ]] && IMPORTS="from __future__ import division; $IMPORTS"
-[[ "$F" == *w* ]] && IMPORTS="from __future__ import with_statement; $IMPORTS"
-[[ "$F" == *u* ]] && IMPORTS="from __future__ import unicode_literals; $IMPORTS"
+[[ "$FUTURE" == *d* ]] && IMPORTS="from __future__ import division; $IMPORTS"
+[[ "$FUTURE" == *w* ]] && IMPORTS="from __future__ import with_statement; $IMPORTS"
+[[ "$FUTURE" == *u* ]] && IMPORTS="from __future__ import unicode_literals; $IMPORTS"
+
+function run_python() {
+    $PYTHON -c "$IMPORTS print($@)"
+}
 
 if [[ "$@" ]]; then
-    $PYTHON -c "$IMPORTS print($@)"
+    run_python "$@"
 else
-    cat <(echo -n "print(") <(cat) <(echo -n ")") | $PYTHON
+    while read LINE; do run_python "$LINE"; done
 fi
