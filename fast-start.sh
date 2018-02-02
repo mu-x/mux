@@ -23,7 +23,10 @@ title Pulling configs
 configs/manage.sh pull
 
 if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
-    title Installing basic packages
+    title Update repository
+    sudo apt-get update
+
+    title Install basic packages
     sudo apt-get install tmux build-essential vim-gtk p7zip
 
     title Install development packages
