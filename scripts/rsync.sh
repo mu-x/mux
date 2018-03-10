@@ -15,13 +15,13 @@ ARGS="--archive"
 LOG=/tmp/mux-rsync-$(date +%s)
 echo Log file: "$LOG"
 rsync $ARGS --verbose --dry-run --stats "$@" > "$LOG"
-vi "$LOG"
+less "$LOG"
+rm "$LOG"
 
 IFS= read -p "Continue? (y/n): " RESP
 if [ "$RESP" == y ] || [ "$RESP" == Y ]; then
     rsync $ARGS --progress "$@"
 fi
 
-rm "$LOG" #< TODO: trap!
 echo Done!
 

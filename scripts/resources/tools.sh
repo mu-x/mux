@@ -2,6 +2,13 @@
 # MUX Bash helper functions.
 #
 
+# Prints fatal error to stderr and exits
+function mux_fatal() {
+    { set +x; } >/dev/null 2>&1
+    echo ERROR: "$@" >&2
+    exit 1
+}
+
 # Prints first existing file from arguments
 function mux_first_existing_file() {
     for file in $@; do
@@ -17,6 +24,7 @@ function mux_silent_run() {
     echo $@
     $@ >/dev/null 2>&1 &
 }
+
 # Setup BASH cross-terminal history with [limit]
 function mux_bash_history() {
     export HISTCONTROL=ignoredups:erasedups

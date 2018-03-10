@@ -2,7 +2,7 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Creates
-Usage: [KEY=~/.ssh/key.pub] $0 USER PASSWORD HOST ALIAS
+Usage: [KEY=~/.ssh/mux.pub] $0 USER PASSWORD HOST ALIAS
 END
 exit 0; fi
 
@@ -15,25 +15,46 @@ HOST="$3"
 ALIAS="$4"
 KEY=${KEY:-$MUX_SSH_KEY}
 
+source "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/resources/tools.sh"
+
+SSH_DIR="$HOME/.ssh"
+mkdir -p "$SSH_DIR"
+
+if [ ! "$KEY" ]; then
+    KEY_BASE="$SSH_DIR/mux"
+    if [ ! -f "$KEY_BASE" ]; then
+        ssh-keygen -t rsa -N "" -f "$KEY_BASE"
+        mux_use_ssh_keys "$KEY_BASE"
+    fi
+    KEY="$KEY_BASE.pub"
+fi
+
 RUN="sshpass -p $PASSWORD"
-$RUN ssh "$USER@$HOST" echo "Connection '$USER:$PASSWORD@$HOST' works" || exit 1
+INFO="Connection '$USER:$PASSWORD@$HOST'"
+$RUN ssh -o StrictHostKeyChecking=no "$USER@$HOST" echo $INFO works \
+    || mux_fatal $INFO failed
 
 if [ ! "$ALIAS" ]; then
     echo "Alias argument is required, see --help" >&2
     exit 1
 fi
 
-if grep "Host $ALIAS" ~/.ssh/config >/dev/null 2>&1; then
+CONFIG="$SSH_DIR/config"
+if grep "Host $ALIAS" "$CONFIG" >/dev/null 2>&1; then
     echo "WARNING: Alias '$ALIAS' already exists"
 else
-    cat >> ~/.ssh/config <<END
-        Host $ALIAS
-            HostName $HOST
-            User $USER
-            # Password $PASSWORD
+    cat >> "$CONFIG" <<END
+Host $ALIAS
+    HostName $HOST
+    User $USER
+    # Password $PASSWORD
+
 END
 fi
-$RUN ssh "$ALIAS" echo "Alias '$ALIAS' works"
+
+chmod 600 "$CONFIG"
+INFO="Alias '$ALIAS'"
+$RUN ssh "$ALIAS" echo "$INFO works" || mux_fail $INFO failed
 
 if [ "$KEY" ]; then
     $RUN scp "$KEY" "$ALIAS:/tmp/ssh-key.pub"
