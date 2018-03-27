@@ -3,7 +3,7 @@
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Replaces substring for all files in current directory.
 Usage:
-    $0 SUBSTRING REPLACENEMT
+    [MV=mv] $0 SUBSTRING REPLACENEMT
 END
 exit 0; fi
 
@@ -21,8 +21,8 @@ for NAME in ./*; do
     echo Rename: $NAME
     echo --- to: $RENAME
 
-    mv "$NAME" "$RENAME"
-    echo mv \'"$RENAME"\' \'"$NAME"\' >> $ROLLBACK
+    $MV "$NAME" "$RENAME"
+    echo $MV \'"$RENAME"\' \'"$NAME"\' >> $ROLLBACK
 done
 
 echo echo Rolled back >> $ROLLBACK

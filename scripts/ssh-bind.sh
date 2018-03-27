@@ -1,13 +1,17 @@
 #!/bin/bash
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
+<<<<<<< Updated upstream
 Creates
 Usage: [KEY=~/.ssh/mux.pub] $0 USER PASSWORD HOST ALIAS
+=======
+Creates alias for SSH host and uploads public key
+Usage: [KEY=~/.ssh/key.pub] $0 USER PASSWORD HOST ALIAS
+>>>>>>> Stashed changes
 END
 exit 0; fi
 
-set -e
-[ "$X" ] && set -x
+set -e -x
 
 USER="$1"
 PASSWORD="$2"
@@ -59,6 +63,6 @@ $RUN ssh "$ALIAS" echo "$INFO works" || mux_fail $INFO failed
 if [ "$KEY" ]; then
     $RUN scp "$KEY" "$ALIAS:/tmp/ssh-key.pub"
     $RUN ssh $ALIAS 'mkdir -p .ssh; cat /tmp/ssh-key.pub >> .ssh/authorized_keys'
-    ssh "$ALIAS" echo Public key $KEY works
+    ssh "$ALIAS" echo "Public key [ $KEY ] works"
 fi
 
