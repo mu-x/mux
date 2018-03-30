@@ -42,11 +42,11 @@ if uname -a | grep -q MINGW; then
             powershell \
                 -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command \
                 "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
-            SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+            PATH="$PATH:/c/ProgramData/chocolatey/bin"
         fi
 
         title Install basic packages
-        choco install cmder 7zip totalcmd virtualbox
+        choco install -y cmder 7zip notepadplusplus virtualbox
     fi
 fi
 

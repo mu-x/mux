@@ -11,22 +11,35 @@ set -e
 
 cd $(dirname "${BASH_SOURCE[0]}")
 
+CONFIG_FILES="$(find -type f -name '.*')"
+if uname -a | grep -q MINGW; then
+	CONFIG_FILES+=" $(find ./AppData -type f)"
+fi
+
 function each_rc {
     ACTION="$1"
-    for CONF in $(echo .??*); do
-        LOCAL=$HOME/$CONF
-        REMOTE=$PWD/$CONF
-        echo $ACTION for $CONF
+    for FILE in $CONFIG_FILES; do
+        LOCAL=$HOME/$FILE
+        REMOTE=$PWD/$FILE
+        echo $ACTION for $FILE
         eval $ACTION || true
     done
 }
 
 for ARG in ${@:-status}; do
     case $ARG in
-        save|push)  each_rc 'cp $LOCAL $REMOTE'                             ;;
-        load|pull)  each_rc 'cp $REMOTE $LOCAL'                             ;;
-        meld|merge) each_rc 'diff $LOCAL $REMOTE || meld $LOCAL $REMOTE'    ;;
-        *)          each_rc 'diff $LOCAL $REMOTE'                           ;;
+        save|push)  
+			each_rc 'cp $LOCAL $REMOTE'                             	
+			;;
+        load|pull)  
+			each_rc 'mkdir -p $(dirname $LOCAL) && cp $REMOTE $LOCAL'	
+			;;
+        meld|merge) 
+			each_rc 'diff $LOCAL $REMOTE || meld $LOCAL $REMOTE'    	
+			;;
+        *)          
+			each_rc 'diff $LOCAL $REMOTE'                           	
+			;;
     esac
 done
 

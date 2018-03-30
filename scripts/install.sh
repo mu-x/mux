@@ -8,7 +8,6 @@ Defaults:
     PREFIX  = mux-
 END
 exit 0; fi
-echo $HOME
 
 set -e
 [ $X ] && set -x
