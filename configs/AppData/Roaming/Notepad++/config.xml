@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="Windows-1252" ?>
 <NotepadPlus>
     <FindHistory nbMaxFindHistoryPath="10" nbMaxFindHistoryFilter="10" nbMaxFindHistoryFind="10" nbMaxFindHistoryReplace="10" matchWord="no" matchCase="no" wrap="yes" directionDown="yes" fifRecuisive="yes" fifInHiddenFolder="no" dlgAlwaysVisible="no" fifFilterFollowsDoc="no" fifFolderFollowsDoc="no" searchMode="0" transparencyMode="1" transparency="150" dotMatchesNewline="no" isSearch2ButtonsMode="no">
-        <Filter name="" />
-        <Find name="eol" />
-        <Find name="end" />
-        <Find name="line end" />
-        <Find name="sess" />
-        <Replace name="" />
     </FindHistory>
     <History nbMaxFile="0" inSubMenu="no" customLength="-1" />
     <GUIConfigs>

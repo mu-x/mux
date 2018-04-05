@@ -46,7 +46,7 @@ if uname -a | grep -q MINGW; then
         fi
 
         title Install basic packages
-        choco install -y cmder 7zip notepadplusplus virtualbox
+        choco install -y cmder 7zip notepadplusplus meld virtualbox
     fi
 fi
 
