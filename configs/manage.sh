@@ -17,12 +17,12 @@ if uname -a | grep -q MINGW; then
 fi
 
 function silent_diff {
-	diff "$@" >/dev/null 2>1
+    diff "$@" >/dev/null 2>1
 }
 
 function each_rc {
     ACTION="$1"
-	NAME=${2:-$ACTION}
+    NAME=${2:-$ACTION}
     for FILE in $CONFIG_FILES; do
         LOCAL=$HOME/$FILE
         REMOTE=$PWD/$FILE
@@ -33,20 +33,20 @@ function each_rc {
 
 for ARG in ${@:-status}; do
     case $ARG in
-        save|push)  
-			each_rc 'cp $LOCAL $REMOTE' 'copy $LOCAL $REMOTE'                            	
+        save|push)
+			each_rc 'cp $LOCAL $REMOTE' 'copy $LOCAL $REMOTE'
 			;;
-        load|pull)  
-			each_rc 'mkdir -p $(dirname $LOCAL) && cp $REMOTE $LOCAL' 'copy $REMOTE $LOCAL'	
+        load|pull)
+			each_rc 'mkdir -p $(dirname $LOCAL) && cp $REMOTE $LOCAL' 'copy $REMOTE $LOCAL'
 			;;
-        meld|merge) 
-			each_rc 'silent_diff $LOCAL $REMOTE || meld $LOCAL $REMOTE'    	
+        meld|merge)
+			each_rc 'silent_diff $LOCAL $REMOTE || meld $LOCAL $REMOTE'
 			;;
-        diff) 
-			each_rc 'diff $LOCAL $REMOTE'    	
+        diff)
+			each_rc 'diff $LOCAL $REMOTE'
 			;;
-        *)          
-			each_rc 'silent_diff $LOCAL $REMOTE || echo "---  Different"' 'diff $REMOTE $LOCAL'                      	
+        *)
+			each_rc 'silent_diff $LOCAL $REMOTE || echo "---  Different"' 'diff $REMOTE $LOCAL'
 			;;
     esac
 done

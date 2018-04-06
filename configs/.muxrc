@@ -17,6 +17,10 @@ function sdevenv() {
     mux_silent_run devenv ${@:-$(mux_first_existing_file *.sln build/*.sln)}
 }
 
+function spycharm() {
+    mux_silent_run pycharm .
+}
+
 function cless() {
     "$@" --color=always | LESS=FRX less
 }
