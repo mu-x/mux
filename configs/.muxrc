@@ -18,7 +18,7 @@ function sdevenv() {
 }
 
 function spycharm() {
-    mux_silent_run pycharm .
+    mux_silent_run pycharm ${@:-.}
 }
 
 function cless() {
