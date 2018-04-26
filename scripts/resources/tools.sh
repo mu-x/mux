@@ -21,8 +21,13 @@ function mux_first_existing_file() {
 
 # Silent run COMMAND [ARGS...]
 function mux_silent_run() {
-    echo $@
-    $@ >/dev/null 2>&1 &
+    if ! which "$1" 1>/dev/null 2>&1; then
+        echo ERROR: Unable to find executable: "$1" >&2
+        return 1
+    fi
+
+    echo "$@"
+    "$@" >/dev/null 2>&1 &
 }
 
 # Setup BASH cross-terminal history with [limit]

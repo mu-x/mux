@@ -11,8 +11,9 @@ set -e
 
 COUNT=${C:-1}
 
-LEFT=/tmp/mux-cdiff-$(uuidgen)
-RIGHT=/tmp/mux-cdiff-$(uuidgen)
+BASE=/tmp/mux-cdiff-$(date +%s)
+LEFT=$BASE-left
+RIGHT=$BASE-right
 
 DOTS=$(printf "%0.s." $(seq 1 $COUNT))
 PATTERN="s/\($DOTS\)/\1\n/g"
