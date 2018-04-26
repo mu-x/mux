@@ -13,7 +13,7 @@ cd $(dirname "${BASH_SOURCE[0]}")
 
 CONFIG_FILES="$(find -type f -name '.*')"
 if uname -a | grep -q MINGW; then
-	CONFIG_FILES+=" $(find ./AppData -type f)"
+	CONFIG_FILES+=" $(find -name *.ini) $(find ./AppData -type f)"
 fi
 
 function silent_diff {

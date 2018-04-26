@@ -39,14 +39,19 @@ if uname -a | grep -q MINGW; then
     if [[ $CONFIRM == *y* ]]; then
         if ! which choco >/dev/null 2>&1; then
             title Install chocolatey
-            powershell \
-                -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command \
+            powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command \
                 "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
-            PATH="$PATH:/c/ProgramData/chocolatey/bin"
+            PATH+=":/c/ProgramData/chocolatey/bin"
         fi
 
         title Install basic packages
-        choco install -y cmder 7zip notepadplusplus meld virtualbox
+        choco install -y cmder 7zip notepadplusplus meld
+
+        title Suggested external packages
+        echo "Total Commander: https://www.ghisler.com/download.htm"
+
+        title Install development packages
+        choco install -y virtualbox
     fi
 fi
 
