@@ -1,13 +1,8 @@
 #!/bin/bash
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
-<<<<<<< Updated upstream
-Creates
-Usage: [KEY=~/.ssh/mux.pub] $0 USER PASSWORD HOST ALIAS
-=======
 Creates alias for SSH host and uploads public key
 Usage: [KEY=~/.ssh/key.pub] $0 USER PASSWORD HOST ALIAS
->>>>>>> Stashed changes
 END
 exit 0; fi
 
