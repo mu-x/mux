@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
+source "scripts/resources/tools.sh"
 
 function title()
 {
@@ -33,7 +34,7 @@ if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
     sudo apt-get install qtcreator konqueror virtualbox
 fi
 
-if uname -a | grep -q MINGW; then
+if mux_is_windows; then
     title Install windows packages
     read -p "Continue? (y/n): " CONFIRM
     if [[ $CONFIRM == *y* ]]; then

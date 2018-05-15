@@ -72,6 +72,11 @@ function mux_terminal_multiplexer() {
     fi
 }
 
+# Figures out if it is bash on windows.
+function mux_is_windows() {
+    uname -s | grep -q "CYGWIN\|MINGW"
+}
+
 # Prints windows [path] as UNIX (assuming drives are mounted to /)
 function mux_windows_path() {
     local path="${1//\\/\/}"

@@ -11,6 +11,8 @@ set -e
 NAME=$1
 PS=${PS:-"ps aux"}
 
+source "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/resources/tools.sh"
+
 LIST=$($PS | grep -v ' grep ' | grep "$NAME")
 # TODO: Print some message if process is not found.
 
@@ -20,7 +22,7 @@ echo
 read -p 'Select PIDs, blank for everyone: ' PIDS
 
 if [ ! "$PIDS" ]; then
-    if uname -a | grep -q MINGW; then
+    if mux_is_windows; then
         PIDS=$(echo "$LIST" | awk '{print$1}')
     else
         PIDS=$(echo "$LIST" | awk '{print$2}')

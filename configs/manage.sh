@@ -10,9 +10,10 @@ set -e
 [ $X ] && set -x
 
 cd $(dirname "${BASH_SOURCE[0]}")
+source "../scripts/resources/tools.sh"
 
 CONFIG_FILES="$(find -type f -name '.*')"
-if uname -a | grep -q MINGW; then
+if mux_is_windows; then
 	CONFIG_FILES+=" $(find -name *.ini) $(find ./AppData -type f)"
 fi
 

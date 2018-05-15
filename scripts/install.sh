@@ -18,6 +18,7 @@ PREFIX=${PREFIX:-mux-}
 SELF=$(basename "${BASH_SOURCE[0]}")
 [ $SUDO_USER ] && HOME=/home/$SUDO_USER
 cd "$(dirname "${BASH_SOURCE[0]}")"
+source "resources/tools.sh"
 
 if [ "$SUDO_USER" ]; then
     echo Remove old "$LOCAL/$PREFIX*" ... done
@@ -27,7 +28,7 @@ if [ "$SUDO_USER" ]; then
     done
 fi
 
-if [ -f $HOME/.bashrc ] || uname -a | grep -q MINGW; then
+if [ -f $HOME/.bashrc ] || mux_is_windows; then
     BASHRC=$HOME/.bashrc
 else
     BASHRC=$HOME/.bash_profile
