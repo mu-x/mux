@@ -12,21 +12,22 @@ set -e
 cd $(dirname "${BASH_SOURCE[0]}")
 source "../scripts/resources/tools.sh"
 
-CONFIG_FILES="$(find -type f -name '.*')"
 if mux_is_windows; then
-	CONFIG_FILES+=" $(find -name *.ini) $(find ./AppData -type f)"
+    FIND_CONFIGS="find -type f"
+else
+    FIND_CONFIGS="find -type f -name '.*'"
 fi
 
 function silent_diff {
-    diff "$@" >/dev/null 2>1
+    diff "$@" >/dev/null 2>&1
 }
 
 function each_rc {
     ACTION="$1"
     NAME=${2:-$ACTION}
-    for FILE in $CONFIG_FILES; do
-        LOCAL=$HOME/$FILE
-        REMOTE=$PWD/$FILE
+    $FIND_CONFIGS | grep -v '.sh$' | while IFS= read -r FILE; do
+        LOCAL="$HOME/$FILE"
+        REMOTE="$PWD/$FILE"
         echo $NAME for $FILE
         eval $ACTION || true
     done
@@ -35,19 +36,19 @@ function each_rc {
 for ARG in ${@:-status}; do
     case $ARG in
         save|push)
-			each_rc 'cp $LOCAL $REMOTE' 'copy $LOCAL $REMOTE'
+			each_rc 'cp "$LOCAL" "$REMOTE"' 'copy $LOCAL $REMOTE'
 			;;
         load|pull)
-			each_rc 'mkdir -p $(dirname $LOCAL) && cp $REMOTE $LOCAL' 'copy $REMOTE $LOCAL'
+			each_rc 'mkdir -p $(dirname "$LOCAL") && cp "$REMOTE" "$LOCAL"' 'copy $REMOTE $LOCAL'
 			;;
         meld|merge)
-			each_rc 'silent_diff $LOCAL $REMOTE || meld $LOCAL $REMOTE'
+			each_rc 'silent_diff "$LOCAL" "$REMOTE" || meld "$LOCAL" "$REMOTE"'
 			;;
         diff)
-			each_rc 'diff $LOCAL $REMOTE'
+			each_rc 'diff "$LOCAL" "$REMOTE"'
 			;;
         *)
-			each_rc 'silent_diff $LOCAL $REMOTE || echo "---  Different"' 'diff $REMOTE $LOCAL'
+			each_rc 'silent_diff "$LOCAL" "$REMOTE" || echo "---  Different"' 'diff $REMOTE $LOCAL'
 			;;
     esac
 done
