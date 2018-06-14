@@ -10,11 +10,13 @@ exit 0; fi
 set -e
 [ "$X" ] && set -x
 
+MV=${MV:-mv}
+
 ROLLBACK=/tmp/mux-rename.rollback
 echo '#!/bin/bash' > $ROLLBACK
 chmod +x $ROLLBACK
 
-for NAME in ./*; do
+for NAME in *; do
     RENAME=$(python -c "print('''$NAME'''.replace('''$1''', '''$2'''))")
     [[ "$NAME" == "$RENAME" ]] && continue
 
