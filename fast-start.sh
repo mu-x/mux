@@ -28,7 +28,7 @@ if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
     sudo apt-get update
 
     title Install basic packages
-    sudo apt-get install tmux build-essential vim-gtk p7zip
+    sudo apt-get install tmux build-essential vim-gtk p7zip sshfs
 
     title Install development packages
     sudo apt-get install qtcreator konqueror virtualbox

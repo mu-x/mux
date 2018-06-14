@@ -12,11 +12,13 @@ set -e
 cd $(dirname "${BASH_SOURCE[0]}")
 source "../scripts/resources/tools.sh"
 
-if mux_is_windows; then
-    FIND_CONFIGS="find -type f"
-else
-    FIND_CONFIGS="find -type f -name '.*'"
-fi
+function find_configs {
+    if mux_is_windows; then
+        find -type f -not -name '*.sh'
+    else
+        find -type f -name '.*' -and -not -name '*.sh'
+    fi
+}
 
 function silent_diff {
     diff "$@" >/dev/null 2>&1
@@ -25,7 +27,7 @@ function silent_diff {
 function each_rc {
     ACTION="$1"
     NAME=${2:-$ACTION}
-    $FIND_CONFIGS | grep -v '.sh$' | while IFS= read -r FILE; do
+    find_configs | while IFS= read -r FILE; do
         LOCAL="$HOME/$FILE"
         REMOTE="$PWD/$FILE"
         echo $NAME for $FILE
