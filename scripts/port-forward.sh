@@ -2,12 +2,33 @@
 
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Forwards local ports to remote ports for remapping, etc.
-Usage: [P=tcp] $0 LOCAL_IP REMOTE_IP PORT[-REMOTE_PORT][,OTHER_PORTS]
+Create:
+    [P=tcp] $0 LOCAL_IP REMOTE_IP PORT[-REMOTE_PORT][,OTHER_PORTS]
+List/Delete All:
+    $0 list|delete
 END
 exit 0; fi
 
 set -e
 [ "$X" ] && set -x
+
+if [ $(whoami) != root ]; then
+    sudo $0 "$@"
+    exit $?
+fi
+
+if [ "$1" == list ]; then
+    iptables -t nat --line-numbers -L
+    exit $?
+fi
+
+if [ "$1" == delete ]; then
+    COUNT=0
+    while iptables -t nat -D PREROUTING 1; do ((COUNT++)) || true; done
+    while iptables -t nat -D POSTROUTING 1; do :; done
+    echo Removed $COUNT rules.
+    exit 0
+fi
 
 PROTOCOLS=${P:-tcp udp}
 if [ ! "$1" ] || [ ! "$2" ] || [ ! "$3" ]; then
@@ -29,6 +50,6 @@ for PORT in "${PORTS[@]}"; do
     for PROTO in $PROTOCOLS; do
         iptables -t nat -A PREROUTING -p $PROTO -d $LOCAL_IP --dport $LOCAL_PORT \
             -j DNAT --to-destination $REMOTE_IP:$REMOTE_PORT
-        iptables -t nat -A POSTROUTING -j MASQUERADE
     done
 done
+iptables -t nat -A POSTROUTING -j MASQUERADE
