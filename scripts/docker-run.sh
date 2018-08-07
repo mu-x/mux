@@ -4,7 +4,7 @@ if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Runs docker container, mounts current directory inside
 Usage: [I=IMAGE] [CU=USER] $0 [COMMAND]
 Defaults:
-    IMAGE=ubuntu, USER=builder, COMMAND=bash
+    IMAGE=ubuntu, USER=${SUDO_USER:-$(whoami)}, COMMAND=bash
 END
 exit 0; fi
 
@@ -13,7 +13,7 @@ set -e
 
 IMAGE=${I:-${IMG:-${MUX_DOCKER_IMAGE:-ubuntu}}}
 COMMAND=${@:-${MUX_DOCKER_COMMAND:-bash}}
-CUSER=${CU:-${MUX_DOCKER_CUSER:-}}
+CUSER=${CU:-${MUX_DOCKER_CUSER:-${SUDO_USER:-$(whoami)}}}
 CMOUNTS=".ivy .cache .m $CM"
 
 # Forward terminal to container and redirect std in otherwise
