@@ -1,91 +1,124 @@
 #include "h.hpp"
 
+namespace kaka { struct K {}; }
+struct K {};
+
+
+//----------------------------------------------------------------------------------------
+
 namespace detail {
 
 typedef int8_t No;
 typedef int16_t Yes;
 
 struct Any { template<typename T> Any(const T&); };
-No test(const No&);
 
 No operator<<(QDebug&, const Any&);
-Yes test(const QDebug&);
-
 No toString(const Any& any);
+No test(const No&);
+Yes test(const QDebug&);
 Yes test(const QString&);
 
 template<typename T>
-class exists
+class StringSupport
 {
     static QDebug& m_stream;
     static const T& m_value;
 
-public:
-    static constexpr bool qdebug_operator =
-        sizeof(test(m_stream << m_value)) == sizeof(Yes);
+    template<typename C>
+    static Yes testMethod(decltype(&C::toString));
 
-    static constexpr bool to_string =
-        sizeof(test(toString(m_value))) == sizeof(Yes);
+    template<typename C>
+    static No testMethod(...);
+
+public:
+    static constexpr bool qdebug = sizeof(test(m_stream << m_value)) == sizeof(Yes);
+    static constexpr bool function = sizeof(test(toString(m_value))) == sizeof(Yes);
+    static constexpr bool method = sizeof(testMethod<T>(0)) == sizeof(Yes);
 };
 
-template<typename T>
-constexpr bool exists<T>::qdebug_operator;
+template<typename T> constexpr bool StringSupport<T>::qdebug;
+template<typename T> constexpr bool StringSupport<T>::function;
+template<typename T> constexpr bool StringSupport<T>::method;
 
-} // namespace detail
-
-// ---
-
-template<typename T>
-QString toString(const T& value, decltype(&T::toString) = 0)
+template<typename T, typename = typename std::enable_if_t<
+    StringSupport<T>::method || StringSupport<T>::function || StringSupport<T>::qdebug
+>>
+QString qtString(const T& value)
 {
-    return value.toString();
-}
+    if constexpr (StringSupport<T>::method)
+        return value.toString();
 
-template<typename T>
-QString toString(const T& value, typename std::enable_if<detail::exists<T>::qdebug_operator>::type* = 0)
-{
+    if constexpr (StringSupport<T>::function)
+        return ::toString(value);
+
     QString result;
     QDebug d(&result);
     d.noquote().nospace() << value;
     return result;
 }
 
-// --
-
-template<typename T>
-void PrintTo(const T& value, ::std::ostream* stream, typename std::enable_if<detail::exists<T>::to_string>::type* = 0)
+template<typename T, typename = typename std::enable_if_t<
+    detail::StringSupport<T>::method || detail::StringSupport<T>::function
+>>
+std::ostream& operator<<(std::ostream& stream, const T& value)
 {
-    *stream << toString(value).toStdString();
+    const auto string = detail::qtString(value).toStdString();
+    return stream << string;
 }
 
-// ---
+
+} // namespace detail
+
+using detail::operator<<;
+
+//------------------------------------------------------------------------------------------------
+
+namespace ns {
 
 struct A {
     QString toString() const { return "A"; }
 };
 
+struct AF;
+
 struct B {};
 QString toString(const B&) { return "B"; }
+
+enum E {};
+QString toString(const E&) { return "E"; }
+
+enum class EC {};
+QString toString(const EC&) { return "EC"; }
+
+} // namespace ns
 
 
 // ---
 
+#define TRAITS(T) \
+    mux::print(#T, \
+        detail::StringSupport<T>::qdebug, detail::StringSupport<T>::function, detail::StringSupport<T>::method)
+
 template<typename T>
 void print(const T& v)
 {
-    mux::print(toString(v).toStdString());
+    std::cout << v << std::endl;
+    //mux::print(detail::qtString(v).toStdString());
 }
 
 int main(int, const char** /*argv*/)
 {
-    print(A());
-    print(B());
-    print(QSize());
-    //print(std::vector<int>());
-
-    PrintTo(A(), &std::cout);
-    PrintTo(B(), &std::cout);
-    PrintTo(QSize(), &std::cout);
-    print(std::vector<int>());
+    TRAITS(ns::A);
+    TRAITS(ns::B);
+    TRAITS(QSize);
+    print(ns::A());
+    print(ns::B());
+    //print(QSize());
+    print(ns::E());
+    print(ns::EC());
+    print(kaka::K());
+    print(K());
+    //print(ns::AF());
 }
 

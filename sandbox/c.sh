@@ -8,7 +8,7 @@ while [ "$1" ] && [ "$1" != "--" ]; do
 done
 [ "$1" == "--" ] && shift
 
-: ${SRC:=1.cpp}
+SRC=${F:-1.cpp}
 COMPILER=${C:-g++}
 STD=${S:-11}
 
