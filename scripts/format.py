@@ -7,7 +7,7 @@ class ParserError(Exception):
     pass
 
 
-def parse(text, input_format='yaml'):
+def parse(text, input_format='yaml'):  # types: (str, str) -> object
     if input_format == 'yaml':
         try:
             import yaml
@@ -18,18 +18,21 @@ def parse(text, input_format='yaml'):
     return json.loads(text)
 
 
-def expand(data, *args, **kwargs):
+def expand(data, *args, **kwargs):  # types: (object, ...) -> object
+    if isinstance(data, list):
+        return [expand(v) for v in data]
     if isinstance(data, dict):
         return {k: expand(v) for k, v in data.items()}
-    if isinstance(data, list):
-        return [expand(v) for v in data.items()]
     try:
-        return parse(data, *args, **kwargs)
+        parsed = parse(data, *args, **kwargs)
+        if isinstance(parsed, dict) and len(parsed) == 1 and parsed.values() == [None]:
+            return data  # Avoid accidental dict syntax.
+        return parsed
     except Exception:
         return data
 
 
-def serialize(data, output_format='yaml'):
+def serialize(data, output_format='yaml'):  # types: (object, str) -> str
     if output_format == 'yaml':
         try:
             import yaml
@@ -40,7 +43,7 @@ def serialize(data, output_format='yaml'):
     return json.dumps(data, indent=4, sort_keys=True)
 
 
-def diff_contents(contents, diff_tool):
+def diff_contents(contents, diff_tool):  # types: (List[str], str) -> None
     command = [diff_tool]
     for index, content in enumerate(contents):
         name = '/tmp/mux-format.tmp.{}'.format(index)
@@ -58,9 +61,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('inputs', nargs='*')
     parser.add_argument('-d', '--diff-tool', default='diff')
+    parser.add_argument('-e', '--expand-format', default='json')
     parser.add_argument('-i', '--input-format', default='yaml')
     parser.add_argument('-o', '--output-format', default='yaml')
-    parser.add_argument('-r', '--recursive', type=bool, default='true')
 
     args = parser.parse_args()
     def format_content(text):
@@ -68,8 +71,8 @@ if __name__ == '__main__':
             data = parse(text, args.input_format)
         except Exception as e:
             return str(e)
-        if args.recursive:
-            data = expand(data)
+        if args.expand_format:
+            data = expand(data, args.expand_format)
         return serialize(data, args.output_format)
 
     inputs = args.inputs or [os.stdin.read()]
