@@ -1,10 +1,19 @@
 #!/bin/bash
 
+current_user() {
+    USER=$(whoami)
+    if [ $USER == root ]; then
+        echo ${SUDO_USER:-$USER}
+    else
+        echo $USER
+    fi
+}
+
 if [[ "$1" == --help ]] || [[ "$1" == -h ]]; then cat <<END
 Runs docker container, mounts current directory inside
 Usage: [I=IMAGE] [CU=USER] $0 [COMMAND]
 Defaults:
-    IMAGE=ubuntu, USER=${SUDO_USER:-$(whoami)}, COMMAND=bash
+    IMAGE=ubuntu, USER=$(current_user), COMMAND=bash
 END
 exit 0; fi
 
@@ -13,7 +22,7 @@ set -e
 
 IMAGE=${I:-${IMG:-${MUX_DOCKER_IMAGE:-ubuntu}}}
 COMMAND=${@:-${MUX_DOCKER_COMMAND:-bash}}
-CUSER=${CU:-${MUX_DOCKER_CUSER:-${SUDO_USER:-$(whoami)}}}
+CUSER=${CU:-${MUX_DOCKER_CUSER:-$(current_user)}}
 CMOUNTS=".ivy .cache .m $CM"
 
 # Forward terminal to container and redirect std in otherwise
