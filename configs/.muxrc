@@ -8,6 +8,7 @@ export LESS=FRX
 
 alias g=mux-grep
 alias p=mux-python
+mux_is_osx && alias ls="ls -G"
 
 function sqtcreator() {
     mux_silent_run qtcreator ${@:-$(mux_first_existing_file CMakeLists.txt *.pro)}
@@ -30,7 +31,7 @@ function f() {
 }
 
 function e() {
-    mux_first_gui_tool "gedit kate notepad++ notepad" "$@"
+    mux_first_gui_tool "gedit kate notepad++ mux-open" "$@"
 }
 
 function wcd() {

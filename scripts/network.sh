@@ -14,7 +14,7 @@ exit 0; fi
 set -e
 [ "$X" ] && set -x
 
-source "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/resources/tools.sh"
+source "$(dirname $(readlink "${BASH_SOURCE[0]}"))/resources/tools.sh"
 
 if mux_is_windows; then
     case ${1:-ips} in

@@ -14,9 +14,9 @@ source "../scripts/resources/tools.sh"
 
 function find_configs {
     if mux_is_windows; then
-        find -type f -not -name '*.sh'
+        find . -type f -not -name '*.sh'
     else
-        find -type f -name '.*' -and -not -name '*.sh'
+        find . -type f -name '.*' -and -not -name '*.sh'
     fi
 }
 

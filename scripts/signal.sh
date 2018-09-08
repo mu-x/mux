@@ -8,7 +8,7 @@ exit 0; fi
 
 set -e
 
-DIR="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))"
+DIR="$(dirname $(readlink "${BASH_SOURCE[0]}"))"
 FILE=${F:-$DIR/resources/ready.wav}
 
 echo Playing $FILE

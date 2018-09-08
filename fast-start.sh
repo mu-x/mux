@@ -14,7 +14,7 @@ title Update repository
 git pull
 
 title Installing scripts
-if uname -a | grep -q Linux; then
+if mux_is_linux || mux_is_osx; then
     sudo scripts/install.sh
 else
     scripts/install.sh

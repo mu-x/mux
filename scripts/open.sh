@@ -16,7 +16,7 @@ URL="$(echo "$USER_URL" | sed 's/\\/\//g')"
 [[ "$USER_URL" =~ '\\'* ]] && URL="smb:$URL"
 
 SMB_TOOLS="$T konqueror nautilus"
-OPEN_TOOLS="$T xdg-open kde-open"
+OPEN_TOOLS="$T xdg-open kde-open open"
 
 function select_tool()
 {

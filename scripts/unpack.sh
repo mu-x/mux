@@ -9,7 +9,7 @@ exit 0; fi
 set -e
 [ "$X" ] && set -x
 
-ARCHIVE=$(readlink -f "$1")
+ARCHIVE=$(readlink "$1")
 DIRECTORY=$(dirname "$ARCHIVE")
 NAME=$(basename "$ARCHIVE")
 

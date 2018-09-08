@@ -14,7 +14,7 @@ HOST="$3"
 ALIAS="$4"
 KEY=${KEY:-$MUX_SSH_KEY}
 
-source "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/resources/tools.sh"
+source "$(dirname $(readlink "${BASH_SOURCE[0]}"))/resources/tools.sh"
 
 SSH_DIR="$HOME/.ssh"
 mkdir -p "$SSH_DIR"

@@ -36,7 +36,10 @@ function mux_bash_history() {
     export HISTSIZE=$1
     export HISTFILESIZE=$1
     shopt -s histappend
-    export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+    if ! mux_is_osx; then
+        # Work around for OS X Bug
+        export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+    fi
 }
 
 # Run first avalible GUI tool from space separated [list] with [args...]
@@ -72,7 +75,15 @@ function mux_terminal_multiplexer() {
     fi
 }
 
-# Figures out if it is bash on windows.
+function mux_is_linux() {
+    uname | grep -q Linux
+}
+
+function mux_is_osx() {
+    uname | grep -q Darwin
+}
+
+# Figures out if it is a bash on windows.
 function mux_is_windows() {
     uname -s | grep -q "CYGWIN\|MINGW"
 }
