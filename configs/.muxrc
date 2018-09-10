@@ -8,6 +8,10 @@ export LESS=FRX
 
 alias g=mux-grep
 alias p=mux-python
+alias s=mux_silent_run && complete -W "$(compgen -c)" s
+
+alias la="ls -a"
+alias ll="ls -l"
 mux_is_osx && alias ls="ls -G"
 
 function sqtcreator() {
