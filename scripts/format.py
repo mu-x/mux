@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import json
+import os
 
 
 class ParserError(Exception):
@@ -55,7 +56,6 @@ def diff_contents(contents, diff_tool):  # types: (List[str], str) -> None
 
 if __name__ == '__main__':
     import argparse
-    import os
     import sys
 
     parser = argparse.ArgumentParser()
@@ -66,7 +66,12 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output-format', default='yaml')
 
     args = parser.parse_args()
-    def format_content(text):
+    def format_content(text_or_file):
+        try:
+            with open(text_or_file) as f:
+                text = f.read()
+        except IOError:
+            text = text_or_file
         try:
             data = parse(text, args.input_format)
         except Exception as e:
@@ -75,7 +80,7 @@ if __name__ == '__main__':
             data = expand(data, args.expand_format)
         return serialize(data, args.output_format)
 
-    inputs = args.inputs or [os.stdin.read()]
+    inputs = args.inputs or [sys.stdin.read()]
     if len(inputs) > 1:
         diff_contents([format_content(t) for t in inputs], args.diff_tool)
     else:
