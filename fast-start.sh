@@ -56,5 +56,10 @@ if mux_is_windows; then
     fi
 fi
 
+if mux_is_osx; then
+    title Update MacPorts
+    sudo port install tmux p7zip
+fi
+
 title Done
 
