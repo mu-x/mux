@@ -1,6 +1,7 @@
 [ui]
 username = Mikhail Uskov <muskov@networkoptix.com>
 merge = meld
+ignore = ~/.hgignore
 
 [extensions]
 color =

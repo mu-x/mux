@@ -20,8 +20,8 @@ else
     scripts/install.sh
 fi
 
-title Pulling configs
-configs/manage.sh pull
+title Sync configs
+configs/manage.sh sync
 
 if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
     title Update repository

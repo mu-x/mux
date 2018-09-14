@@ -26,6 +26,10 @@ function spycharm() {
     mux_silent_run pycharm ${@:-.}
 }
 
+function sthg() {
+    mux_silent_run thg "$@"
+}
+
 function cless() {
     "$@" --color=always | LESS=FRX less
 }

@@ -21,38 +21,61 @@ function find_configs {
 }
 
 function silent_diff {
-    diff "$@" >/dev/null 2>&1
+    if [ "$3" == copy_none ] && [ ! -e "$2" ]; then
+        cp "$1" "$2"
+    else
+        diff "$1" "$2" >/dev/null 2>&1
+    fi
+}
+
+function merge {
+    meld "$@" >/dev/null 2>&1
 }
 
 function each_rc {
     ACTION="$1"
     NAME=${2:-$ACTION}
-    find_configs | while IFS= read -r FILE; do
+    RETURN_CODE=0
+
+    mkdir -p $HOME || true
+    for FILE in $(find_configs); do
         LOCAL="$HOME/$FILE"
         REMOTE="$PWD/$FILE"
-        echo $NAME for $FILE
-        eval $ACTION || true
+
+        echo ">   $NAME    for    $FILE"
+        if ! eval $ACTION; then
+            echo 'Different'
+            RETURN_CODE=1
+        fi
     done
+    return $RETURN_CODE
 }
 
 for ARG in ${@:-status}; do
     case $ARG in
         save|push)
-			each_rc 'cp "$LOCAL" "$REMOTE"' 'copy $LOCAL $REMOTE'
+			each_rc 'cp "$LOCAL" "$REMOTE"' 'copy $LOCAL to $REMOTE'
 			;;
         load|pull)
-			each_rc 'mkdir -p $(dirname "$LOCAL") && cp "$REMOTE" "$LOCAL"' 'copy $REMOTE $LOCAL'
+			each_rc 'cp "$REMOTE" "$LOCAL"' 'copy $REMOTE to $LOCAL'
 			;;
         meld|merge)
-			each_rc 'silent_diff "$LOCAL" "$REMOTE" || meld "$LOCAL" "$REMOTE"'
+			each_rc 'silent_diff "$LOCAL" "$REMOTE" || merge "$LOCAL" "$REMOTE"' \
+                'merge $LOCAL to $REMOTE'
 			;;
         diff)
-			each_rc 'diff "$LOCAL" "$REMOTE"'
+			each_rc 'diff "$LOCAL" "$REMOTE"' ''
 			;;
+        sync)
+            if ! each_rc 'silent_diff "$REMOTE" "$LOCAL" copy_none'; then
+                read -p "Some configs are different, do we pull merge? " ACTION
+                [ "$ACTION" ] && "./$(basename ${BASH_SOURCE[0]})" "$ACTION"
+            fi
+            ;;
         *)
-			each_rc 'silent_diff "$LOCAL" "$REMOTE" || echo "---  Different"' 'diff $REMOTE $LOCAL'
-			;;
+            each_rc 'silent_diff "$LOCAL" "$REMOTE"' \
+                'compare $REMOTE to $LOCAL'
+            ;;
     esac
 done
 
-echo Done
