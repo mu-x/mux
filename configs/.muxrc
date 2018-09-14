@@ -6,45 +6,15 @@ source $MUX_HOME/scripts/resources/tools.sh
 export PYTHONPATH+=";$MUX_HOME/examples/python"
 export LESS=FRX
 
-alias g=mux-grep
-alias p=mux-python
-alias s=mux_silent_run && complete -W "$(compgen -c)" s
-
 alias la="ls -a"
 alias ll="ls -l"
 mux_is_osx && alias ls="ls -G"
 
-function sqtcreator() {
-    mux_silent_run qtcreator ${@:-$(mux_first_existing_file CMakeLists.txt *.pro)}
-}
-
-function sdevenv() {
-    mux_silent_run devenv ${@:-$(mux_first_existing_file *.sln build/*.sln)}
-}
-
-function spycharm() {
-    mux_silent_run pycharm ${@:-.}
-}
-
-function sthg() {
-    mux_silent_run thg "$@"
-}
-
-function cless() {
-    "$@" --color=always | LESS=FRX less
-}
-
-function f() {
-    find "${2:-.}" -name "$1" $([ "$3" ] && echo -type "$3")
-}
-
-function e() {
-    mux_first_gui_tool "gedit kate notepad++ mux-open" "$@"
-}
-
-function wcd() {
-    cd $(mux_wundows_path "$@")
-}
+alias g=mux-grep
+alias p=mux-python
+alias s=mux_silent_run && complete -W "$(compgen -c)" s
+alias f=mux_find
+alias e='mux_first_gui_tool "gedit kate notepad++ mux-open"'
 
 if [ $(basename $SHELL) == bash ]; then
     PS1='\n\[\033[01;32m\]\u \[\033[01;34m\]@\h \[\033[01;32m\]\D{%H:%M:%S} \[\033[01;34m\]\w\[\033[00m\]\n\$ '

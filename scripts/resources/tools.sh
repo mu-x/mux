@@ -88,7 +88,7 @@ function mux_is_windows() {
     uname -s | grep -q "CYGWIN\|MINGW"
 }
 
-# Prints windows [path] as UNIX (assuming drives are mounted to /)
+# Prints windows [path] as UNIX (assuming drives are mounted to /).
 function mux_windows_path() {
     local path="${1//\\/\/}"
     if [ $(cut -c2-2 <<< "$path") == ":" ]; then
@@ -96,5 +96,19 @@ function mux_windows_path() {
         path=${drive,,}$(cut -c3- <<< "$path")
     fi
     echo "$path"
+}
+
+# Open develop environment for C++.
+function mux_cpp() {
+    if mux_is_windows; then
+        mux_silent_run devenv ${@:-$(mux_first_existing_file *.sln build/*.sln)}
+    else
+        mux_silent_run qtcreator ${@:-$(mux_first_existing_file CMakeLists.txt *.pro)}
+    fi
+}
+
+# Find for [name] in [path or .] with [type or any].
+function mux_find() {
+    find "${2:-.}" -name "$1" $([ "$3" ] && echo -type "$3")
 }
 
