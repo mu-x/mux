@@ -8,6 +8,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <thread>
 #include <type_traits>
 #include <vector>
@@ -59,8 +60,10 @@ struct Args
     const std::string binary;
     const std::vector<std::string> args;
 
-    Args(const char** argv):
-        binary(*argv), args(parse(argv))
+    inline
+    Args(const char** argv)
+        : binary(*argv)
+        , args(parse(argv))
     {
     }
 

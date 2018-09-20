@@ -10,7 +10,7 @@ done
 
 SRC=${F:-1.cpp}
 COMPILER=${C:-g++}
-STD=${S:-11}
+STD=${S:-17}
 
 OPTIONS="-std=c++$STD -fPIC $O"
 LIBS="-pthread $L"
