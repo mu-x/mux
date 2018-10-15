@@ -30,6 +30,14 @@ function mux_silent_run() {
     "$@" >/dev/null 2>&1 &
 }
 
+function _mux_silent_run() {
+    if [[ $COMP_CWORD == 1 ]]; then
+        COMPREPLY=($(compgen -c ${COMP_WORDS[1]}))
+    else
+        COMPREPLY=($(echo "${COMP_WORDS[$COMP_CWORD]}*"))
+    fi
+}
+
 # Setup BASH cross-terminal history with [limit]
 function mux_bash_history() {
     export HISTCONTROL=ignoredups:erasedups
@@ -110,5 +118,17 @@ function mux_cpp() {
 # Find for [name] in [path or .] with [type or any].
 function mux_find() {
     find "${2:-.}" -name "$1" $([ "$3" ] && echo -type "$3")
+}
+
+# Check local git repositories.
+function mux_git_check() {
+    for repository in "$@"; do
+        cd "$repository"
+        git fetch >/dev/null 2>&1 || true
+        if ! git diff origin >/dev/null 2>&1; then
+            echo Git $repository is out of origin >&2
+        fi
+        cd -
+    done
 }
 

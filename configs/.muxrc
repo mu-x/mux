@@ -12,7 +12,7 @@ mux_is_osx && alias ls="ls -G"
 
 alias g=mux-grep
 alias p=mux-python
-alias s=mux_silent_run && complete -W "$(compgen -c)" s
+alias s=mux_silent_run && complete -F _mux_silent_run s
 alias f=mux_find
 alias e='mux_first_gui_tool "gedit kate notepad++ mux-open"'
 
