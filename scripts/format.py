@@ -2,6 +2,7 @@
 
 import json
 import os
+from pprint import pformat
 
 
 class ParserError(Exception):
@@ -9,7 +10,10 @@ class ParserError(Exception):
 
 
 def parse(text, input_format='yaml'):  # types: (str, str) -> object
-    if input_format == 'yaml':
+    if input_format in ('p', 'python'):
+        from collections import *
+        return eval(text)
+    if input_format in ('y', 'yaml'):
         try:
             import yaml
         except ImportError:
@@ -34,7 +38,9 @@ def expand(data, *args, **kwargs):  # types: (object, ...) -> object
 
 
 def serialize(data, output_format='yaml'):  # types: (object, str) -> str
-    if output_format == 'yaml':
+    if output_format in ('p', 'python'):
+        return pformat(data)
+    if output_format in ('y', 'yaml'):
         try:
             import yaml
         except ImportError:
