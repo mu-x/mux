@@ -3,7 +3,7 @@
 #
 
 # Prints fatal error to stderr and exits
-function mux_fatal() {
+function mux_fail() {
     { set +x; } >/dev/null 2>&1
     echo ERROR: "$@" >&2
     exit 1

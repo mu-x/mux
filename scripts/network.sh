@@ -21,13 +21,13 @@ if mux_is_windows; then
         i|ips)      ipconfig | grep 'Ethernet\|IPv'                 ;;
         l|listen)   timeout 1 netstat -abp TCP | grep "\[$2" -B1    ;;
         u|udp)      netstat -abp UDP | grep "\[$2" -B1              ;;
-        *)          mux_fatal "Unknown command '$1', use --help"    ;;
+        *)          mux_fail "Unknown command '$1', use --help"    ;;
     esac
 else
     case ${1:-ips} in
         i|ips)      ifconfig | grep inet -B1                                ;;
         l|listen)   netstat -lpn | grep -E "tcp.+LISTEN" | grep ${2:-.+}    ;;
         u|udp)      netstat -lpn | grep udp | grep ${2:-.+}                 ;;
-        *)          mux_fatal "Unknown command '$1', use --help"            ;;
+        *)          mux_fail "Unknown command '$1', use --help"            ;;
     esac
 fi

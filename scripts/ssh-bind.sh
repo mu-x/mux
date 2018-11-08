@@ -31,7 +31,7 @@ fi
 RUN="sshpass -p $PASSWORD"
 INFO="Connection '$USER:$PASSWORD@$HOST'"
 $RUN ssh -o StrictHostKeyChecking=no "$USER@$HOST" echo $INFO works \
-    || mux_fatal $INFO failed
+    || mux_fail $INFO failed
 
 if [ ! "$ALIAS" ]; then
     echo "Alias argument is required, see --help" >&2
