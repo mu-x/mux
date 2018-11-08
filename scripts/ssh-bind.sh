@@ -39,7 +39,7 @@ if [ ! "$ALIAS" ]; then
 fi
 
 CONFIG="$SSH_DIR/config"
-if grep "Host $ALIAS" "$CONFIG" >/dev/null 2>&1; then
+if grep "Host $ALIAS"'$' "$CONFIG" >/dev/null 2>&1; then
     echo "WARNING: Alias '$ALIAS' already exists"
 else
     cat >> "$CONFIG" <<END

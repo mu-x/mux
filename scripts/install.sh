@@ -63,11 +63,8 @@ done
 
 if [ "$(grep .muxrc $BASHRC)" ]; then
     echo Update $BASHRC ... no need
-    exit 0
-fi
-
-echo Update $BASHRC ... done
-echo -e "
+else
+    echo -e "
 # MU eXecutables config
 if [ -f ~/.muxrc ]
 then
@@ -75,4 +72,24 @@ then
     . ~/.muxrc
 fi
 " >> $BASHRC
+    echo Update $BASHRC ... done
+fi
+
+if [ "$(grep MUX_SSH_KEY $BASHRC)" ]; then
+    echo Select SSH Key ... no need
+else
+    read -p "Select SSH Key (empty for auto generate): " SSH_KEY
+    if [ "$SSH_KEY" ]; then
+        SSH_KEY=$(eval "echo $SSH_KEY")
+        [[ $SSH_KEY != *.pub ]] && SSH_KEY+=.pub
+        [ ! -f $SSH_KEY ] && mux_fail $SSH_KEY does not exist
+    else
+        mkdir -p ~/.ssh
+        SSH_KEY=~/.ssh/mux.pub
+        ssh-keygen -t rsa -f ~/.ssh/mux || true
+        [ "$SUDO_USER" ] && chown $SUDO_USER:$SUDO_USER ~/.ssh/mux*
+    fi
+    echo "export MUX_SSH_KEY=$SSH_KEY" >> $BASHRC
+    echo Select SSH Key $SSH_KEY ... done
+fi
 

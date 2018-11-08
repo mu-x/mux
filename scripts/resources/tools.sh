@@ -63,10 +63,11 @@ function mux_first_gui_tool() {
 
 # Adds SSH keys if publics are avaliable
 function mux_use_ssh_keys() {
+    eval $(ssh-agent -s)
     for key in "$@"; do
         if [ -f "$key".pub ]; then
-            eval $(ssh-agent -s)
-            ssh-add "$key"
+            ssh-add "$key" || true
+            echo SSH Key $key
         fi
     done
 }
