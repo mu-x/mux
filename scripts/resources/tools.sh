@@ -26,8 +26,13 @@ function mux_silent_run() {
         return 1
     fi
 
-    echo "$@"
-    "$@" >/dev/null 2>&1 &
+    if [ ! -z $USE_SUDO ]; then
+        echo sudo "$@"
+        sudo bash -c "$@ > /dev/null 2>&1 &"
+    else
+        echo "$@"
+        "$@" >/dev/null 2>&1 &
+    fi
 }
 
 function _mux_silent_run() {

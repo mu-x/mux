@@ -10,11 +10,12 @@ alias la="ls -a"
 alias ll="ls -l"
 mux_is_osx && alias ls="ls -G"
 
+alias e='mux_first_gui_tool "gedit kate notepad++ mux-open"'
+alias f=mux_find
 alias g=mux-grep
 alias p=mux-python
 alias s=mux_silent_run && complete -F _mux_silent_run s
-alias f=mux_find
-alias e='mux_first_gui_tool "gedit kate notepad++ mux-open"'
+alias ss='USE_SUDO=1 mux_silent_run' && complete -F _mux_silent_run ss
 
 if [ $(basename $SHELL) == bash ]; then
     PS1='\n\[\033[01;32m\]\u \[\033[01;34m\]@\h \[\033[01;32m\]\D{%H:%M:%S} \[\033[01;34m\]\w\[\033[00m\]\n\$ '
