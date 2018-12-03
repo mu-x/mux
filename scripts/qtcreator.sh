@@ -43,7 +43,7 @@ list_files() {
 }
 
 main() {
-    DIR=$(readlink ${1:-.})
+    DIR=$(readlink -f ${1:-.})
     NAME=$(basename $DIR)
     CUR_DIR="$PWD"
     cd $DIR
