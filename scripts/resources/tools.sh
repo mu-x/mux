@@ -66,6 +66,7 @@ function mux_use_ssh_keys() {
     eval $(ssh-agent -s)
     for key in "$@"; do
         if [ -f "$key".pub ]; then
+            chmod 600 "$key"
             ssh-add "$key" || true
             echo SSH Key $key
         fi

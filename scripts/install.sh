@@ -87,7 +87,7 @@ else
         mkdir -p ~/.ssh
         SSH_KEY=~/.ssh/mux.pub
         ssh-keygen -t rsa -f ~/.ssh/mux || true
-        [ "$SUDO_USER" ] && chown $SUDO_USER:$SUDO_USER ~/.ssh/mux*
+        [ "$SUDO_USER" ] && chown $SUDO_USER:$SUDO_USER -R ~/.ssh
     fi
     echo "export MUX_SSH_KEY=$SSH_KEY" >> $BASHRC
     echo Select SSH Key $SSH_KEY ... done
