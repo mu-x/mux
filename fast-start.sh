@@ -28,7 +28,7 @@ if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
     sudo apt-get update
 
     title Install basic packages
-    sudo apt-get install tmux build-essential vim-gtk p7zip sshfs gnome-tweaks
+    sudo apt-get install tmux build-essential vim-gtk p7zip sshfs sshpass
     grep 18.04 /etc/os-release && sudo apt-get install \
         gnome-tweaks gnome-shell-extension-dash-to-panel
 
