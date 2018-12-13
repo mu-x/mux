@@ -17,6 +17,10 @@ alias p=mux-python
 alias s=mux_silent_run && complete -F _mux_silent_run s
 alias ss='USE_SUDO=1 mux_silent_run' && complete -F _mux_silent_run ss
 
+alias thg="mux_silent_run thg"
+alias meld="mux_silent_run meld"
+alias wireshark="USE_SUDO=1 mux_silent_run wireshark"
+
 if [ $(basename $SHELL) == bash ]; then
     PS1='\n\[\033[01;32m\]\u \[\033[01;34m\]@\h \[\033[01;32m\]\D{%H:%M:%S} \[\033[01;34m\]\w\[\033[00m\]\n\$ '
     mux_bash_history 1000000000
