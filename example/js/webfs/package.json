@@ -1,0 +1,16 @@
+{
+    "name": "webfs",
+    "version": "1.0.0",
+    "description": "Web Interface for File System",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo Success"
+    },
+    "dependencies": {
+        "express": "*",
+        "morgan": "*",
+        "ejs": "*"
+    },
+    "author": "mux",
+    "license": "ISC"
+}

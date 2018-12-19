@@ -1,0 +1,21 @@
+<html>
+
+<head>
+    <title>WebFS: <%= path %></title>
+</head>
+
+<body>
+    <h1><%= path %></h1>
+    <ul>
+        <% if (back) { %>
+            <li><a href="/">/</a></li>
+            <li><a href="<%= back %>">..</a></li>
+            <br>
+        <% } %>
+        <% files.forEach(function(name) { %>
+            <li><a href="<%= path + '/' + name %>"><%= name %></a></li>
+        <% }) %>
+    </ul>
+</body>
+
+</html>
