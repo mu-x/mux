@@ -1,7 +1,13 @@
 [user]
-	name = mu-x
-	email = uskov.mikhail@gmail.com
+    name = mu-x
+    email = uskov.mikhail@gmail.com
 [push]
-	default = simple
+    default = simple
 [alias]
-	st = status
+    st = status
+[diff]
+    tool = meld
+[difftool]
+    prompt = false
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"

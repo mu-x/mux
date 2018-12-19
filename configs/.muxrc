@@ -17,8 +17,9 @@ alias p=mux-python
 alias s=mux_silent_run && complete -F _mux_silent_run s
 alias ss='USE_SUDO=1 mux_silent_run' && complete -F _mux_silent_run ss
 
-alias thg="mux_silent_run thg"
+alias idea="mux_silent_run intellij-idea-community"
 alias meld="mux_silent_run meld"
+alias thg="mux_silent_run thg"
 alias wireshark="USE_SUDO=1 mux_silent_run wireshark"
 
 if [ $(basename $SHELL) == bash ]; then
