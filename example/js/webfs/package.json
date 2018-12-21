@@ -9,7 +9,9 @@
     "dependencies": {
         "express": "*",
         "morgan": "*",
-        "ejs": "*"
+        "ejs": "*",
+        "prettysize": "*",
+        "mime-types": "*"
     },
     "author": "mux",
     "license": "ISC"

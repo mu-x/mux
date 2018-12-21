@@ -1,0 +1,30 @@
+<html>
+
+<head>
+    <title>WebFS: <%= path %></title>
+</head>
+
+<body>
+    <h1><%= path.replace('/', ' / ') %></h1>
+    <ul>
+        <% if (backLink) { %>
+            <li><a href="/">/</a></li>
+            <li><a href="<%= backLink %>">..</a></li>
+            <br>
+        <% } %>
+        <% items.forEach(item => { %>
+            <li>
+            <a href="<%= item.link %>">
+                <% if (item.type == 'directory') { %>
+                    <%= item.name %> /
+                <% } else { %>
+                    <%= item.name %> (<%= item.size %>)
+
+                <% } %>
+            </a>
+            </li>
+        <% }) %>
+    </ul>
+</body>
+
+</html>
