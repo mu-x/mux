@@ -77,6 +77,67 @@ struct Args
     }
 };
 
+template <typename T>
+class Traceble
+{
+public:
+    Traceble()
+    {
+        mux::print("Traceble()");
+    }
+    template<typename ... Args>
+    Traceble(Args ... args)
+        : data_(std::forward<Args>(args) ...)
+    {
+        mux::print("Traceble(", data_, ")");
+    }
+    ~Traceble()
+    {
+        mux::print("~Traceble(", data_, ")");
+    }
+
+    void set(T data)
+    {
+        data_ = std::move(data);
+        mux::print("Traceble::set(", data_, ")");
+    }
+    const T& get() const
+    {
+        return data_;
+    }
+    void print() const
+    {
+        mux::print("Traceble::print(", data_, ")");
+    }
+
+    Traceble(const Traceble& rhs)
+        : data_(rhs.data_)
+    {
+        mux::print("Traceble(", data_, ")");
+    }
+    Traceble(Traceble&& rhs)
+        : data_(std::move(rhs.data_))
+    {
+        mux::print("Traceble&&(", data_, ")");
+    }
+
+    Traceble& operator=(const Traceble& rhs)
+    {
+        data_ = rhs.data_;
+        mux::print("Traceble::=(", data_, ")");
+        return *this;
+    }
+    Traceble& operator=(Traceble&& rhs)
+    {
+        data_ = std::move(rhs.data);
+        mux::print("Traceble::=&&(", data_, ")");
+        return *this;
+    }
+
+private:
+    T data_;
+};
+
 } // namespace mux
 
 #define MUX_TRACE(EXPRESSION) mux::print(#EXPRESSION, "=", EXPRESSION)
