@@ -1,0 +1,14 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
+}
+
+.grid-item {
+    text-align: center;
+    padding: 10px;
+}
+
+.preview {
+    width: 64px;
+    height: 64px;
+}

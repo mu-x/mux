@@ -2,33 +2,32 @@
 
 <head>
     <title>WebFS: /<%= path %></title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
-    <h1><img src="favicon.ico"/> / <%= path.replace('/', ' / ') %></h1>
-    <ul>
-        <% if (backLink) { %>
-            <li><a href="/">(root) /</a></li>
-            <li><a href="<%= backLink %>">(back) ..</a></li>
-            <br>
-        <% } %>
+    <header>
+        <h1><img src="/favicon.ico" alt="Folder"/> / <%= path.replace('/', ' / ') %></h1>
+    </header>
+
+    <section>
+    <div class="grid-container">
         <% items.forEach(item => { %>
-            <li>
-            <a href="<%= item.link %>">
-                <% if (item.type == 'directory') { %>
-                    <%= item.name %> /
-                <% } else { %>
-                    <%= item.name %> (<%= item.size %>)
-                <% } %>
-            </a>
-            </li>
+            <div class="grid-item">
+            <a href="/<%= item.link %>">
+                <img class="preview" src="/<%= item.preview %>"/>
+                <br>
+                <%= item.text %></a>
+            </div>
         <% }) %>
-    </ul>
-    <div>
+    </div>
+    </section>
+
+    <footer>
         Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>
         from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
-        is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
-    </div>
+        is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>    
+    </footer>
 </body>
 
 </html>

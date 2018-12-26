@@ -9,17 +9,18 @@ const router = express.Router()
 
 router.get('/*', function(req, res) {
     const directory = req.params['0']
-    return res.render('browser', {
-        path: directory,
-        backLink: path.dirname(directory),
-        items: fileSystem.list(directory).map(item => {
-            const itemPath = path.join(directory, item.name)
-            return Object.assign(item, {
-                link: (item.type == 'directory' ? '/' : '/api/content/') + itemPath,
-                preview: '/api/prewiew' + itemPath,
-            })
-        })
-    });
+    var items = fileSystem.list(directory).map(item => {
+        const itemPath = path.join(directory, item.name)
+        return (item.type == 'directory')
+            ? {link: itemPath, preview: 'favicon.ico', text: item.name}
+            : {link: 'api/content/' + itemPath, preview: 'api/preview' + itemPath, text: item.name}
+    })
+
+    const parent = path.dirname(directory)
+    if (parent)
+        items.unshift({link: parent, preview: 'favicon.ico', text: '..'})
+
+    return res.render('browser', {path: directory, items: items});
 });
 
 module.exports = router
