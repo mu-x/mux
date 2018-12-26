@@ -13,17 +13,23 @@ class FileSystem {
         return fs.readdirSync(osPath)
             .filter(item => !item.startsWith('.'))
             .map(item => {
-                const stats = fs.statSync(path.join(osPath, item))
-                return {
-                    name: item,
-                    type: stats.isDirectory() ? 'directory' : 'file',
-                    size: prettySize(stats.size),
+                try {
+                    const stats = fs.statSync(path.join(osPath, item))
+                    return {
+                        name: item,
+                        type: stats.isDirectory() ? 'directory' : 'file',
+                        size: prettySize(stats.size),
+                    }
+                } catch (error) {
+                    console.log(`${error}`)
+                    return null
                 }
             })
+            .filter(item => item != null)
     }
     read(subPath) {
         return fs.readFileSync(path.join(this.osPath, subPath))
     }
 }
 
-module.exports = new FileSystem(process.env.HOME)
+module.exports = new FileSystem(process.env.ROOT || process.env.HOME)

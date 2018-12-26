@@ -13,6 +13,7 @@ app.use(logger('dev'))
 app.use('/api', api)
 
 // HTML based pages
+app.use(express.static('public'))
 app.use('/', browser)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'server'))
