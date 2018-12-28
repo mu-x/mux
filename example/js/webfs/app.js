@@ -10,14 +10,13 @@ const browser = require('./server/browser')
 const app = express()
 app.use(logger('dev'))
 
-app.use('/api', api)
-
-// HTML based pages
 app.use(express.static('public'))
-app.use('/', browser)
+app.use('/api', api)
+app.use('/browser', browser)
+app.get('/', (req, res) => res.redirect('/browser'))
+
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'server'))
 
-// TODO: Move to config?
 const port = process.env.PORT || 8080
 app.listen(port, () => console.log('Running on ' + port))

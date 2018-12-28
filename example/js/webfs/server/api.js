@@ -1,7 +1,6 @@
 "use strict";
 
 const express = require('express')
-const mime = require('mime-types')
 
 const fileSystem = require('./file_system')
 
@@ -17,13 +16,24 @@ router.route('/directory/*')
 
 router.route('/content/*')
     .get((req, res) => {
-        const file = req.params['0']
-        const type = mime.lookup(file)
-        if (type) res.header("Content-Type", type);
-        res.send(fileSystem.read(file))
+        const file = fileSystem.read(req.params[0])
+        res.header("Content-Type", file.type)
+        res.send(file.data)
     })
     .post((req, res) => {
         res.send('TODO')
     });
+
+router.route('/preview/*')
+    .get((req, res) => {
+        const file = fileSystem.read(req.params[0])
+        if (file == null) {
+            res.statusCode = 404
+            res.send('Not Found')
+        } else {
+            res.header("Content-Type", file.type)
+            res.send(file.data)
+        }
+    })
 
 module.exports = router

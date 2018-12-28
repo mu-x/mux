@@ -1,21 +1,21 @@
 <html>
 
 <head>
-    <title>WebFS: /<%= path %></title>
+    <title>WebFS: <%= path %></title>
     <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
     <header>
-        <h1><img src="/favicon.ico" alt="Folder"/> / <%= path.replace('/', ' / ') %></h1>
+        <h1><img src="/favicon.ico" alt="Folder"/><%= path.replace('/', ' / ') %></h1>
     </header>
 
     <section>
     <div class="grid-container">
         <% items.forEach(item => { %>
             <div class="grid-item">
-            <a href="/<%= item.link %>">
-                <img class="preview" src="/<%= item.preview %>"/>
+            <a href="<%= item.link %>">
+                <img class="preview" src="<%= item.preview %>" alt="Preview"/>
                 <br>
                 <%= item.text %></a>
             </div>

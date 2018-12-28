@@ -8,19 +8,23 @@ const fileSystem = require('./file_system')
 const router = express.Router()
 
 router.get('/*', function(req, res) {
-    const directory = req.params['0']
-    var items = fileSystem.list(directory).map(item => {
-        const itemPath = path.join(directory, item.name)
-        return (item.type == 'directory')
-            ? {link: itemPath, preview: 'favicon.ico', text: item.name}
-            : {link: 'api/content/' + itemPath, preview: 'api/preview' + itemPath, text: item.name}
+    const makeItem = (text, link, preview = []) => ({
+        text: text, link: path.join.apply(this, link), 
+        preview: preview.length ? path.join.apply(this, preview) : '/favicon.ico'
     })
 
-    const parent = path.dirname(directory)
-    if (parent)
-        items.unshift({link: parent, preview: 'favicon.ico', text: '..'})
+    const directoryPath = unescape(req.path)
+    const items = fileSystem.list(directoryPath).map(item => {
+        const itemPath = path.join(directoryPath, item.name)
+        return (item.type == 'directory')
+            ? makeItem(item.name, [req.baseUrl, itemPath])
+            : makeItem(item.name, ['/api/content', itemPath], ['/api/preview', itemPath])
+    })
 
-    return res.render('browser', {path: directory, items: items});
+    if (directoryPath != '/')
+        items.unshift(makeItem('..', [path.dirname(req.originalUrl)]))
+
+    return res.render('browser', {path: req.path, items: items});
 });
 
 module.exports = router

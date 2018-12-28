@@ -7,11 +7,12 @@
         "test": "echo Success"
     },
     "dependencies": {
-        "express": "*",
-        "morgan": "*",
         "ejs": "*",
+        "express": "*",
+        "mime-types": "*",
+        "morgan": "*",
         "prettysize": "*",
-        "mime-types": "*"
+        "sharp": "^0.21.1"
     },
     "author": "mux",
     "license": "ISC"
