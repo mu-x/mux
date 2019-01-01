@@ -6,34 +6,30 @@ const fileSystem = require('./file_system')
 
 const router = express.Router()
 
+function sendError(res, error) {
+    console.warn(`Preview error: ${error}`)
+    res.statusCode = 404
+    res.send('Not Found')
+}
+
 router.route('/directory/*')
-    .get((req, res) => {
-        res.json(fileSystem.list(req.params['0']))
-    })
-    .post((req, res) => {
-        res.send('TODO')
-    })
+    .get((req, res) => fileSystem.list(decodeURIComponent(req.params[0]))
+        .then((preview) => res.sendFile(preview))
+        .catch((error) => sendError(res, error))
+    )
 
 router.route('/content/*')
-    .get((req, res) => {
-        const file = fileSystem.read(req.params[0])
-        res.header("Content-Type", file.type)
-        res.send(file.data)
-    })
-    .post((req, res) => {
-        res.send('TODO')
-    });
+    .get((req, res) => fileSystem.path(decodeURIComponent(req.params[0]))
+        .then((preview) => res.sendFile(preview))
+        .catch((error) => sendError(res, error))
+    )
+    .post((req, res) => sendError('Not Tmplemented', res) //< TODO
+    )
 
 router.route('/preview/*')
-    .get((req, res) => {
-        const file = fileSystem.read(req.params[0])
-        if (file == null) {
-            res.statusCode = 404
-            res.send('Not Found')
-        } else {
-            res.header("Content-Type", file.type)
-            res.send(file.data)
-        }
-    })
+    .get((req, res) => fileSystem.preview(decodeURIComponent(req.params[0]))
+        .then((preview) => res.sendFile(preview))
+        .catch((error) => sendError(res, error))
+    )
 
 module.exports = router

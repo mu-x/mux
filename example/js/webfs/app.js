@@ -18,5 +18,10 @@ app.get('/', (req, res) => res.redirect('/browser'))
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'server'))
 
+if (process.env.DEBUG) {
+    console.log('Enable DEBUG mode', process.env.DEBUG)
+    app.disable('etag')
+}
+
 const port = process.env.PORT || 8080
 app.listen(port, () => console.log('Running on ' + port))
