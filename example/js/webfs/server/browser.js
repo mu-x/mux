@@ -8,31 +8,37 @@ const fileSystem = require('./file_system')
 const router = express.Router()
 
 router.get('/*', (req, res) => {
-    const makeItem = (text, link, preview = []) => ({
-        text: text, link: path.join.apply(this, link), 
-        preview: preview.length ? path.join.apply(this, preview) : '/favicon.ico'
-    })
-
     const directoryPath = unescape(req.path.replace(/^\//g, ''))
+    console.log('-----------dp', directoryPath)
     fileSystem.list(directoryPath)
-    .then(list => {
-        const items = list.map(({name, size, type}) => {
-            const itemPath = encodeURIComponent(path.join(directoryPath, name)).replace(/%2F/g, '/')
-            return (type == 'directory')
-                ? makeItem(name, [req.baseUrl, itemPath])
-                : makeItem(`${name} (${size})`, ['/api/content', itemPath], ['/api/preview', itemPath])
+        .then(list => {
+            const items = list.map(({name, size, type}) => {
+                if (type == 'directory') {
+                    var link = name + '/'
+                    var preview = '/images/directory.png'
+                } else {
+                    const itemPath = encodeURIComponent(path.join(directoryPath, name))
+                    var link = path.join('/api/content', itemPath)
+                    var preview = (type == 'image') 
+                        ? path.join('/api/preview', itemPath)
+                        : '/images/file.png'
+                }
+                return {name: name, title: type, link, preview}
+            })
+            if (directoryPath) {
+                items.unshift({
+                    name: '..', title: 'level up',
+                    link: '..',//path.dirname(req.path), 
+                    preview: '/images/directory.png'
+                })
+            }
+            res.render('browser', {path: directoryPath, items})
         })
-
-        if (directoryPath != '/')
-            items.unshift(makeItem('..', [path.dirname(req.originalUrl)]))
-
-        res.render('browser', {path: directoryPath, items: items})
-    })
-    .catch(error => {
-        console.warn(`Unable to show directory: ${error}`)
-        res.statusCode = 404
-        res.render('browser', {path: directoryPath, message: 'Directory does not exist'})
-    })
+        .catch(error => {
+            console.warn(`Unable to show directory: ${error}`)
+            res.statusCode = 404
+            res.render('browser', {path: directoryPath, message: 'Directory does not exist'})
+        })
 });
 
 module.exports = router

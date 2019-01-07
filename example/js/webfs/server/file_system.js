@@ -3,7 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const prettySize = require('prettysize')
-const mime = require('mime-types')
+const mimeTypes = require('mime-types')
 const sharp = require('sharp')
 
 class FileSystem {
@@ -20,12 +20,15 @@ class FileSystem {
             console.warn(`Warning: ${error}`)
         }
     }
+    type(subPath) {
+        return mimeTypes.lookup(subPath).split('/')[0]
+    }
     stats(subPath) {
         const osPath = path.join(this.osPath, subPath)
         var item = {name: path.basename(subPath)}
         try {
             const stats = fs.statSync(fs.realpathSync(osPath))
-            item.type = stats.isDirectory() ? 'directory' : 'file'
+            item.type = stats.isDirectory() ? 'directory' : this.type(subPath)
             item.size = prettySize(stats.size)
         } catch (error) {
             console.error(`Unable to stat '${osPath}': ${error}`)
@@ -38,6 +41,13 @@ class FileSystem {
             .filter(item => !item.startsWith('.'))
             .map(item => this.stats(path.join(subPath, item)))
             .filter(item => item.type != 'error')
+            .sort((left, right) => {
+                if (left.type == 'directory' && right.type != 'directory')
+                    return -1
+                if (left.type != 'directory' && right.type == 'directory')
+                    return 1
+                return left.name.localeCompare(right.name)
+            })
     }
     async path(subPath) {
         return path.join(this.osPath, subPath)
@@ -54,14 +64,13 @@ class FileSystem {
         return previewPath
     }
     async makePreview(subPath) {
-        const type = mime.lookup(subPath) || 'unknown'
-        if (type.startsWith('image')) {
+        if (this.type(subPath) == 'image') {
             const {size, format, bg} = this.previewOptions
             return sharp(await this.path(subPath))
                 .resize(size, size, {background: bg, fit: 'contain'})
                 .toFormat(format).toBuffer()
         }
-        throw new Error('Unsupported preview format ${type} of ${subPath}')
+        throw new Error(`Unsupported preview format ${type} of ${subPath}`)
     }
 }
 

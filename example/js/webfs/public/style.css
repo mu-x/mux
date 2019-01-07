@@ -21,11 +21,21 @@ header, footer {
     color: black;
     background-color: orange;
     padding: 5px;
+    text-align: center;
+}
+
+img {
+    vertical-align: middle;
+}
+
+span {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 .grid-item {

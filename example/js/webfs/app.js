@@ -11,9 +11,9 @@ const app = express()
 app.use(logger('dev'))
 
 app.use(express.static('public'))
-app.use('/api', api)
-app.use('/browser', browser)
-app.get('/', (req, res) => res.redirect('/browser'))
+app.use('/api/', api)
+app.use('/browser/', browser)
+app.get('/', (req, res) => res.redirect('/browser/'))
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'server'))
