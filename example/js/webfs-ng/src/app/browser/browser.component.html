@@ -1,0 +1,12 @@
+<h2>
+  <a (click)="onPathClick(0)">root/</a>
+  <a *ngFor="let item of _path; let i = index" (click)="onPathClick(i + 1)">
+    &nbsp; {{item}}/
+  </a>
+</h2>
+
+<div class="grid">
+  <app-item *ngFor="let item of _items" 
+    [data]="item" [parent]="_path" (click)="onItemClick(item.path, item.type)">
+  </app-item>
+</div>
