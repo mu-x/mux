@@ -1,0 +1,33 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: lightgrey;
+  background-color: black;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+a:hover {
+  color: lightgrey;
+}
+
+.ribbon {
+  background-color: rgb(101, 0, 128);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min-content, 150px));
+}
+
+.grid-item {
+  padding: 10px;
+  text-align: center;
+}
