@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="ribbon"><h1>Web FS</h1></div>
-    <FileBrowser path="" />
+    <Browser path="" />
     <div class="ribbon">
       See <a href="https://github.com/mu-x/mux">https://github.com/mu-x/mux</a>
     </div>
@@ -9,12 +9,12 @@
 </template>
 
 <script>
-import FileBrowser from './components/FileBrowser.vue'
+import Browser from './components/Browser.vue'
 
 export default {
   name: 'app',
   components: {
-    FileBrowser
+    Browser
   }
 }
 </script>
