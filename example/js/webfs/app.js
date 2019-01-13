@@ -23,5 +23,5 @@ if (process.env.DEBUG) {
     app.disable('etag')
 }
 
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 8081
 app.listen(port, () => console.log('Running on ' + port))
