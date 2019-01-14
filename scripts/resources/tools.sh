@@ -100,7 +100,7 @@ function mux_is_osx() {
 
 # Figures out if it is a bash on windows.
 function mux_is_windows() {
-    uname -s | grep -q "CYGWIN\|MINGW"
+    uname -s | grep -q "CYGWIN\|MINGW\|MSYS"
 }
 
 # Prints windows [path] as UNIX (assuming drives are mounted to /).

@@ -1,14 +1,16 @@
-# Just a note pad
+# Just a Note Pad
 
-## Maven for C++ dummies
+## First things to do on Windows 10
 
-```
-    mvn compile     # Generate make files
-    mvn package     # Build binaries
+Useful Soft:
+- Git Bash: https://git-scm.com
+- Total Commander: https://www.ghisler.com/download.htm
+- Virtual Box: https://www.virtualbox.org/wiki/Downloads
+- Visual Studio (+Code): https://visualstudio.microsoft.com
 
-    -Dbuild.configuration=debug     # debug mode
-    --projects P1[,P2[,...]]        # affect only projects
-```
+Explorer (Win+E - View - Options):
+- View - Hide extensions for known file types
+
 
 ## Mercurial (hg) for git user
 

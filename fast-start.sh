@@ -49,13 +49,10 @@ if mux_is_windows; then
 
         title Install basic packages
         choco install -y cmder 7zip notepadplusplus meld
-
-        title Suggested external packages
-        echo "Total Commander: https://www.ghisler.com/download.htm"
-
-        title Install development packages
-        choco install -y virtualbox
     fi
+
+	title What to do next?
+	echo "See $PWD/NOTES.md"
 fi
 
 if mux_is_osx; then

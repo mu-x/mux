@@ -20,6 +20,12 @@ function find_configs {
     fi
 }
 
+function copy {
+	echo "$(dirname "$2")"
+	mkdir -p "$(dirname "$2")"
+	cp "$1" "$2"
+}
+
 function silent_diff {
     if [ "$3" == copy_none ] && [ ! -e "$2" ]; then
         cp "$1" "$2"
@@ -38,7 +44,8 @@ function each_rc {
     RETURN_CODE=0
 
     mkdir -p $HOME || true
-    for FILE in $(find_configs); do
+    find_configs | while IFS= read -r FILE; do
+		echo "+++++++++ FOUND $FILE" 
         LOCAL="$HOME/$FILE"
         REMOTE="$PWD/$FILE"
 
@@ -54,10 +61,10 @@ function each_rc {
 for ARG in ${@:-status}; do
     case $ARG in
         save|push)
-			each_rc 'cp "$LOCAL" "$REMOTE"' 'copy $LOCAL to $REMOTE'
+			each_rc 'copy "$LOCAL" "$REMOTE"' 'copy $LOCAL to $REMOTE'
 			;;
         load|pull)
-			each_rc 'cp "$REMOTE" "$LOCAL"' 'copy $REMOTE to $LOCAL'
+			each_rc 'copy "$REMOTE" "$LOCAL"' 'copy $REMOTE to $LOCAL'
 			;;
         meld|merge)
 			each_rc 'silent_diff "$LOCAL" "$REMOTE" || merge "$LOCAL" "$REMOTE"' \
