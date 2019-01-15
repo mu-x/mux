@@ -19,6 +19,7 @@ alias ss='USE_SUDO=1 mux_silent_run' && complete -F _mux_silent_run ss
 
 alias idea="mux_silent_run intellij-idea-community"
 alias meld="mux_silent_run meld"
+alias pycharm="mux_silent_run pycharm"
 alias thg="mux_silent_run thg"
 alias wireshark="USE_SUDO=1 mux_silent_run wireshark"
 

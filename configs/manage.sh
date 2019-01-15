@@ -13,45 +13,49 @@ cd $(dirname "${BASH_SOURCE[0]}")
 source "../scripts/resources/tools.sh"
 
 function find_configs {
-    if mux_is_windows; then
-        find . -type f -not -name '*.sh'
-    else
-        find . -type f -name '.*' -and -not -name '*.sh'
-    fi
+    find . -type f -not -name '*.sh'
+}
+
+function check_files {
+    for FILE in "$@"; do
+        if [ ! -f "$FILE" ]; then
+            echo "'$FILE' does not exist"
+            return 1
+        fi
+    done
 }
 
 function copy {
-	echo "$(dirname "$2")"
-	mkdir -p "$(dirname "$2")"
-	cp "$1" "$2"
+    mkdir -p "$(dirname "$2")"
+    cp "$1" "$2"
 }
 
 function silent_diff {
-    if [ "$3" == copy_none ] && [ ! -e "$2" ]; then
+    if [ "$3" == copy_none ] && [ ! -f "$2" ]; then
         cp "$1" "$2"
     else
+        check_files "$1" "$2" || true
         diff "$1" "$2" >/dev/null 2>&1
     fi
 }
 
 function merge {
+    check_files "$@" || true
     meld "$@" >/dev/null 2>&1
 }
 
 function each_rc {
     ACTION="$1"
-    NAME=${2:-$ACTION}
+    NAME="${2:-$ACTION}"
     RETURN_CODE=0
 
-    mkdir -p $HOME || true
     find_configs | while IFS= read -r FILE; do
-		echo "+++++++++ FOUND $FILE" 
         LOCAL="$HOME/$FILE"
         REMOTE="$PWD/$FILE"
 
-        echo ">   $NAME    for    $FILE"
-        if ! eval $ACTION; then
-            echo 'Different'
+        echo "> $NAME for '$FILE'"
+        if ! eval "$ACTION"; then
+            echo 'different'
             RETURN_CODE=1
         fi
     done
