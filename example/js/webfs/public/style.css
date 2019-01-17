@@ -1,44 +1,30 @@
-body {
-    background-color: black;
-    padding: 0px;
-}
-
-a {
-    color: white;
-    text-decoration: none;
-}
-
-a:hover {
-    color: gray;
-}
-
-section {
-    color: white;
+header, footer, section {
     padding: 10px;
 }
 
-header, footer {
-    color: black;
-    background-color: orange;
-    padding: 5px;
+header {
+    font-weight: bold;
+}
+
+footer {
     text-align: center;
 }
 
-img {
+img, span {
     vertical-align: middle;
-}
-
-span {
     display: inline-block;
-    vertical-align: middle;
 }
 
-.grid-container {
+.message {
+    width: 100%;
+}
+
+.browser {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
-.grid-item {
+.item {
     text-align: center;
     padding: 10px;
 }

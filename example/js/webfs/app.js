@@ -1,22 +1,20 @@
-"use strict";
+"use strict"
 
 const express = require('express')
 const path = require('path')
 const logger = require('morgan')
 
 const api = require('./server/api')
-const browser = require('./server/browser')
 
 const app = express()
 app.use(logger('dev'))
+app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, 'server'))
 
 app.use(express.static('public'))
 app.use('/api/', api)
-app.use('/browser/', browser)
-app.get('/', (req, res) => res.redirect('/browser/'))
-
-app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, 'server'))
+app.get('/', (req, res) => res.redirect('/browser'))
+app.get('/browser', (req, res) => res.render('browser', {pathBase: '/browser'}))
 
 if (process.env.DEBUG) {
     console.log('Enable DEBUG mode', process.env.DEBUG)
