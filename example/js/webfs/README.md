@@ -1,24 +1,37 @@
 # Web Interface for File System
 
-## Requirements
+## Install Requirements
 
-Node.js 8: https://nodejs.org
-```
-    # Ubuntu
+Node.js https://nodejs.org
+
+```bash
+    # For Ubuntu:
     curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
     sudo apt-get install -y nodejs
 ```
 
-Node.js express and some other packages
-```
-    # Any platform
+Node.js modules
+
+```bash
+    # Any platform:
     npm install
+```
+
+## Run Tests
+
+Just to be sure your version is good to go.
+
+```bash
+    npm test
 ```
 
 ## Start Server
 
+In this example environment variables are set to default.
+
+```bash
+    export PORT=8081
+    export ROOT=$HOME
+    node start
 ```
-    export PORT=8081    #< Default port.
-    export ROOT=$HOME   #< Root directory to browse.
-    node app            #< Run Server.
-```
+

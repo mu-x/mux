@@ -30,7 +30,7 @@ describe('list directory', () => {
       {name: 'empty', type: 'directory', size: '4 kB'},
       {name: 'images', type: 'directory', size: '4 kB'},
       {name: 'previews', type: 'directory', size: '4 kB'},
-      {name: 'Vary? strange& directory=', type: 'directory', size: '4 kB'},
+      {name: 'Vary+ strange& directory=', type: 'directory', size: '4 kB'},
       {name: 'text.txt', type: 'text', size: '5 Bytes'},
     ]],
     ['empty', []],
@@ -47,9 +47,9 @@ describe('list directory', () => {
     ['Directory with spaces', [
       {name: 'hello world.txt', type: 'text', size: '12 Bytes'},
     ]],
-    ['Vary? strange& directory=', [
+    ['Vary+ strange& directory=', [
       {name: 'another file', type: 'unknown', size: '12 Bytes'},
-      {name: 'Is file?', type: 'unknown', size: '15 Bytes'},
+      {name: 'Is file&', type: 'unknown', size: '15 Bytes'},
       {name: 'part&of=url', type: 'unknown', size: '24 Bytes'},
     ]]
   ]
@@ -83,8 +83,8 @@ describe('list directory error', () => {
 describe('content', () => {
   ;[
     'text.txt',
-    'Vary? strange& directory=/Is file?',
-    'Vary? strange& directory=/part&of=url',
+    'Vary+ strange& directory=/Is file&',
+    'Vary+ strange& directory=/part&of=url',
     'Directory with spaces/hello world.txt',
     'images/kitten.jpg',
     'images/petr.jpeg',
@@ -102,7 +102,7 @@ describe('content', () => {
 describe('content error', () => {
   ;[
     'text2.txt',
-    'Vary? strange& directory=/Is file??',
+    'Vary+ strange& directory=/Is file&?',
     'images/shrack.jpeg',
     'no_such_directry/puppy.jpeg',
   ]
