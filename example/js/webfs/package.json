@@ -1,19 +1,25 @@
 {
-    "name": "webfs",
-    "version": "1.0.0",
-    "description": "Web Interface for File System",
-    "main": "app.js",
-    "scripts": {
-        "test": "echo Success"
-    },
-    "dependencies": {
-        "ejs": "*",
-        "express": "*",
-        "mime-types": "*",
-        "morgan": "*",
-        "prettysize": "*",
-        "sharp": "^0.21.1"
-    },
-    "author": "mux",
-    "license": "ISC"
+  "name": "webfs",
+  "version": "1.0.0",
+  "description": "Web Interface for File System",
+  "author": "mux",
+  "license": "ISC",
+  "scripts": {
+    "start": "node app.js",
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
+  "dependencies": {
+    "argparse": "^1.0.10",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "fs-extra": "^7.0.1",
+    "mime-types": "^2.1.21",
+    "morgan": "^1.9.1",
+    "prettysize": "^2.0.0",
+    "sharp": "^0.21.1"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0",
+    "supertest": "^3.4.1"
+  }
 }

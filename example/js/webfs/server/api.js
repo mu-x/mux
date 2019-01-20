@@ -2,34 +2,41 @@
 
 const express = require('express')
 
-const fileSystem = require('./file_system')
+const FileSystem = require('./file_system')
 
-const router = express.Router()
+function api(options) {
+    const router = express.Router()
+    const fileSystem = new FileSystem(options)
 
-function sendError(res, error) {
-    console.warn(`Error: ${error}`)
-    res.statusCode = 404
-    res.send('Not Found')
+    const forwardGet = getter => {
+        const getterBind = getter.bind(fileSystem)
+        return (request, response) =>
+            getterBind(decodeURIComponent(request.params[0]))
+                .then((content) => 
+                    response.send(content)
+                )
+                .catch((error) => {
+                    console.warn(error.toString())
+                    // TODO: Use other return codes for other situations.
+                    response.statusCode = 404
+                    response.send('Not Found')
+                })
+    }
+
+    router.route('/directory/*')
+        .get(forwardGet(fileSystem.list))
+
+    router.route('/content/*')
+        .get(forwardGet(fileSystem.content))
+        .post((request, response) => {
+            response.statusCode = 404
+            response.send('Not Implemented')
+        })
+
+    router.route('/preview/*')
+        .get(forwardGet(fileSystem.preview))
+
+    return router
 }
 
-router.route('/directory/*')
-    .get((req, res) => fileSystem.list(decodeURIComponent(req.params[0]))
-        .then((items) => res.send(items))
-        .catch((error) => sendError(res, error))
-    )
-
-router.route('/content/*')
-    .get((req, res) => fileSystem.path(decodeURIComponent(req.params[0]))
-        .then((content) => res.sendFile(content))
-        .catch((error) => sendError(res, error))
-    )
-    .post((req, res) => sendError('Not Tmplemented', res) //< TODO
-    )
-
-router.route('/preview/*')
-    .get((req, res) => fileSystem.preview(decodeURIComponent(req.params[0]))
-        .then((preview) => res.sendFile(preview))
-        .catch((error) => sendError(res, error))
-    )
-
-module.exports = router
+module.exports = api
