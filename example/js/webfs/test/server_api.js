@@ -9,14 +9,14 @@ const startServer = require('../server/server.js')
 var direcotry, server
 beforeEach(async () => {
   // TODO: Add support for OSs without /tmp.
-  direcotry = `/tmp/webfs-test-${Math.random().toString().slice(2)}`
+  direcotry = `${process.env.TMP}/webfs-test-${Math.random().toString().slice(2)}`
   await fs.copy(path.join(__dirname, 'data'), direcotry)
   server = startServer({port: 0, root: direcotry})
 })
 
 afterEach(async () => {
   server.close()
-  await fs.remove(direcotry)
+  await fs.removeSync(direcotry)
 })
 
 function preparePath(path) {
@@ -26,11 +26,11 @@ function preparePath(path) {
 describe('list directory', () => {
   ;[
     ['', [
-      {name: 'Directory with spaces', type: 'directory', size: '4 kB'},
-      {name: 'empty', type: 'directory', size: '4 kB'},
-      {name: 'images', type: 'directory', size: '4 kB'},
-      {name: 'previews', type: 'directory', size: '4 kB'},
-      {name: 'Vary+ strange& directory=', type: 'directory', size: '4 kB'},
+      {name: 'Directory with spaces', type: 'directory'},
+      {name: 'empty', type: 'directory'},
+      {name: 'images', type: 'directory'},
+      {name: 'previews', type: 'directory'},
+      {name: 'Vary+ strange& directory=', type: 'directory'},
       {name: 'text.txt', type: 'text', size: '5 Bytes'},
     ]],
     ['empty', []],

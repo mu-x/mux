@@ -32,8 +32,12 @@ class FileSystem {
         var item = {name: path.basename(subPath)}
         try {
             const stats = await fs.stat(await fs.realpath(osPath))
-            item.type = stats.isDirectory() ? 'directory' : this.type(subPath)
-            item.size = prettySize(stats.size)
+            if (stats.isDirectory()) {
+                item.type = 'directory'
+            } else {
+                item.type = this.type(subPath)
+                item.size = prettySize(stats.size)
+            }
         } catch (error) {
             console.warn(`Unable to stat '${osPath}': ${error}`)
             item.type = 'error'
@@ -81,21 +85,21 @@ class FileSystem {
         }
 
         const preview = await this.makePreview(subPath)
-        console.time(`Generating preview for ${subPath}`)
+        console.time(`Generating preview for '${subPath}'`)
         if (!this.previewsInProgress.has(preview)) {
             this.previewsInProgress.add(preview)
-            fs.writeFile(previewPath, preview)
-                .then(() => {
-                    console.log(`Preview for '${subPath}' is saved to '${previewPath}'`)
-                    this.previewsInProgress.remove(preview)
-                })
-                .catch(() => {
-                    console.error(`Preview for '${subPath}' failed to save to '${previewPath}'`)
-                    this.previewsInProgress.remove(preview)
-                })
+            try {
+                // For performance reasons the it does not make any sense to vate for file writing,
+                // unfirtunallely there is no way to waut for this callback on exit yet.
+                await fs.writeFile(previewPath, preview)
+                console.log(`Preview for '${subPath}' is saved to '${previewPath}'`)
+            } catch (error) {
+                console.error(`Preview for '${subPath}' failed to save to '${previewPath}'`)
+            }
+            this.previewsInProgress.delete(preview)
         }
 
-        console.timeEnd(`Generating preview for ${subPath}`)
+        console.timeEnd(`Generating preview for '${subPath}'`)
         return preview
     }
 
