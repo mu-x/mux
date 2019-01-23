@@ -21,6 +21,8 @@ const browser = {
   path: '',
   initialize(pathBase) {
     this.pathBase = pathBase
+    this.navigationItem = $('#navigation')
+    this.browserItem = $('#browser')
     this.navigate(window.location.pathname.substr(this.pathBase.length), false)
   },
   navigate(path, pushState=true) {
@@ -31,8 +33,8 @@ const browser = {
     }
     this.updateNavigation()
     serverApi.listDirectory(this.path)
-      .then(items => this.updateBrowser(items))
-      .catch(error => $('.browser').html(`Unable to load directory ${this.path}`))
+      .then(items => this.browserItem.html(this.renderBrowserItems(items)))
+      .catch(error => this.browserItem.html(`Unable to load directory ${this.path}`))
   },
   updateNavigation() {
     const path = this.path.split('/').filter(i => i)
@@ -40,11 +42,11 @@ const browser = {
     const renderButton = (item, index) => {
       const name = item || 'root'
       const target = path.slice(0, index + 1).join('/')
-      return `<span class="w3-button" onClick="browser.navigate('${target}')">${name } /</span>`
+      return `<span class="w3-button" onClick="browser.navigate('${target}')">${name} /</span>`
     }
-    $('.navigation').html(path.map(renderButton).join(''))
+    this.navigationItem.html(path.map(renderButton).join(''))
   },
-  updateBrowser(items) {
+  renderBrowserItems(items) {
     console.log('Render items', items)
     const renderItem = (item) => {
       const path = this.path + item.name
@@ -52,13 +54,13 @@ const browser = {
         ? `browser.navigate('${path}')`
         : `window.open('${serverApi.url('content', path)}')`
       return `
-        <div class="item w3-button" onClick="${clickAction}">
+        <div id="${item.name}" class="item w3-button" onClick="${clickAction}">
           <div><img class="preview" src="${serverApi.preview(item.type, path)}" /></div>
           <div><b>${item.name}</b></div>
           <div>[${(item.type == 'directory') ? 'open' : `download ${item.size}`}]</div>
         </div>
       `
     }
-    $('.browser').html(items.map(renderItem).join(''))
+    return items.map(renderItem).join('')
   }
 }

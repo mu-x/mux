@@ -1,2 +1,10 @@
 {
+    "window.zoomLevel": -1,
+    "files.autoSave": "onFocusChange",
+    "editor.wordWrapColumn": 100,
+    "workbench.statusBar.feedback.visible": false,
+    "workbench.statusBar.visible": true,
+    "editor.minimap.enabled": false,
+    "editor.tabSize": 2,
+    "workbench.sideBar.location": "left"
 }

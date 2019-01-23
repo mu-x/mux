@@ -15,11 +15,7 @@ img, span {
     display: inline-block;
 }
 
-.message {
-    width: 100%;
-}
-
-.browser {
+#browser {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }

@@ -1,2 +1,6 @@
 [
+  {
+    "key": "ctrl+shift+q",
+    "command": "workbench.view.extension.test"
+  }
 ]

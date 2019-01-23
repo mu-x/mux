@@ -13,7 +13,11 @@ cd $(dirname "${BASH_SOURCE[0]}")
 source "../scripts/resources/tools.sh"
 
 function find_configs {
-    find . -type f -not -name '*.sh'
+    if mux_is_windows; then
+        find . -type f -not -name '*.sh*' | grep -v .config
+    else
+        find -L . -type f -not -name '*.sh*' | grep -v AppData
+    fi
 }
 
 function check_files {
