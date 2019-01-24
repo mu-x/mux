@@ -79,16 +79,18 @@ class FileSystem {
   async content(subPath) {
     const osPath = path.join(this.root, subPath)
     const content = await fs.readFile(osPath)
-    console.log(`File '${osPath}' read returns ${content.length} bytes`)
-    return content
+    const type = mimeTypes.lookup(osPath) || 'application/octet-stream'
+    console.log(`File '${osPath}' (${type}) read returns ${content.length} bytes`)
+    return {type, content}
   }
 
   async preview(subPath) {
     const {format} = this.previewOptions
     const previewPath = path.join(this.cache, encodeURIComponent(subPath)) + `.${format}`
+    const type = mimeTypes.lookup(previewPath).split(';')[0]
     if (await fs.exists(previewPath)) {
-      console.debug(`Preview for '${subPath}' from cache '${previewPath}'`)
-      return fs.readFile(previewPath)
+      console.debug(`Preview for '${subPath}' from cache '${previewPath}' (${type})`)
+      return {type: type, content: await fs.readFile(previewPath)}
     }
 
     return await this.previewsInProgress.start(`Preview for ${subPath}`, async () => {
@@ -103,7 +105,7 @@ class FileSystem {
         console.error(`Preview for '${subPath}' failed to save to '${previewPath}'`)
       }
 
-      return preview
+      return {type: type, content: preview}
     })
   }
 

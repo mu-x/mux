@@ -12,8 +12,8 @@ class Server {
     this.app = express()
     this.app.use(logger('dev'))
 
-    this.app.get('/', (req, res) => res.redirect('/browser'))
-    this.app.get('/browser', (req, res) => res.render('browser', {pathBase: '/browser'}))
+    this.app.get('/', (req, res) => res.redirect('/browser/'))
+    this.app.get('/browser/*', (req, res) => res.render('browser', {pathBase: '/browser'}))
 
     this.app.set('view engine', 'ejs')
     this.app.set('views', __dirname)
@@ -41,34 +41,39 @@ function apiRouter(fileSystem) {
   const router = express.Router()
 
   router.route('/directory/*')
-  .get(forwardGet(fileSystem, 'list'))
+    .get((req, res) => 
+      fileSystem.list(decodeURIComponent(req.params[0]))
+        .then(content => res.send(content))
+        .catch(error => {
+          console.warn(error)
+          res.status(404).send('Not Found')
+        })
+    )
 
   router.route('/content/*')
-    .get(forwardGet(fileSystem, 'content'))
-    .post((request, response) => {
-      response.statusCode = 404
-      response.send('Not Implemented')
-    })
+    .get((req, res) => 
+      fileSystem.content(decodeURIComponent(req.params[0]))
+        .then(({type, content}) => res.header('Content-Type', type).send(content))
+        .catch(error => {
+          console.warn(error)
+          res.status(404).send('Not Found')
+        })
+    )
+    .post((req, res) => 
+      res.status(500).send('Not Implemented') // TODO: Implement!
+    )
 
   router.route('/preview/*')
-    .get(forwardGet(fileSystem, 'preview'))
+    .get((req, res) => 
+      fileSystem.preview(decodeURIComponent(req.params[0]))
+        .then(({type, content}) => {res.header('Content-Type', type).send(content)})
+        .catch(error => {
+          console.warn(error)
+          res.status(404).send('Not Found')
+        })
+    )
 
   return router
-}
-
-function forwardGet(target, method) {
-  var getter = target[method].bind(target)
-  return (request, response) =>
-      getter(decodeURIComponent(request.params[0]))
-          .then((content) => 
-              response.send(content)
-          )
-          .catch((error) => {
-              console.warn(error.toString())
-              // TODO: Use other return codes for other situations.
-              response.statusCode = 404
-              response.send('Not Found')
-          })
 }
 
 module.exports = Server

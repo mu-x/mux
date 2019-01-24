@@ -3,6 +3,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const supertest = require('supertest')
+const assert = require('assert')
 
 const Server = require('../server/server.js')
 
@@ -56,8 +57,8 @@ describe('Server API', () => {
       it(requestPath, async () => {
         await supertest(server.listener)
           .get('/api/directory/' + preparePath(requestPath))
-          .expect(200)
-          .expect(expectedData)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+          .expect(200, expectedData)
       })
     })
   })
@@ -80,19 +81,21 @@ describe('Server API', () => {
 
   describe('content', () => {
     ;[
-      'text.txt',
-      'Vary+ strange& directory=/Is file&',
-      'Vary+ strange& directory=/part&of=url',
-      'Directory with spaces/hello world.txt',
-      'images/kitten.jpg',
-      'images/petr.jpeg',
+      ['text.txt', 'text/plain; charset=utf-8'],
+      ['Vary+ strange& directory=/Is file&', 'application/octet-stream'],
+      ['Vary+ strange& directory=/part&of=url', 'application/octet-stream'],
+      ['Directory with spaces/hello world.txt', 'text/plain; charset=utf-8'],
+      ['images/kitten.jpg', 'image/jpeg'],
+      ['images/petr.jpeg', 'image/jpeg'],
     ]
-    .forEach(requestPath => {
+    .forEach(data => {
+      const [requestPath, contentType] = data
       it(requestPath, async () => {
+        const expectedContent = await fs.readFile(path.join(__dirname, 'data', requestPath))
         await supertest(server.listener)
           .get('/api/content/' + preparePath(requestPath))
-          .expect(200)
-          .expect(await fs.readFile(path.join(__dirname, 'data', requestPath)))
+          .expect('Content-Type', contentType)
+          .expect(200).end((err, res) => assert.equal(res.body, expectedContent))
       })
     })
   })
@@ -108,8 +111,7 @@ describe('Server API', () => {
       it(requestPath, async () => {
         await supertest(server.listener)
           .get('/api/content/' + preparePath(requestPath))
-          .expect(404)
-          .expect('Not Found')
+          .expect(404, 'Not Found')
       })
     })
   })
@@ -125,8 +127,8 @@ describe('Server API', () => {
         const previewName = `${path.basename(requestPath).split('.')[0]}.png`
         await supertest(server.listener)
           .get('/api/preview/' + preparePath(requestPath))
-          .expect(200)
-          .expect(await fs.readFile(path.join(__dirname, 'data/previews', previewName)))
+          .expect('Content-Type', 'image/png')
+          .expect(200, await fs.readFile(path.join(__dirname, 'data', 'previews', previewName)))
       })
     })
   })
@@ -142,8 +144,7 @@ describe('Server API', () => {
       it(requestPath, async () => {
         await supertest(server.listener)
           .get('/api/preview/' + preparePath(requestPath))
-          .expect(404)
-          .expect('Not Found')
+          .expect(404, 'Not Found')
       })
     })
   })
