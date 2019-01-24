@@ -10,13 +10,15 @@
   },
   "dependencies": {
     "argparse": "^1.0.10",
+    "debug": "^4.1.1",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "fs-extra": "^7.0.1",
+    "jquery": "^3.3.1",
     "mime-types": "^2.1.21",
-    "morgan": "^1.9.1",
     "prettysize": "^2.0.0",
-    "sharp": "^0.21.1"
+    "sharp": "^0.21.1",
+    "w3-css": "^4.1.0"
   },
   "devDependencies": {
     "mocha": "^5.2.0",

@@ -1,24 +1,23 @@
 "use strict"
 
+const debug = require('debug')('webfs:file_system')
+
 const fs = require('fs-extra')
+const mimeTypes = require('mime-types')
 const path = require('path')
 const prettySize = require('prettysize')
-const mimeTypes = require('mime-types')
 const sharp = require('sharp')
 
 const {ConcurrentTasks} = require('../server/utils.js')
 
 class FileSystem {
-  constructor(options) {
-    this.root = options.root
-    this.cache = options.cache || path.join(this.root, '.webfs_previews')
+  constructor(root, preview = {}) {
+    this.root = root
+    this.cache = preview.cache || path.join(this.root, '.webfs_previews')
+    this.previewOptions = {size: 128, format: 'png', bg: {r: 0, g: 0, b: 0, alpha: 0}, ...preview}
     this.previewsInProgress = new ConcurrentTasks()
-    this.previewOptions = {
-      size: 128, format: 'png', bg: {r: 0, g: 0, b: 0, alpha: 0},
-      ...(options.preview || {})
-    }
 
-    console.log('Using cache directory:', this.cache)
+    console.info('Using cache directory:', this.cache)
     if (!fs.existsSync(this.cache)) { //< TODO: Switch to async versions.
       fs.mkdirSync(this.cache)
     }
@@ -50,7 +49,7 @@ class FileSystem {
       item.type = 'error'
     }
 
-    console.debug(`Stat for '${osPath}':`, item)
+    debug(`Stat for '${osPath}':`, item)
     return item
   }
 
@@ -70,9 +69,7 @@ class FileSystem {
         return left.name.localeCompare(right.name)
       })
 
-    console.log(
-      `Directory '${osPath}' contains ${items.length} items (${records.length} records)`)
-
+    debug(`Directory '${osPath}' contains ${items.length} items (${records.length} records)`)
     return items
   }
 
@@ -80,7 +77,7 @@ class FileSystem {
     const osPath = path.join(this.root, subPath)
     const content = await fs.readFile(osPath)
     const type = mimeTypes.lookup(osPath) || 'application/octet-stream'
-    console.log(`File '${osPath}' (${type}) read returns ${content.length} bytes`)
+    debug(`File '${osPath}' (${type}) read returns ${content.length} bytes`)
     return {type, content}
   }
 
@@ -89,7 +86,7 @@ class FileSystem {
     const previewPath = path.join(this.cache, encodeURIComponent(subPath)) + `.${format}`
     const type = mimeTypes.lookup(previewPath).split(';')[0]
     if (await fs.exists(previewPath)) {
-      console.debug(`Preview for '${subPath}' from cache '${previewPath}' (${type})`)
+      debug(`Preview for '${subPath}' from cache '${previewPath}' (${type})`)
       return {type: type, content: await fs.readFile(previewPath)}
     }
 
@@ -100,7 +97,7 @@ class FileSystem {
         // unfirtunallely there is no way to waut for this callback on exit yet.
         await fs.writeFile(previewPath, preview)
 
-        console.log(`Preview for '${subPath}' is saved to '${previewPath}'`)
+        debug(`Preview for '${subPath}' is saved to '${previewPath}'`)
       } catch (error) {
         console.error(`Preview for '${subPath}' failed to save to '${previewPath}'`)
       }
@@ -110,13 +107,18 @@ class FileSystem {
   }
 
   async generatePreview(subPath) {
-    if (this.type(subPath) == 'image') {
-      const {size, format, bg} = this.previewOptions
-      return await sharp(path.join(this.root, subPath))
-        .resize(size, size, {background: bg, fit: 'contain'})
-        .toFormat(format).toBuffer()
+    const type = this.type(subPath)
+    switch (type) {
+      case 'image': {
+        const {size, format, bg} = this.previewOptions
+        return await sharp(path.join(this.root, subPath))
+          .resize(size, size, {background: bg, fit: 'contain'})
+          .toFormat(format).toBuffer()
+      }
+      default: {
+        throw new Error(`Unsupported preview format ${type} of '${subPath}'`)
+      }
     }
-    throw new Error(`Unsupported preview format ${type} of ${subPath}`)
   }
 }
 

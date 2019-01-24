@@ -47,7 +47,6 @@ Than open http://localhost:8081 in your browser and see WebFS in action.
 
 ## Developent Plans
 
-- Internet independency: use npm jQuery and w3-css instead of CDNs.
 - Introduce browser based automatic tests for UI.
 - Configurable grid preview sizes (128, 64, 32px).
 - Separate preview side bar for selected items description.

@@ -1,39 +1,45 @@
 "use strict"
 
 const express = require('express')
-const logger = require('morgan')
 
 const FileSystem = require('./file_system')
 
 class Server {
   constructor(config) {
     console.info('Server config:', config)
-    this.fileSystem = new FileSystem(config)
+    const {port, root, production, preview} = config
+    this.fileSystem = new FileSystem(root, preview)
+
     this.app = express()
-    this.app.use(logger('dev'))
+    this.app.use((req, res, next) => {
+      next()
+      console.log(`${req.method} ${req.url} -> ${res.statusCode}`)
+    })
 
     this.app.get('/', (req, res) => res.redirect('/browser/'))
-    this.app.get('/browser/*', (req, res) => res.render('browser', {pathBase: '/browser'}))
-
+    this.app.get('/browser/*', (req, res) => 
+      res.render('browser', {production, pathBase: '/browser'}))
+    
     this.app.set('view engine', 'ejs')
     this.app.set('views', __dirname)
 
     this.app.use('/api', apiRouter(this.fileSystem))
     this.app.use(express.static('public'))
-  
-    if (process.env.NODE_ENV != 'production') {
+    this.app.use(express.static('node_modules/jquery/dist/'))
+    this.app.use(express.static('node_modules/w3-css/'))
+
+    if (!production) { 
       this.app.disable('etag')
     }
     
-    this.listener = this.app.listen(config.port, () =>
+    this.listener = this.app.listen(port, () =>
       console.info(`Server is running on ${this.listener.address().port}`))
   }
 
   async stop() {
-    console.log('Stopping server...')
+    console.info('Stopping server...')
     await this.listener.close()
     await this.fileSystem.stop()
-    console.log('Server is stopped')
   }
 }
 

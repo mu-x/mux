@@ -1,5 +1,7 @@
 "use strict"
 
+const debug = require('debug')('webfs:utils')
+
 class ConcurrentTasks {
   constructor() {
     this.running = new Map()
@@ -10,7 +12,7 @@ class ConcurrentTasks {
       const waiters = this.running.get(name)
       if (waiters) {
         waiters.push({resolve, reject})
-        console.debug(`Task '${name}' is running, handler is added to waiters: ${waiters.length}`)
+        debug(`Task '${name}' is running, handler is added to waiters: ${waiters.length}`)
         return 
       }
 
@@ -21,7 +23,7 @@ class ConcurrentTasks {
         const printResult = () =>
           (['string', 'number'].includes(typeof result) || result instanceof Error) ? result : '?'
 
-        console.debug(`Task '${name}' result '${printResult()}', notify ${waiters.length} waiters`)
+        debug(`Task '${name}' result '${printResult()}', notify ${waiters.length} waiters`)
         if (result instanceof Error) {
           waiters.forEach(w => w.reject(result))
         } else {
@@ -29,22 +31,22 @@ class ConcurrentTasks {
         }
       }
 
-      console.debug(`Task '${name}' is started`)
+      debug(`Task '${name}' is started`)
       task().then(finish).catch(finish)
     })
   }
 
   waitAll() {
     if (!this.running.size) {
-      console.debug('No tasks to wait, exiting')
+      debug('No tasks to wait, exiting')
       return new Promise((resolve) => resolve())
     }
 
-    console.debug(`Wating for ${this.running.size} tasks`)
+    debug(`Wating for ${this.running.size} tasks`)
     return Promise.all(
       Array.from(this.running.values()).map(waiters => 
         new Promise((resolve, reject) => {
-          console.debug(`All ${this.running.size} tasks finished`)
+          debug(`All ${this.running.size} tasks finished`)
           waiters.push({resolve, reject})
         })
     ))
