@@ -1,18 +1,19 @@
 'use strict'
 
-const fs = require('fs-extra')
-const path = require('path')
-const supertest = require('supertest')
 const assert = require('assert')
+const path = require('path')
+
+const fs = require('fs-extra')
+const supertest = require('supertest')
 
 const Server = require('../server/server.js')
+const {temporaryDirectory} = require('../server/utils.js')
 
-describe('Server API', () => {
+describe('Server', () => {
   var direcotry, server
   
   beforeEach(async () => {
-    direcotry = `${process.env.TMP}/webfs-test-${Math.random().toString().slice(2)}`
-    await fs.copy(path.join(__dirname, 'data'), direcotry)
+    direcotry = await temporaryDirectory(path.join(__dirname, 'data'))
     server = new Server({port: 0, root: direcotry})
   })
 
@@ -95,7 +96,10 @@ describe('Server API', () => {
         await supertest(server.listener)
           .get('/api/content/' + preparePath(requestPath))
           .expect('Content-Type', contentType)
-          .expect(200).end((err, res) => assert.equal(res.body, expectedContent))
+          .expect(200)
+          // TODO: Find out how to fix supertest's warning. Unfortuatelly 'expect' is not an option
+          //  because expect tries to parse text/plain as JSON (bug?). 
+          .end((res) => assert.equal(res.body, expectedContent))
       })
     })
   })

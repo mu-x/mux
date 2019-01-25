@@ -17,7 +17,7 @@ class FileSystem {
     this.previewOptions = {size: 128, format: 'png', bg: {r: 0, g: 0, b: 0, alpha: 0}, ...preview}
     this.previewsInProgress = new ConcurrentTasks()
 
-    console.info('Using cache directory:', this.cache)
+    debug('Using cache directory:', this.cache)
     if (!fs.existsSync(this.cache)) { //< TODO: Switch to async versions.
       fs.mkdirSync(this.cache)
     }

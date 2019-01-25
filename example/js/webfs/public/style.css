@@ -1,9 +1,14 @@
-header, footer, section {
-    padding: 10px;
+body {
+    color: white;
+    background-color: black;
 }
 
-header {
-    font-weight: bold;
+header, footer {
+    background-color: purple;
+}
+
+header, footer, section {
+    padding: 10px;
 }
 
 footer {
@@ -15,17 +20,41 @@ img, span {
     display: inline-block;
 }
 
-#browser {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+/* Navigation */
+
+#navigation .button {
+    font-weight: bold;
+    padding: 15px;
 }
 
-.item {
+#navigation .button:hover {
+    background-color: gray;
+    border-radius: 5px;
+}
+
+/* Directory */
+
+#directory {
     text-align: center;
-    padding: 10px;
 }
 
-.preview {
-    width: 128px;
-    height: 128px;
+#directory .item {
+    vertical-align: top;
+    word-wrap: break-word;
+    text-align: center;
+    padding: 5px;
+    width: 200px;
+}
+
+#directory .item:hover {
+    background-color: gray;
+    border-radius: 5px;
+}
+
+#directory .error {
+    text-align: center;
+    background-color: red;
+    padding: 10px;
+    border-radius: 5px;
+
 }

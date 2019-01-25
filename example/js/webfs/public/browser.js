@@ -1,66 +1,81 @@
 "use strict"
 
-const serverApi = {
-  url(action, path) {
-    return `/api/${action}${path}`
-  },
-  listDirectory(path) {
-    return fetch(this.url('directory', path)).then(response => response.json())
-  },
+class NavigationView {
+  constructor(navigate) {
+    this.element = $('#navigation')
+    this.navigate = navigate
+  }
+
+  update(path) {
+    const items = [''].concat(path.split('/').filter(i => i))
+    console.debug('Update navigation view', items)
+    this.element.html(items.map((item, index) =>
+      $(`<span id="path${index}" class="button">${item || 'root'} /</span>`)
+        .click(() => this.navigate(items.slice(0, index + 1).join('/')))
+    ))
+  }
+}
+
+class DirectoryView {
+  constructor(navigate) {
+    this.element = $('#directory')
+    this.navigate = navigate
+  }
+
+  update(directory, items) {
+    console.debug('Update directory view', directory, ':', items)
+    this.element.html(items 
+      ? items.map((item) => this.item(directory, item))
+      : `Directory ${directory} is empty`
+    )
+  }
+
+  error(error) {
+    console.error('Error directory view: \n\n', error)
+    this.element.html(`<span class="error">Unable to load directory</span>`)
+  }
+
+  item(directory, {name, type, size}) {
+    const path = directory + name
+    return $(`
+      <span id="${name}" class="item">
+        <div><img src="${this.preview(type, path)}" /></div>
+        <div><b>${name}</b></div>
+        <div>${size || 'directory'}</div>
+      </span>
+    `).click(() =>
+      (type === 'directory') ? this.navigate(path) : window.open('/api/content/' + path)
+    )
+  }
+
   preview(type, path) {
     switch (type) {
+      case 'image': return '/api/preview/' + path
       case 'directory': return '/images/directory.png'
-      case 'image': return this.url('preview', path)
       default: return '/images/file.png'
     }
   }
 }
 
-const browser = {
-  pathBase: '',
-  path: '',
-  initialize(pathBase) {
+class Browser {
+  constructor(pathBase) {
     this.pathBase = pathBase
-    this.navigationItem = $('#navigation')
-    this.browserItem = $('#browser')
-    this.navigate(window.location.pathname.substr(this.pathBase.length), false)
-  },
+    this.navigationView = new NavigationView(p => this.navigate(p))
+    this.directoryView = new DirectoryView(p => this.navigate(p))
+    this.navigate(window.location.pathname.substr(pathBase.length), /* pushState */ false)
+  }
+
   navigate(path, pushState=true) {
-    this.path = path + (path.endsWith('/') ? '' : '/')
-    console.log(`Navigate '${path}'`)
+    path = path + (path.endsWith('/') ? '' : '/')
+    console.log('Navigate', path)
     if (pushState) {
-      window.history.pushState(null, `WebFS: ${this.path}`, this.pathBase + this.path)
+      window.history.pushState(null, `WebFS: ${path}`, this.pathBase + path)
     }
-    this.updateNavigation()
-    serverApi.listDirectory(this.path)
-      .then(items => this.browserItem.html(this.renderBrowserItems(items)))
-      .catch(error => this.browserItem.html(`Unable to load directory ${this.path}`))
-  },
-  updateNavigation() {
-    const path = this.path.split('/').filter(i => i)
-    path.unshift('')
-    const renderButton = (item, index) => {
-      const name = item || 'root'
-      const target = path.slice(0, index + 1).join('/')
-      return `<span class="w3-button" onClick="browser.navigate('${target}')">${name} /</span>`
-    }
-    this.navigationItem.html(path.map(renderButton).join(''))
-  },
-  renderBrowserItems(items) {
-    console.log('Render items', items)
-    const renderItem = (item) => {
-      const path = this.path + item.name
-      const clickAction = (item.type === 'directory') 
-        ? `browser.navigate('${path}')`
-        : `window.open('${serverApi.url('content', path)}')`
-      return `
-        <div id="${item.name}" class="item w3-button" onClick="${clickAction}">
-          <div><img class="preview" src="${serverApi.preview(item.type, path)}" /></div>
-          <div><b>${item.name}</b></div>
-          <div>[${(item.type == 'directory') ? 'open' : `download ${item.size}`}]</div>
-        </div>
-      `
-    }
-    return items.map(renderItem).join('')
+
+    this.navigationView.update(path)
+    fetch('/api/directory' + path)
+      .then(res => res.json())
+      .then(items => this.directoryView.update(path, items))
+      .catch(error => this.directoryView.error(error))
   }
 }

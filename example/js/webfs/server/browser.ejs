@@ -8,15 +8,15 @@
     <script language="javascript" src="/jquery<% production ? '.min' : '' %>.js"></script>
     <script language="javascript" src="/browser.js"></script>
 </head>
-<body class="w3-black" onload="browser.initialize('<%= pathBase %>')">
+<body onload="new Browser('<%= pathBase %>', '/api')">
     <br/>
-    <header class="w3-purple">
+    <header>
         <img src="/favicon.ico" alt="Folder"/>
         <span id="navigation"></span>
     </header>
-    <section id="browser">
+    <section id="directory">
     </section>
-    <footer class="w3-purple">
+    <footer>
         Github: <a href="https://github.com/mu-x/mux">https://github.com/mu-x/mux</a>
         |
         Icons made by

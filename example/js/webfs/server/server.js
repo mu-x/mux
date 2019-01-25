@@ -1,19 +1,20 @@
 "use strict"
 
 const express = require('express')
+const debug = require('debug')('webfs:server')
 
 const FileSystem = require('./file_system')
 
 class Server {
-  constructor(config) {
-    console.info('Server config:', config)
+  constructor(config, onStart = null) {
+    debug('Config:', config)
     const {port, root, production, preview} = config
     this.fileSystem = new FileSystem(root, preview)
 
     this.app = express()
     this.app.use((req, res, next) => {
       next()
-      console.log(`${req.method} ${req.url} -> ${res.statusCode}`)
+      debug(`${req.method} ${req.url} -> ${res.statusCode}`)
     })
 
     this.app.get('/', (req, res) => res.redirect('/browser/'))
@@ -32,12 +33,15 @@ class Server {
       this.app.disable('etag')
     }
     
-    this.listener = this.app.listen(port, () =>
-      console.info(`Server is running on ${this.listener.address().port}`))
+    this.listener = this.app.listen(port, () => {
+      const port = this.listener.address().port
+      debug(`Listening on ${port}`)
+      if (onStart) onStart(port)
+    })
   }
 
   async stop() {
-    console.info('Stopping server...')
+    debug('Stopping...')
     await this.listener.close()
     await this.fileSystem.stop()
   }
@@ -51,7 +55,7 @@ function apiRouter(fileSystem) {
       fileSystem.list(decodeURIComponent(req.params[0]))
         .then(content => res.send(content))
         .catch(error => {
-          console.warn(error)
+          debug(error)
           res.status(404).send('Not Found')
         })
     )
@@ -61,7 +65,7 @@ function apiRouter(fileSystem) {
       fileSystem.content(decodeURIComponent(req.params[0]))
         .then(({type, content}) => res.header('Content-Type', type).send(content))
         .catch(error => {
-          console.warn(error)
+          debug(error)
           res.status(404).send('Not Found')
         })
     )
@@ -74,7 +78,7 @@ function apiRouter(fileSystem) {
       fileSystem.preview(decodeURIComponent(req.params[0]))
         .then(({type, content}) => {res.header('Content-Type', type).send(content)})
         .catch(error => {
-          console.warn(error)
+          debug(error)
           res.status(404).send('Not Found')
         })
     )
