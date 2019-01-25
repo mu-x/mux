@@ -9,7 +9,6 @@
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "dependencies": {
-    "argparse": "^1.0.10",
     "debug": "^4.1.1",
     "ejs": "^2.6.1",
     "express": "^4.16.4",

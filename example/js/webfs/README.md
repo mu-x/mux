@@ -10,18 +10,18 @@ Core Features:
 
 ## Requirements
 
-Node.js https://nodejs.org
+Node.js 11:
+
+- For any platform: download and install from https://nodejs.org
+- For ubuntu and debian:
+    ```bash
+        curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+        sudo apt-get install -y nodejs
+    ```
+
+Node.js modules:
 
 ```bash
-    # For Ubuntu:
-    curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
-    sudo apt-get install -y nodejs
-```
-
-Node.js modules
-
-```bash
-    # Any platform:
     npm install
 ```
 
@@ -40,14 +40,13 @@ In this example environment variables are set to default.
 ```bash
     export PORT=8081
     export ROOT=$HOME
-    node start
+    npm start
 ```
 
 Than open http://localhost:8081 in your browser and see WebFS in action.
 
 ## Developent Plans
 
-- Introduce browser based automatic tests for UI.
 - Configurable grid preview sizes (128, 64, 32px).
 - Separate preview side bar for selected items description.
 - Full screen preview in modal layer.
