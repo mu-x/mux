@@ -1,0 +1,3 @@
+[submodule "example/python/qt5printers"]
+	path = example/python/qt5printers
+	url = https://github.com/Lekensteyn/qt5printers
