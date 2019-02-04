@@ -12,9 +12,8 @@ function title()
 }
 
 title Check GIT Repository
-if git pull --dry-run | grep objects; then
-    mux_fail "Repository is not up to date, use: git pull"
-fi
+git pull --dry-run | grep objects || mux_fail "Update required, use: git pull"
+git submodule update --init --recursive
 
 title Installing Scripts
 if mux_is_linux || mux_is_osx; then

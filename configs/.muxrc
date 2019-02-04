@@ -3,7 +3,7 @@
 MUX=true
 
 source $MUX_HOME/scripts/resources/tools.sh
-export PYTHONPATH+=";$MUX_HOME/examples/python"
+export PYTHONPATH+=":$MUX_HOME/example/python"
 export LESS=FRX
 
 alias la="ls -a"
