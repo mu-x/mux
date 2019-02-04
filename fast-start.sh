@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 cd "$(dirname "${BASH_SOURCE[0]}")"
 source "scripts/resources/tools.sh"
 
@@ -10,44 +11,43 @@ function title()
     echo
 }
 
-title Update repository
-git pull
+title Check GIT Repository
+if git pull --dry-run | grep objects; then
+    mux_fail "Repository is not up to date, use: git pull"
+fi
 
-title Installing scripts
+title Installing Scripts
 if mux_is_linux || mux_is_osx; then
     sudo scripts/install.sh
 else
     scripts/install.sh
 fi
 
-title Sync configs
+title Sync Configs
 configs/manage.sh sync
 
 if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
-    title Update repository
+    title Update Ubuntu Repository
     sudo apt-get update
 
-    title Install basic packages
+    title Install Ubuntu Packages
     sudo apt-get install tmux build-essential vim-gtk p7zip sshfs sshpass
     grep 18.04 /etc/os-release && sudo apt-get install \
         gnome-tweaks gnome-shell-extension-dash-to-panel
-
-    title Install development packages
-    sudo apt-get install qtcreator konqueror virtualbox
 fi
 
 if mux_is_windows; then
-    title Install windows packages
+    title Install Windows Packages
     read -p "Continue? (y/n): " CONFIRM
     if [[ $CONFIRM == *y* ]]; then
         if ! which choco >/dev/null 2>&1; then
-            title Install chocolatey
+            title Install Chocolatey
             powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command \
                 "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
             PATH+=":/c/ProgramData/chocolatey/bin"
         fi
 
-        title Install basic packages
+        title Install Basic Packages
         choco install -y cmder 7zip notepadplusplus meld
     fi
 

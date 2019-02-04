@@ -36,7 +36,7 @@ function copy {
 
 function silent_diff {
     if [ "$3" == copy_none ] && [ ! -f "$2" ]; then
-        cp "$1" "$2"
+        copy "$1" "$2"
     else
         check_files "$1" "$2" || true
         diff "$1" "$2" >/dev/null 2>&1
