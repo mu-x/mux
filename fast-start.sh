@@ -12,7 +12,7 @@ function title()
 }
 
 title Check GIT Repository
-git pull --dry-run | grep objects || mux_fail "Update required, use: git pull"
+git pull --dry-run | grep objects && mux_fail "Update required, use: git pull"
 git submodule update --init --recursive
 
 title Installing Scripts
@@ -36,8 +36,10 @@ if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
 fi
 
 if mux_is_windows; then
+    PACKAGES="cmder 7zip notepadplusplus meld"
+
     title Install Windows Packages
-    read -p "Continue? (y/n): " CONFIRM
+    read -p "Install chocolatey with $PACKAGES? (y/n): " CONFIRM
     if [[ $CONFIRM == *y* ]]; then
         if ! which choco >/dev/null 2>&1; then
             title Install Chocolatey
