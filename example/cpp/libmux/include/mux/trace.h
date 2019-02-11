@@ -9,7 +9,7 @@ namespace trace {
 
 enum class Level
 {
-    disabled
+    disabled,
     error,
     warning,
     info,
@@ -28,11 +28,12 @@ void setStream(std::ostream* stream);
 class Stream
 {
 public:
-    Stream(Level level, std::string tag, std::string delimiter = " ");
+    Stream(Level level, std::string tag, const char* delimiter = " ");
     ~Stream();
     
     template<typename T>
-    Stream(Level level, const T* tag, std::string delimiter = " ");
+    Stream(Level level, const T* tag, const char* delimiter = " ")
+        : Stream(level, toString(tag), std::move(delimiter)) {}
     
     Stream(const Stream&) = delete;
     Stream(Stream&&) = delete;
@@ -40,30 +41,18 @@ public:
     Stream& operator=(const Stream&) = delete;
     Stream& operator=(Stream&&) = delete;
     
-private:
     template<typename T>
-    friend Stream& operator<<(Stream& stream, const T& value);
+    Stream& print(const T& value) { return stream_ << delimiter_ << value; }
     
 private:
-    std::string mTag;
-    std::string mDelimiter;
-    std::ostringstream mStream;
-}
+    const Level level_;
+    const std::string tag_;
+    const char* const delimiter_;
+    std::ostringstream stream_;
+};
 
 template<typename T>
-Stream& Stream::operator<<(Stream& stream, const T& value)
-{
-    stream.mStream << mDelimiter << value;
-    return 
-}
-
-/* TODO:
-template<typename T>
-Stream::Stream(Level level, const T* tag, std::string delimiter = " ")
-    : Stream(level, toString(tag ? typeid(*tag) : typeid(T)), std::move(delimiter))
-{
-}
-*/
+Stream& operator<<(Stream& stream, const T& value) { return stream.print(value); }
 
 } // namespace trace
 } // namespace mux
@@ -77,5 +66,3 @@ Stream::Stream(Level level, const T* tag, std::string delimiter = " ")
 #define MUX_INFO(TAG) MUX_TRACE(::mux::trace::Level::info, TAG)
 #define MUX_DEBUG(TAG) MUX_TRACE(::mux::trace::Level::debug, TAG)
 #define MUX_VERBOSE(TAG) MUX_TRACE(::mux::trace::Level::verbose, TAG)
-
-

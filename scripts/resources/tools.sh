@@ -103,6 +103,21 @@ function mux_is_windows() {
     uname -s | grep -q "CYGWIN\|MINGW\|MSYS"
 }
 
+# Prints current process parents stack
+function mux_proc_stack() {
+    local pid=$$
+    while [ $pid != 1 ]; do
+        pid=$(ps -h -o ppid -p $pid 2>/dev/null)
+        name=$(ps -h -o comm -p $pid 2>/dev/null)
+        printf "%7s  %s\n" "$pid" "$name"
+    done
+}
+
+# Prints terminal if it is one
+function mux_is_terminal() {
+    mux_proc_stack | grep "xterm\|terminal\|konsole"
+}
+
 # Prints windows [path] as UNIX (assuming drives are mounted to /).
 function mux_windows_path() {
     local path="${1//\\/\/}"

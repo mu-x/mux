@@ -1,21 +1,24 @@
 #include <mux/trace.h>
 
+#include <atomic>
 #include <ctime>
 #include <iostream>
+#include <mutex>
 
 namespace mux {
 namespace trace {
 
 std::ostream& operator<<(std::ostream& stream, Level value)
 {
+    // TODO: Use MUX_ENUM_SWITCH.
     switch (value)
     {
-        case: Level::disabled: return stream << "DISABLED";
-        case: Level::error: return stream << "ERROR";
-        case: Level::warning: return stream << "WARNING";
-        case: Level::info: return stream << "INFO";
-        case: Level::debug: return stream << "DEBUG";
-        case: Level::verbose: return stream << "VERBOSE";
+        case Level::disabled: return stream << "DISABLED";
+        case Level::error: return stream << "ERROR";
+        case Level::warning: return stream << "WARNING";
+        case Level::info: return stream << "INFO";
+        case Level::debug: return stream << "DEBUG";
+        case Level::verbose: return stream << "VERBOSE";
     }
     
     // TODO: assert???
@@ -48,18 +51,18 @@ void setStream(std::ostream* stream)
     gStream = stream;
 }
 
-Stream::Stream(Level level, Tag tag, std::string delimiter)
-    : mLevel(level)
-    , mTag(std::move(tag))
-    , mDelimiter(std::move(delimiter))
+Stream::Stream(Level level, std::string tag, const char* delimiter)
+    : level_(level)
+    , tag_(std::move(tag))
+    , delimiter_(delimiter)
 {
-    if (mDelimiter.empty())
-        mStream << ' ';
+    if (delimiter_[0] == 0)
+        stream_ << ' ';
 }
 
 Stream::~Stream()
 {
-    if (level > getLevel())
+    if (level_ > getLevel())
         return;
         
     // TODO: Add fractions of seconds.
@@ -71,8 +74,8 @@ Stream::~Stream()
     strftime(timeString, kIsoTimeSize, kIsoTimeFormat, gmtime(&currentTime));
         
     std::lock_guard<std::mutex> lock(gMutex);
-    gStream << timeString << std::setw(10) << mLevel 
-        << ' ' << mTag << mStream.str(); //< TODO: use std::stringbuf to speedup
+    *gStream << timeString << std::setw(10) << level_
+        << ' ' << tag_ << stream_.str(); //< TODO: use std::stringbuf to speedup
 }
 
 } // namespace trace
