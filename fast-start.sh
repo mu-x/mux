@@ -30,17 +30,20 @@ if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
     sudo apt-get update
 
     title Install Ubuntu Packages
-    sudo apt-get install tmux build-essential vim-gtk p7zip sshfs sshpass
+    sudo apt-get install tmux build-essential vim-gtk p7zip sshfs sshpass silversearcher-ag
     grep 18.04 /etc/os-release && sudo apt-get install \
         gnome-tweaks gnome-shell-extension-dash-to-panel
+
+    title Install Development Packages
+    mux_confirm "Install VSCode?" && sudo snap install vscode --classic
+    sudo apt-get install meld
 fi
 
 if mux_is_windows; then
     PACKAGES="cmder 7zip notepadplusplus meld"
 
     title Install Windows Packages
-    read -p "Install chocolatey with $PACKAGES? (y/n): " CONFIRM
-    if [[ $CONFIRM == *y* ]]; then
+    if mux_confirm "Install chocolatey with $PACKAGES?"; then
         if ! which choco >/dev/null 2>&1; then
             title Install Chocolatey
             powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command \

@@ -2,6 +2,16 @@
 # MUX Bash helper functions.
 #
 
+# Requests confirmation with custom message.
+function mux_confirm() {
+    while true; do
+        read -p "$@ (y/n): " answer
+        [[ $answer == y* ]] && return 0
+        [[ $answer == n* ]] && return 1
+        echo "Wrong answer: $answer"
+    done
+}
+
 # Prints fatal error to stderr and exits
 function mux_fail() {
     { set +x; } >/dev/null 2>&1
