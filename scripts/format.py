@@ -2,7 +2,10 @@
 
 import json
 import os
+from collections import *
 from pprint import pformat
+
+LIST_TO_DICT_KEYS = ['name', 'id']
 
 
 class ParserError(Exception):
@@ -11,7 +14,6 @@ class ParserError(Exception):
 
 def parse(text, input_format='yaml'):  # types: (str, str) -> object
     if input_format in ('p', 'python'):
-        from collections import *
         return eval(text)
     if input_format in ('y', 'yaml'):
         try:
@@ -23,13 +25,33 @@ def parse(text, input_format='yaml'):  # types: (str, str) -> object
     return json.loads(text)
 
 
-def expand(data, *args, **kwargs):  # types: (object, ...) -> object
+def expand(data, list_to_dict=False, *parse_args, **parse_kwargs
+        ):  # types: (object, ...) -> object
+    """Tries to parse string values recurcively.
+        :list_to_dict Enables conversions [{name: NAME, ...}, ...] to [{NAME: ...}, ...]
+    """
+    expand_ = lambda d: expand(d, list_to_dict, *parse_args, **parse_kwargs)
     if isinstance(data, list):
-        return [expand(v) for v in data]
+        expanded = [expand_(v) for v in data]
+        if not list_to_dict:
+            return expanded
+        def dict_eject(d, key):
+            md = {k: v for k, v in d.items() if k != key}
+            return md['value'] if list(md.keys()) == ['value'] else md
+        def dict_item(d):
+            for key in LIST_TO_DICT_KEYS:
+                if key in d:
+                    return d['name'], dict_eject(d, key)
+        try:
+            return {k: expand_(v) for k, v in map(dict_item, expanded)}
+        except Exception as e:
+            pass
+
     if isinstance(data, dict):
-        return {k: expand(v) for k, v in data.items()}
+        return {k: expand_(v) for k, v in data.items()}
+
     try:
-        parsed = parse(data, *args, **kwargs)
+        parsed = parse(data, *parse_args, **parse_kwargs)
         if isinstance(parsed, dict) and len(parsed) == 1 and parsed.values() == [None]:
             return data  # Avoid accidental dict syntax.
         return parsed
@@ -65,7 +87,12 @@ if __name__ == '__main__':
     import sys
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('inputs', nargs='*')
+    parser.add_argument('inputs', nargs='*', help=', '.join([
+        'empty - format stdin',
+        'single - format file or text',
+        'multi - format files or texts & diff them',
+    ]))
+    parser.add_argument('-l', '--list-to-dict', action='store_true', default=False)
     parser.add_argument('-d', '--diff-tool', default='diff')
     parser.add_argument('-e', '--expand-format', default='json')
     parser.add_argument('-i', '--input-format', default='yaml')
@@ -83,7 +110,7 @@ if __name__ == '__main__':
         except Exception as e:
             return str(e)
         if args.expand_format:
-            data = expand(data, args.expand_format)
+            data = expand(data, args.list_to_dict, args.expand_format)
         return serialize(data, args.output_format)
 
     inputs = args.inputs or [sys.stdin.read()]
