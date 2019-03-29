@@ -14,6 +14,7 @@ function title()
 title Check GIT Repository
 git pull --dry-run | grep objects && mux_fail "Update required, use: git pull"
 git submodule update --init --recursive
+echo Done
 
 title Installing Scripts
 if mux_is_linux || mux_is_osx; then
@@ -40,8 +41,6 @@ if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
 fi
 
 if mux_is_windows; then
-    PACKAGES="cmder 7zip notepadplusplus meld"
-
     title Install Windows Packages
     if mux_confirm "Install chocolatey with $PACKAGES?"; then
         if ! which choco >/dev/null 2>&1; then
@@ -50,9 +49,18 @@ if mux_is_windows; then
                 "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
             PATH+=":/c/ProgramData/chocolatey/bin"
         fi
+        
+        function choco_install() {
+            PACKAGES="$@"
+            read -p "Install $PACKAGES? (y/n): " CONFIRM
+            [[ $CONFIRM == *y* ]] && choco install -y $@
+        }
 
         title Install Basic Packages
-        choco install -y cmder 7zip notepadplusplus meld
+        choco_install cmder 7zip notepadplusplus meld
+        
+        title Install Development Packages
+        choco_install virtualbox vscode
     fi
 
 	title What to do next?

@@ -2,5 +2,9 @@
   {
     "key": "ctrl+shift+q",
     "command": "workbench.view.extension.test"
+  },
+  {
+    "key": "shift+alt+s",
+    "command": "editor.action.sortLinesAscending"
   }
 ]

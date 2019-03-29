@@ -6,6 +6,11 @@ source $MUX_HOME/scripts/resources/tools.sh
 export PYTHONPATH+=":$MUX_HOME/example/python"
 export LESS=FRX
 
+if mux_is_windows; then
+    export PATH="/bin:/usr/bin:/usr/local/bin:$PATH"
+    export PATH="$PATH:/c/Program Files (x86)/Meld"
+fi
+
 alias la="ls -a"
 alias ll="ls -l"
 mux_is_osx && alias ls="ls -G"
