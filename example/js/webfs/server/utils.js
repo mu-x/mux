@@ -6,7 +6,7 @@ const fs = require('fs-extra')
 
 async function temporaryDirectory(sourcePath = '') {
   debug('Creating temporary directory from', sourcePath)
-  const basePath = path.join(process.env.TMP, 'webfs')
+  const basePath = path.join(process.env.TMP || '/tmp', 'webfs')
   await fs.mkdirp(basePath)
   const targetPath = path.join(basePath, Math.random().toString().slice(2))
   if (sourcePath) await fs.copy(sourcePath, targetPath)
