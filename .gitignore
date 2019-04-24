@@ -2,6 +2,7 @@
 a.out
 build_x86
 build_x86_64
+core
 
 # python
 *.pyc
