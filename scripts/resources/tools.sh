@@ -164,3 +164,11 @@ function mux_git_check() {
     done
 }
 
+# Upgrades $PATH with bin directories in [directory or ~/bins] with [exceptions or gcc].
+function mux_local_PATH() {
+    export PATH=$( \
+        find "${1:-$HOME/bins}" -name bin -type d \
+            | sort -r | grep -v "${2:-gcc}" | tr '\n' ':' \
+    )"$PATH"
+}
+
