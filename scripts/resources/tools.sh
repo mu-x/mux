@@ -166,9 +166,15 @@ function mux_git_check() {
 
 # Upgrades $PATH with bin directories in [directory or ~/bins] with [exceptions or gcc].
 function mux_local_PATH() {
-    export PATH=$( \
-        find "${1:-$HOME/bins}" -name bin -type d \
-            | sort -r | grep -v "${2:-gcc}" | tr '\n' ':' \
-    )"$PATH"
+    local dir=${1:-$HOME/bins}
+    local ignore=${2:-gcc}
+    [ ! -d "$dir" ] && return 0
+    local path=$(find "$dir" -name bin -type d | sort -r | grep -v "$ignore" | tr '\n' ':' )
+    export PATH="$path$PATH"
+}
+
+# Change current directory on start if configured.
+function mux_start_dir() {
+    [ "$MUX_START_DIR" ] && [ "$PWD" == "$HOME" ] && cd "$MUX_START_DIR"
 }
 

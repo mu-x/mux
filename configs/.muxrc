@@ -36,5 +36,6 @@ fi
 
 mux_use_ssh_keys $HOME/.ssh/* >/dev/null 2>&1
 mux_local_PATH
+mux_start_dir
 # mux_terminal_multiplexer
 
