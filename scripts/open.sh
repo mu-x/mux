@@ -10,30 +10,29 @@ exit 0; fi
 
 set -e
 [ "$X" ] && set -x
+source "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/resources/tools.sh"
 
 USER_URL="$1"
-URL="$(echo "$USER_URL" | sed 's/\\/\//g')"
-[[ "$USER_URL" =~ '\\'* ]] && URL="smb:$URL"
+shift
 
-SMB_TOOLS="$T konqueror nautilus"
-OPEN_TOOLS="$T xdg-open kde-open open"
+if mux_is_windows; then
+    URL="$USER_URL"
 
-function select_tool()
-{
-    for tool in $@; do
-        which $tool && return 0
-    done
-
-    echo No such tools: $@ >&2
-    exit 1
-}
-
-if [[ "$URL" =~ 'smb'* ]]; then
-    OPEN=$(select_tool $SMB_TOOLS)
+    if [ "$(file "$URL" | grep text)" ]; then
+        TOOLS="notepad++ notepad"
+    else
+        TOOLS="start"
+    fi
 else
-    OPEN=$(select_tool $OPEN_TOOLS)
+    URL="$(echo "$USER_URL" | sed 's/\\/\//g')"
+    [[ "$USER_URL" =~ '\\'* ]] && URL="smb:$URL"
+
+    if [[ "$URL" =~ 'smb'* ]]; then
+        TOOLS="konqueror nautilus"
+    else
+        TOOLS="xdg-open kde-open open"
+    fi
 fi
 
-set -x
-$OPEN "$URL" 1>/dev/null 2>&1 &
+mux_first_gui_tool "$T $TOOLS" "$URL" "$@"
 

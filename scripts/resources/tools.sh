@@ -67,13 +67,14 @@ function mux_bash_history() {
 
 # Run first avalible GUI tool from space separated [list] with [args...]
 function mux_first_gui_tool() {
-    tools=$1
+    local tools=$1
     shift
     for tool in $tools; do
         which $tool >/dev/null 2>&1 && \
             mux_silent_run $tool "$@" && \
             return 0
     done
+    mux_fail "No tool found: $tools"
 }
 
 # Adds SSH keys if publics are avaliable

@@ -11,7 +11,7 @@ set -e
 NAME=$1
 PS=${PS:-"ps aux"}
 
-source "$(dirname $(readlink "${BASH_SOURCE[0]}"))/resources/tools.sh"
+source "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/resources/tools.sh"
 
 LIST=$($PS | grep -v ' grep ' | grep "$NAME")
 # TODO: Print some message if process is not found.

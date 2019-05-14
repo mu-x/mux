@@ -15,7 +15,7 @@ alias la="ls -a"
 alias ll="ls -l"
 mux_is_osx && alias ls="ls -G"
 
-alias e='mux_first_gui_tool "gedit kate notepad++ mux-open"'
+alias e=mux-open
 alias f=mux_find
 alias g=mux-grep
 alias p=mux-python
