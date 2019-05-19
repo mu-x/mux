@@ -12,9 +12,11 @@ function title()
 }
 
 title Check GIT Repository
-git pull --dry-run | grep objects && mux_fail "Update required, use: git pull"
-git submodule update --init --recursive
-echo Done
+if mux_confirm "Check for GIT repository updates?"; then
+    git pull --dry-run | grep objects && mux_fail "Update required, use: git pull"
+    git submodule update --init --recursive
+    echo Done
+fi
 
 title Installing Scripts
 if mux_is_linux || mux_is_osx; then
@@ -28,16 +30,19 @@ configs/manage.sh sync
 
 if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
     title Update Ubuntu Repository
-    sudo apt-get update
+        if mux_confirm "Check for ubuntu packages updates?"; then
+        sudo apt-get update
 
-    title Install Ubuntu Packages
-    sudo apt-get install tmux build-essential vim-gtk p7zip sshfs sshpass silversearcher-ag
-    grep 18.04 /etc/os-release && sudo apt-get install \
-        gnome-tweaks gnome-shell-extension-dash-to-panel
+        title Install Ubuntu Packages
+        sudo apt-get install \
+            tmux build-essential git-gui vim-gtk p7zip sshfs sshpass silversearcher-ag
+        grep 18.04 /etc/os-release && sudo apt-get install \
+            gnome-tweaks gnome-shell-extension-dash-to-panel
 
-    title Install Development Packages
-    mux_confirm "Install VSCode?" && sudo snap install vscode --classic
-    sudo apt-get install meld
+        title Install Development Packages
+        mux_confirm "Install VSCode?" && sudo snap install vscode --classic
+        sudo apt-get install meld
+    fi
 fi
 
 if mux_is_windows; then
@@ -49,7 +54,7 @@ if mux_is_windows; then
                 "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
             PATH+=":/c/ProgramData/chocolatey/bin"
         fi
-        
+
         function choco_install() {
             PACKAGES="$@"
             read -p "Install $PACKAGES? (y/n): " CONFIRM
@@ -58,7 +63,7 @@ if mux_is_windows; then
 
         title Install Basic Packages
         choco_install cmder 7zip notepadplusplus meld
-        
+
         title Install Development Packages
         choco_install virtualbox vscode
     fi

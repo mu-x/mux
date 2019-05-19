@@ -12,14 +12,14 @@ function mux_confirm() {
     done
 }
 
-# Prints fatal error to stderr and exits
+# Prints fatal error to stderr and exits.
 function mux_fail() {
     { set +x; } >/dev/null 2>&1
     echo ERROR: "$@" >&2
     exit 1
 }
 
-# Prints first existing file from arguments
+# Prints first existing file from arguments.
 function mux_first_existing_file() {
     for file in $@; do
         if [ -f "$file" ]; then
@@ -29,7 +29,7 @@ function mux_first_existing_file() {
     done
 }
 
-# Silent run COMMAND [ARGS...]
+# Silent run COMMAND [ARGS...].
 function mux_silent_run() {
     if ! which "$1" 1>/dev/null 2>&1; then
         echo ERROR: Unable to find executable: "$1" >&2
@@ -53,7 +53,7 @@ function _mux_silent_run() {
     fi
 }
 
-# Setup BASH cross-terminal history with [limit]
+# Setup BASH cross-terminal history with [limit].
 function mux_bash_history() {
     export HISTCONTROL=ignoredups:erasedups
     export HISTSIZE=$1
@@ -65,7 +65,7 @@ function mux_bash_history() {
     fi
 }
 
-# Run first avalible GUI tool from space separated [list] with [args...]
+# Run first avalible GUI tool from space separated [list] with [args...].
 function mux_first_gui_tool() {
     local tools=$1
     shift
@@ -77,7 +77,7 @@ function mux_first_gui_tool() {
     mux_fail "No tool found: $tools"
 }
 
-# Adds SSH keys if publics are avaliable
+# Adds SSH keys if publics are avaliable.
 function mux_use_ssh_keys() {
     eval $(ssh-agent -s)
     for key in "$@"; do
@@ -89,8 +89,9 @@ function mux_use_ssh_keys() {
     done
 }
 
-# Execute avaliable terminal multiplexer
-function mux_terminal_multiplexer() {
+# Execute avaliable terminal multiplexer if [reqired].
+function mux_tmux() {
+    [ ! "$1" ] && return 0
     if [ "$TERM" != "screen" ]; then
         if which tmux 2>/dev/null; then
             SESSION=$(tmux list-sessions | grep -v '(attached)' | head -1 | cut -f1 -d':')
@@ -114,7 +115,7 @@ function mux_is_windows() {
     uname -s | grep -q "CYGWIN\|MINGW\|MSYS"
 }
 
-# Prints current process parents stack
+# Prints current process parents stack.
 function mux_proc_stack() {
     local pid=$$
     while [ $pid != 1 ]; do
@@ -124,7 +125,7 @@ function mux_proc_stack() {
     done
 }
 
-# Prints terminal if it is one
+# Prints terminal if it is one.
 function mux_is_terminal() {
     mux_proc_stack | grep "xterm\|terminal\|konsole"
 }
@@ -174,8 +175,8 @@ function mux_local_PATH() {
     export PATH="$path$PATH"
 }
 
-# Change current directory on start if configured.
+# Change current directory to [diretory] on start if non-empty.
 function mux_start_dir() {
-    [ "$MUX_START_DIR" ] && [ "$PWD" == "$HOME" ] && cd "$MUX_START_DIR"
+    [ "$1" ] && [ "$PWD" == "$HOME" ] && cd "$1"
 }
 

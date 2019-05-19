@@ -35,7 +35,7 @@ if [ $(basename $SHELL) == bash ]; then
 fi
 
 mux_use_ssh_keys $HOME/.ssh/* >/dev/null 2>&1
-mux_local_PATH
-mux_start_dir
-# mux_terminal_multiplexer
+mux_local_PATH "${MUX_LOCAL_BINS:-"$HOME/bins"}"
+mux_start_dir "$MUX_START_DIR"
+mux_tmux "$MUX_TMUX"
 
