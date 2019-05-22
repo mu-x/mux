@@ -19,6 +19,12 @@ function mux_fail() {
     exit 1
 }
 
+# Traces command with args and runs it.
+function mux_trace_run() {
+    echo -e "\033[0;35m>>>" "$@" "\033[0m" 1>&2
+    "$@"
+}
+
 # Prints first existing file from arguments.
 function mux_first_existing_file() {
     for file in $@; do
