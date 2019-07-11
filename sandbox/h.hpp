@@ -12,6 +12,7 @@
 #include <thread>
 #include <type_traits>
 #include <vector>
+#include <queue>
 
 #if defined(__linux__)
     #include <pwd.h>
@@ -135,7 +136,7 @@ public:
     }
 
 private:
-    T data_;
+    T data_{};
 };
 
 } // namespace mux

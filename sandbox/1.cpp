@@ -1,8 +1,22 @@
 #include "h.hpp"
 
+using Data = mux::Traceble<int>;
+
+struct S
+{
+    Data d;
+    Data getD() { return d; }
+};
+
+void f(const Data& d)
+{
+    d.print();
+}
+
 int main(int, const char** argv)
 {
-    for (const auto& arg: mux::Args(argv).args)
-        mux::print(arg);
+    S s;
+    s.getD().print();
+    f(s.getD());
 }
 

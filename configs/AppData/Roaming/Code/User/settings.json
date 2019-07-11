@@ -6,5 +6,6 @@
     "workbench.statusBar.visible": true,
     "editor.minimap.enabled": false,
     "editor.tabSize": 2,
-    "workbench.sideBar.location": "left"
+    "workbench.sideBar.location": "left",
+    "explorer.confirmDelete": false
 }
