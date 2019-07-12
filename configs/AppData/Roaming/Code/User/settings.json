@@ -7,5 +7,9 @@
     "editor.minimap.enabled": false,
     "editor.tabSize": 2,
     "workbench.sideBar.location": "left",
-    "explorer.confirmDelete": false
+    "explorer.confirmDelete": false,
+    "terminal.integrated.scrollback": 100000,
+    "files.exclude": {
+        "**/*.pyc": true
+    },
 }
