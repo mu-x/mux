@@ -49,11 +49,11 @@ void print(const Value& value)
     std::cout << value << std::endl;
 }
 
-template<typename Value, typename ... Values>
-void print(const Value& value, const Values& ... values)
+template<typename Value, typename... Values>
+void print(const Value& value, const Values&... values)
 {
     std::cout << value << " ";
-    print(values ...);
+    print(values...);
 }
 
 struct Args
@@ -114,24 +114,26 @@ public:
     Traceble(const Traceble& rhs)
         : data_(rhs.data_)
     {
-        mux::print("Traceble(", data_, ")");
+        mux::print("Traceble(copy ", data_, ")");
     }
     Traceble(Traceble&& rhs)
         : data_(std::move(rhs.data_))
     {
-        mux::print("Traceble&&(", data_, ")");
+        mux::print("Traceble(&& ", data_, ")");
+        rhs.data_ = {};
     }
 
     Traceble& operator=(const Traceble& rhs)
     {
         data_ = rhs.data_;
-        mux::print("Traceble::=(", data_, ")");
+        mux::print("Traceble::=(copy ", data_, ")");
         return *this;
     }
     Traceble& operator=(Traceble&& rhs)
     {
-        data_ = std::move(rhs.data);
-        mux::print("Traceble::=&&(", data_, ")");
+        data_ = std::move(rhs.data_);
+        mux::print("Traceble::=(&& ", data_, ")");
+        rhs.data_ = {};
         return *this;
     }
 
