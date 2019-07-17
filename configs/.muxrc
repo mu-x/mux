@@ -34,6 +34,8 @@ if [ $(basename $SHELL) == bash ]; then
     mux_bash_history 1000000000
 fi
 
+xset m 5 1 #< Mouse sensitivity like in windows.
+
 mux_use_ssh_keys $HOME/.ssh/* >/dev/null 2>&1
 mux_local_PATH "${MUX_LOCAL_BINS:-"$HOME/bins"}"
 mux_start_dir "$MUX_START_DIR"
