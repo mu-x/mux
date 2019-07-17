@@ -40,7 +40,7 @@ if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
             gnome-tweaks gnome-shell-extension-dash-to-panel
 
         title Install Development Packages
-        mux_confirm "Install VSCode?" && sudo snap install vscode --classic
+        mux_confirm "Install VSCode?" && sudo snap install code --classic
         sudo apt-get install meld
     fi
 fi

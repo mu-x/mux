@@ -5,10 +5,11 @@ CMake build helper script.
 Usage:
     [OPTION=VALUE ...] $0 [target] [run-arguments]
 Options:
-    C - clean generate & build if set
-	B - build directory, default: $PWD-build
-	G - cmake generate flags to set
-    K - keep current terminal output
+    C   clean generate & build if set
+    B   build directory, default: $PWD-build
+    G   cmake generate flags to set
+    FG  force cmake generate (enabled on G)
+    K   keep current terminal output
 END
 exit 0; fi
 
@@ -25,7 +26,7 @@ BUILD_DIR=${B:-"$PWD-build"}
 BUILD_FLAGS="--build $BUILD_DIR"
 [ "$1" ] && BUILD_FLAGS+=" --target $1"
 
-if [ ! -d "$BUILD_DIR" ] || [ "$GENERATE_FLAGS" ]; then
+if [ ! -d "$BUILD_DIR" ] || [ "$GENERATE_FLAGS" ] || [ "$FG" ]; then
     mkdir -p "$BUILD_DIR"
     if mux_is_windows; then
         GENERATE_FLAGS+=(-Ax64 -Thost=x64)
