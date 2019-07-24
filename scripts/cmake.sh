@@ -26,7 +26,15 @@ BUILD_DIR=${B:-"$PWD-build"}
 BUILD_FLAGS="--build $BUILD_DIR"
 [ "$1" ] && BUILD_FLAGS+=" --target $1"
 
-if [ ! -d "$BUILD_DIR" ] || [ "$GENERATE_FLAGS" ] || [ "$FG" ]; then
+CHANGE_ID=
+[ -d .hg ] && CHANGE_ID=$(hg id)
+[ -g .git ] && CHANGE_ID=$(git rev-parse HEAD)
+BUILD_ID=$(cat "$BUILD_DIR"/ChangeId.txt 2>/dev/null || true)
+
+FORCE_GENERATE=$FG
+if [ "$CHANGE_ID" != "$BUILD_ID" ] || [ "$GENERATE_FLAGS" ] || [ "$FORCE_GENERATE" ]; then
+    echo "Change: $CHANGE_ID, Build: $BUILD_ID, Flags: ${GENERATE_FLAGS[@]}".
+    [ "FORCE_GENERATE" ] && echo Force Generate!
     mkdir -p "$BUILD_DIR"
     if mux_is_windows; then
         GENERATE_FLAGS+=(-Ax64 -Thost=x64)
@@ -38,6 +46,7 @@ fi
 
 if [ "$GENERATE_FLAGS" ]; then
 	SRC_DIR="$PWD"
+    echo $CHANGE_ID > "$BUILD_DIR"/ChangeId.txt
 	cd "$BUILD_DIR"
 	mux_trace_run cmake "$SRC_DIR" "${GENERATE_FLAGS[@]}"
 	cd -

@@ -177,7 +177,7 @@ function mux_local_PATH() {
     local dir=${1:-$HOME/bins}
     local ignore=${2:-gcc}
     [ ! -d "$dir" ] && return 0
-    local path=$(find "$dir" -name bin -type d | sort -r | grep -v "$ignore" | tr '\n' ':' )
+    local path=$(find -L "$dir" -name bin -type d | sort -r | grep -v "$ignore" | tr '\n' ':' )
     export PATH="$path$PATH"
 }
 
