@@ -17,6 +17,7 @@ ORIGIN=${3:-${MUX_ORIGIN:-origin}}
 REFS=${R:-${MUX_REFS:-refs/for/}}
 
 GIT="mux_trace_run git"
+$GIT branch
 $GIT log -1
 $GIT st
 
