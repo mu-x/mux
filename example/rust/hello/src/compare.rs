@@ -7,7 +7,7 @@ pub fn select<'v, T>(first: &'v T, second: &'v T, compare: Compare<T>) -> &'v T 
 pub fn min<T: PartialOrd + Clone>(first: &T, second: &T) -> bool { first < second }
 pub fn max<T: PartialOrd + Clone>(first: &T, second: &T) -> bool { first > second }
 
-pub trait InOut<T> {
+pub trait Container<T> {
     fn push(&mut self, value: T);
     fn pop(&mut self) -> Option<T>;
     fn extremum(&self) -> Option<&T>;

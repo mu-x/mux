@@ -1,24 +1,24 @@
 use std::collections::VecDeque;
 
-use super::compare::{Compare, InOut, select};
+use super::compare::{Compare, Container, select};
 
-pub struct ExtremumStack<T> {
+pub struct Stack<T> {
     values: VecDeque<T>,
     extremums: VecDeque<T>,
     compare: Compare<T>,
 }
 
 #[allow(dead_code)]
-impl <T: Clone> ExtremumStack<T> {
-    pub fn new(compare: Compare<T>) -> ExtremumStack<T> {
-        return ExtremumStack {
+impl <T: Clone> Stack<T> {
+    pub fn new(compare: Compare<T>) -> Stack<T> {
+        return Stack {
             values: VecDeque::new(),
             extremums: VecDeque::new(),
             compare: compare,
         };
     }
 
-    fn push(&mut self, value: T) {
+    pub fn push(&mut self, value: T) {
         self.values.push_back(value);
         let last = self.values.back().unwrap();
         self.extremums.push_back(match self.extremums.back() {
@@ -27,17 +27,17 @@ impl <T: Clone> ExtremumStack<T> {
         });
     }
 
-    fn pop(&mut self) -> Option<T> {
+    pub fn pop(&mut self) -> Option<T> {
         self.extremums.pop_back();
         return self.values.pop_back();
     }
 
-    fn extremum(&self) -> Option<&T> { self.extremums.back().map(|value| value) }
-    fn len(&self) -> usize { self.values.len() }
+    pub fn extremum(&self) -> Option<&T> { self.extremums.back() }
+    pub fn len(&self) -> usize { self.values.len() }
 }
 
 #[allow(dead_code)]
-impl <T: Clone> InOut<T> for ExtremumStack<T> {
+impl <T: Clone> Container<T> for Stack<T> {
     fn push(&mut self, value: T) { self.push(value) }
     fn pop(&mut self) -> Option<T> { self.pop() }
     fn extremum(&self) -> Option<&T> { self.extremum() }
@@ -47,7 +47,7 @@ impl <T: Clone> InOut<T> for ExtremumStack<T> {
 #[test]
 fn main() {
     use super::compare::max;
-    let mut stack: Box<InOut<i32>> = Box::new(ExtremumStack::new(max));
+    let mut stack: Box<Container<i32>> = Box::new(Stack::new(max));
 
     stack.push(3);
     assert_eq!(stack.extremum(), Some(&3));

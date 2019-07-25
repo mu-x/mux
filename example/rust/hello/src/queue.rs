@@ -1,27 +1,27 @@
-use super::compare::{Compare, InOut, select};
-use super::stack::ExtremumStack;
+use super::compare::{Compare, Container, select};
+use super::stack::Stack;
 
-pub struct ExtremumQueue<T> {
-    ins: ExtremumStack<T>,
-    outs: ExtremumStack<T>,
+pub struct Queue<T> {
+    ins: Stack<T>,
+    outs: Stack<T>,
     compare: Compare<T>,
 }
 
 #[allow(dead_code)]
-impl <T: Clone> ExtremumQueue<T> {
-    pub fn new(compare: Compare<T>) -> ExtremumQueue<T> {
-        return ExtremumQueue {
-            ins: ExtremumStack::<T>::new(compare),
-            outs: ExtremumStack::<T>::new(compare),
+impl <T: Clone> Queue<T> {
+    pub fn new(compare: Compare<T>) -> Queue<T> {
+        return Queue {
+            ins: Stack::<T>::new(compare),
+            outs: Stack::<T>::new(compare),
             compare: compare,
         };
     }
 
-    fn push(&mut self, value: T) {
+    pub fn push(&mut self, value: T) {
         self.ins.push(value)
     }
 
-    fn pop(&mut self) -> Option<T> {
+    pub fn pop(&mut self) -> Option<T> {
         if self.outs.is_empty() {
             loop {
                 match self.ins.pop() {
@@ -33,7 +33,7 @@ impl <T: Clone> ExtremumQueue<T> {
         return self.outs.pop();
     }
 
-    fn extremum(&self) -> Option<&T> {
+    pub fn extremum(&self) -> Option<&T> {
         return match (self.ins.extremum(), self.outs.extremum()) {
             (None, None) => None,
             (Some(first), None) => Some(first),
@@ -42,13 +42,13 @@ impl <T: Clone> ExtremumQueue<T> {
         }
     }
 
-    fn len(&self) -> usize {
+    pub fn len(&self) -> usize {
         self.ins.len() + self.outs.len()
     }
 }
 
 #[allow(dead_code)]
-impl <T: Clone> InOut<T> for ExtremumQueue<T> {
+impl <T: Clone> Container<T> for Queue<T> {
     fn push(&mut self, value: T) { self.push(value) }
     fn pop(&mut self) -> Option<T> { self.pop() }
     fn extremum(&self) -> Option<&T> { self.extremum() }
@@ -58,7 +58,7 @@ impl <T: Clone> InOut<T> for ExtremumQueue<T> {
 #[test]
 fn main() {
     use super::compare::min;
-    let mut stack: Box<InOut<i32>> = Box::new(ExtremumQueue::new(min));
+    let mut stack: Box<Container<i32>> = Box::new(Queue::new(min));
 
     stack.push(3);
     assert_eq!(stack.extremum(), Some(&3));

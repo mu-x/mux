@@ -1,11 +1,11 @@
 use std::io::{stdin, stdout, Write};
 
-use super::compare::{InOut, min, max};
-use super::stack::ExtremumStack as Stack;
-use super::queue::ExtremumQueue as Queue;
+use super::compare::{Container, min, max};
+use super::stack::Stack;
+use super::queue::Queue;
 
 pub struct Cli {
-    container: Box<InOut<String>>,
+    container: Box<Container<String>>,
 }
 
 impl Cli {
@@ -24,43 +24,56 @@ impl Cli {
         });
     }
 
-    pub fn send(&mut self, input: &str, output: &mut String) {
+    pub fn send(&mut self, input: &str, output: &mut String) -> bool {
         let delimiter = input.find(" ").unwrap_or(input.len());
         let (command, value) = input.split_at(delimiter);
         match command.trim() {
-            "push" => {
+            "help" | "h" | "?" => {
+                output.push_str("Commands: in <s>, out, top, extremum, count, quit.");
+            },
+            "in" | "i" => {
                 self.container.push(value.trim().to_string());
                 output.push_str("ok");
             },
-            "pop" => match self.container.pop() {
+            "out" | "o" => match self.container.pop() {
                 None => output.push_str("<empty>"),
                 Some(value) => output.push_str(&value),
             },
-            "extremum" => match self.container.extremum() {
+            "top" | "t" => match self.container.extremum() {
                 None => output.push_str("<empty>"),
                 Some(value) => output.push_str(value),
             },
-            "len" => {
+            "extremum" | "e" => match self.container.extremum() {
+                None => output.push_str("<empty>"),
+                Some(value) => output.push_str(value),
+            },
+            "count" | "c" => {
                 output.push_str(&self.container.len().to_string()[..]);
+            },
+            "quit" | "q" => {
+                return false;
             },
             _ => {
                 output.push_str("Unknown command: ");
                 output.push_str(command);
             }
         };
+        return true;
     }
 }
 
 pub fn std_io_loop(cli: &mut Cli) -> std::io::Result<()> {
+    println!("Welcome to CLI. Type 'help' or 'h' to see help.");
     let mut read_buffer = String::new();
     let mut write_buffer = String::new();
     loop {
-        stdin().read_line(&mut read_buffer)?;
-        cli.send(read_buffer[..].trim(), &mut write_buffer);
-
-        println!("{}", write_buffer);
+        print!("> ");
         stdout().flush()?;
-
+        stdin().read_line(&mut read_buffer)?;
+        if !cli.send(read_buffer[..].trim(), &mut write_buffer) {
+            return Ok(())
+        }
+        println!("{}", write_buffer);
         read_buffer.clear();
         write_buffer.clear();
     }
@@ -100,26 +113,26 @@ mod send {
             Err(m) => { assert!(false, m); return }
         };
 
-        expect_send(&mut cli, "push hello", "ok");
-        expect_send(&mut cli, "len", "1");
+        expect_send(&mut cli, "in hello", "ok");
+        expect_send(&mut cli, "count", "1");
         expect_send(&mut cli, "extremum", "hello");
 
         expect_send(&mut cli, "hello", "Unknown command: hello");
 
-        expect_send(&mut cli,  "push world", "ok");
-        expect_send(&mut cli, "len", "2");
+        expect_send(&mut cli,  "in world", "ok");
+        expect_send(&mut cli, "count", "2");
         expect_send(&mut cli, "extremum", "hello");
 
         expect_send(&mut cli, "hello world", "Unknown command: hello");
 
-        expect_send(&mut cli, "pop", "world");
-        expect_send(&mut cli, "len", "1");
+        expect_send(&mut cli, "out", "world");
+        expect_send(&mut cli, "count", "1");
         expect_send(&mut cli, "extremum", "hello");
 
         expect_send(&mut cli, "", "Unknown command: ");
 
-        expect_send(&mut cli, "push bad", "ok");
-        expect_send(&mut cli, "len", "2");
+        expect_send(&mut cli, "in bad", "ok");
+        expect_send(&mut cli, "count", "2");
         expect_send(&mut cli, "extremum", "bad");
     }
 
@@ -130,24 +143,24 @@ mod send {
             Err(m) => { assert!(false, m); return }
         };
 
-        expect_send(&mut cli, "push hello", "ok");
-        expect_send(&mut cli, "len", "1");
-        expect_send(&mut cli, "extremum", "hello");
+        expect_send(&mut cli, "i hello", "ok");
+        expect_send(&mut cli, "c", "1");
+        expect_send(&mut cli, "e", "hello");
 
-        expect_send(&mut cli, "push world", "ok");
-        expect_send(&mut cli, "len", "2");
-        expect_send(&mut cli, "extremum", "world");
+        expect_send(&mut cli, "i world", "ok");
+        expect_send(&mut cli, "c", "2");
+        expect_send(&mut cli, "e", "world");
 
-        expect_send(&mut cli, "pop", "hello");
-        expect_send(&mut cli, "len", "1");
-        expect_send(&mut cli, "extremum", "world");
+        expect_send(&mut cli, "o", "hello");
+        expect_send(&mut cli, "c", "1");
+        expect_send(&mut cli, "e", "world");
 
-        expect_send(&mut cli, "pop", "world");
-        expect_send(&mut cli, "len", "0");
-        expect_send(&mut cli, "extremum", "<empty>");
+        expect_send(&mut cli, "o", "world");
+        expect_send(&mut cli, "c", "0");
+        expect_send(&mut cli, "e", "<empty>");
 
-        expect_send(&mut cli,  "pop", "<empty>");
-        expect_send(&mut cli, "len", "0");
-        expect_send(&mut cli, "extremum", "<empty>");
+        expect_send(&mut cli,  "o", "<empty>");
+        expect_send(&mut cli, "c", "0");
+        expect_send(&mut cli, "e", "<empty>");
     }
 }
