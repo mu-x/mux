@@ -32,9 +32,9 @@ BUILD_FLAGS="--build $BUILD_DIR"
 [ "$TARGET" ] && BUILD_FLAGS+=" --target $TARGET"
 
 if [ -d .hg ]; then
-    CHANGE_ID="hg: $(hg id)";
+    CHANGE_ID="hg-$(hg id | tr ' ' -)";
 elif [ -d .git ]; then
-    CHANGE_ID="git: $(git rev-parse HEAD)";
+    CHANGE_ID="git-$(git rev-parse HEAD)";
 else
     CHANGE_ID="no vsc: $(date +%s)";
 fi
@@ -42,7 +42,7 @@ BUILD_ID=$(cat "$BUILD_DIR"/ChangeId.txt 2>/dev/null || true)
 
 FORCE_GENERATE=$FG
 if [ "$CHANGE_ID" != "$BUILD_ID" ] || [ "$GENERATE_FLAGS" ] || [ "$FORCE_GENERATE" ]; then
-    echo "Change: $CHANGE_ID, Build: ${BUILD_ID:-None}, Flags: ${GENERATE_FLAGS[@]}".
+    echo "Change: $CHANGE_ID, Build: ${BUILD_ID:-none}, Flags: ${GENERATE_FLAGS[@]}".
     [ "FORCE_GENERATE" ] && echo Force Generate!
     mkdir -p "$BUILD_DIR"
     if mux_is_windows; then
@@ -61,7 +61,9 @@ if [ "$GENERATE_FLAGS" ]; then
 	cd -
 fi
 
-mux_trace_run cmake $BUILD_FLAGS
+THREAD_COUNT=$(( $(nproc) - ${MUX_THREAD_SAVE:-2} ))
+mux_trace_run cmake $BUILD_FLAGS -- -j "$THREAD_COUNT"
+
 if [ "$@" ]; then
     BINARY_PATH=$(find "$BUILD_DIR" -name "$TARGET" -type f)
     mux_trace_run "$BINARY_PATH" "$@"
