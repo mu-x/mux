@@ -1,9 +1,11 @@
+use std::fmt;
 use std::io::{stdin, stdout, Write};
 
 use super::compare::{Container, min, max};
 use super::stack::Stack;
 use super::queue::Queue;
 
+#[derive(Debug)]
 pub struct Cli {
     container: Box<Container<String>>,
 }
@@ -77,6 +79,10 @@ pub fn std_io_loop(cli: &mut Cli) -> std::io::Result<()> {
         read_buffer.clear();
         write_buffer.clear();
     }
+}
+
+impl fmt::Display for Cli {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result { write!(f, "{}", self.container) }
 }
 
 #[cfg(test)]

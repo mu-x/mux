@@ -49,6 +49,7 @@ impl <T: Clone> Queue<T> {
 
 #[allow(dead_code)]
 impl <T: Clone> Container<T> for Queue<T> {
+    fn name(&self) -> &'static str { "stack" }
     fn push(&mut self, value: T) { self.push(value) }
     fn pop(&mut self) -> Option<T> { self.pop() }
     fn extremum(&self) -> Option<&T> { self.extremum() }
