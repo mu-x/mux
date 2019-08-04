@@ -8,7 +8,6 @@ pub struct Stack<T> {
     compare: Compare<T>,
 }
 
-#[allow(dead_code)]
 impl <T: Clone> Stack<T> {
     pub fn new(compare: Compare<T>) -> Stack<T> {
         return Stack {
@@ -36,7 +35,6 @@ impl <T: Clone> Stack<T> {
     pub fn len(&self) -> usize { self.values.len() }
 }
 
-#[allow(dead_code)]
 impl <T: Clone> Container<T> for Stack<T> {
     fn name(&self) -> &'static str { "stack" }
     fn push(&mut self, value: T) { self.push(value) }

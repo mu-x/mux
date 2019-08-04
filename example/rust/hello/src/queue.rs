@@ -7,7 +7,6 @@ pub struct Queue<T> {
     compare: Compare<T>,
 }
 
-#[allow(dead_code)]
 impl <T: Clone> Queue<T> {
     pub fn new(compare: Compare<T>) -> Queue<T> {
         return Queue {
@@ -47,7 +46,6 @@ impl <T: Clone> Queue<T> {
     }
 }
 
-#[allow(dead_code)]
 impl <T: Clone> Container<T> for Queue<T> {
     fn name(&self) -> &'static str { "stack" }
     fn push(&mut self, value: T) { self.push(value) }

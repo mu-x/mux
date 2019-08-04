@@ -1,13 +1,14 @@
 use std::fmt;
 use std::io::{stdin, stdout, Write};
+use std::sync::{Arc, Mutex};
 
 use super::compare::{Container, min, max};
 use super::stack::Stack;
 use super::queue::Queue;
 
-#[derive(Debug)]
+
 pub struct Cli {
-    container: Box<Container<String>>,
+    container: Box<Container<String> + Send>,
 }
 
 impl Cli {
@@ -82,7 +83,29 @@ pub fn std_io_loop(cli: &mut Cli) -> std::io::Result<()> {
 }
 
 impl fmt::Display for Cli {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result { write!(f, "{}", self.container) }
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.container.name())
+    }
+}
+
+#[derive(Clone)]
+pub struct SyncCli {
+    cli: Arc<Mutex<Box<Cli>>>,
+}
+
+impl SyncCli {
+    pub fn new(cli: Cli) -> SyncCli {
+        SyncCli { cli: Arc::new(Mutex::new(Box::new(cli))) }
+    }
+    pub fn send(&mut self, input: &str, output: &mut String) -> bool {
+        self.cli.lock().unwrap().send(input, output)
+    }
+}
+
+impl fmt::Display for SyncCli {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.cli.lock().unwrap())
+    }
 }
 
 #[cfg(test)]
