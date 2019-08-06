@@ -42,7 +42,7 @@ BUILD_ID=$(cat "$BUILD_DIR"/ChangeId.txt 2>/dev/null || true)
 
 FORCE_GENERATE=$FG
 if [ "$CHANGE_ID" != "$BUILD_ID" ] || [ "$GENERATE_FLAGS" ] || [ "$FORCE_GENERATE" ]; then
-    echo "Change: $CHANGE_ID, Build: ${BUILD_ID:-none}, Flags: ${GENERATE_FLAGS[@]}".
+    echo "Change: $CHANGE_ID, build: ${BUILD_ID:-none}, flags: ${GENERATE_FLAGS[@]}".
     [ "FORCE_GENERATE" ] && echo Force Generate!
     mkdir -p "$BUILD_DIR"
     if mux_is_windows; then
@@ -64,7 +64,7 @@ fi
 THREAD_COUNT=$(( $(nproc) - ${MUX_THREAD_SAVE:-2} ))
 mux_trace_run cmake $BUILD_FLAGS -- -j "$THREAD_COUNT"
 
-if [ "$@" ]; then
+if [[ "$@" ]]; then
     BINARY_PATH=$(find "$BUILD_DIR" -name "$TARGET" -type f)
     mux_trace_run "$BINARY_PATH" "$@"
 fi
