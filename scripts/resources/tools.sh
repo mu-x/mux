@@ -179,6 +179,7 @@ function mux_local_PATH() {
     [ ! -d "$dir" ] && return 0
     local path=$(find -L "$dir" -name bin -type d | sort -r | grep -v "$ignore" | tr '\n' ':' )
     export PATH="$path$PATH"
+    [ -d "$dir/go" ] && export GOPATH="$dir/gopath"
 }
 
 # Change current directory to [diretory] on start if non-empty.
