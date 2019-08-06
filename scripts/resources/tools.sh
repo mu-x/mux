@@ -160,6 +160,19 @@ function mux_find() {
     find "${2:-.}" -name "$1" $([ "$3" ] && echo -type "$3")
 }
 
+# In [file] replaces [line_patern] with [line_patern] + [line], sets IS_CHANGED
+function mux_replace_in_file() {
+    local file="$1"
+    local pattern="^$2"
+    local replace="$2$3"
+    if grep "$pattern" "$file"; then
+        grep "^$replace$" "$file" >/dev/null && return
+        grep -v "$pattern" "$file" > "$file"
+    fi
+    echo "$replace" >> "$file"
+    MUX_IS_REPLACED="+$MUX_IS_REPLACED"
+}
+
 # Check local git repositories.
 function mux_git_check() {
     for repository in "$@"; do
