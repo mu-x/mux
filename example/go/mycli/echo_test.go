@@ -6,18 +6,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEchoGreet(test *testing.T) {
-	cli := EchoCli{}
-	assert.Equal(test, "Echo CLI", cli.Greet())
-}
-
 func TestEchoSend(test *testing.T) {
-	cli := EchoCli{}
+	cli := echoCli{}
+	assert.Equal(test, "Echo", cli.Name())
+
 	for _, t := range []struct{ in, out string }{
 		{"hello", "hello"},
 		{"hello world", "hello world"},
-		{" hello cruel world! ", "hello cruel world!"},
+		{" hello cruel world! ", " hello cruel world! "},
+		{"", ""},
 	} {
-		assert.Equal(test, t.out, cli.Send(t.in))
+		assert.Equal(test, t.out, *cli.Send(t.in))
 	}
 }

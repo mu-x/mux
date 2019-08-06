@@ -6,20 +6,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestKvGreet(test *testing.T) {
-	cli := NewKvCli()
-	assert.Equal(test, "Type 'key = value' to set value or 'key' to get value.", cli.Greet())
-}
+func TestKeyValue(test *testing.T) {
+	cli := NewKeyValueCli()
+	assert.Equal(test, "Key-Value", cli.Name())
 
-func TestKvSend(test *testing.T) {
-	cli := NewKvCli()
 	for _, t := range []struct{ in, out string }{
-		{"a = 1", "ok"},
+		{"a = 1", ""},
 		{"a", "1"},
-		{"b", "<empty>"},
-		{"c = ", "ok"},
+		{"b", ""},
+		{"c = ", ""},
 		{"c", ""},
 	} {
-		assert.Equal(test, t.out, cli.Send(t.in))
+		assert.Equal(test, t.out, *cli.Send(t.in))
+	}
+
+	if cli.Send("") != nil {
+		assert.Fail(test, "Connecton did not close in time")
 	}
 }

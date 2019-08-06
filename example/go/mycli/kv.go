@@ -5,39 +5,47 @@ import (
 	"strings"
 )
 
-// KvCli provides key-value CLI.
-type KvCli struct {
+// NewKeyValueCli constructs an empty key-value CLI.
+func NewKeyValueCli() Cli {
+	return &keyValueCli{map[string]string{}}
+}
+
+type keyValueCli struct {
 	storage map[string]string
 }
 
-// NewKvCli constructs empty key-value CLI.
-func NewKvCli() KvCli {
-	return KvCli{map[string]string{}}
+func (c *keyValueCli) Name() string {
+	// return "Type 'key = value' to set value or 'key' to get value."
+	return "Key-Value"
 }
 
-// Greet provides help.
-func (cli *KvCli) Greet() string {
-	return "Type 'key = value' to set value or 'key' to get value."
+func (c *keyValueCli) Help() []string {
+	return []string{
+		"key = value -- set key to value",
+		"key         -- returns value for this key",
+	}
 }
 
-// Send provides a response to message or nil to finish the session.
-func (cli *KvCli) Send(message string) string {
+func (c *keyValueCli) Send(message string) *string {
 	message = strings.TrimSpace(message)
 	if message == "" {
-		return ""
+		return nil
 	}
+
 	if s := strings.SplitN(message, "=", 2); len(s) == 2 {
 		k := strings.TrimSpace(s[0])
 		v := strings.TrimSpace(s[1])
-		cli.storage[k] = v
-		log.Printf("%T set '%v' = '%v'", cli, k, v)
-		return "ok"
+
+		c.storage[k] = v
+		log.Printf("%T set '%v' = '%v'", c, k, v)
+
+		okReplay := ""
+		return &okReplay
 	}
+
 	k := message
-	v := cli.storage[k]
-	if v == "" {
-		v = "<empty>"
-	}
-	log.Printf("%T get '%v' = '%v'", cli, k, v)
-	return v
+	v := c.storage[k]
+
+	log.Printf("%T get '%v' = '%v'", c, k, v)
+	return &v
 }

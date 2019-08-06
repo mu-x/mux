@@ -1,17 +1,21 @@
 package main
 
-import "strings"
-
-// EchoCli provides echo CLI.
-type EchoCli struct {
+// NewEchoCli creates echo CLI.
+func NewEchoCli() Cli {
+	return &echoCli{}
 }
 
-// Greet provides greeting message.
-func (c *EchoCli) Greet() string {
-	return "Echo CLI"
+type echoCli struct {
 }
 
-// Send provides a response to message or nil to finish the session.
-func (c *EchoCli) Send(m string) string {
-	return strings.TrimSpace(m)
+func (c *echoCli) Name() string {
+	return "Echo"
+}
+
+func (c *echoCli) Help() []string {
+	return []string{"Type message and it will be sent back to you."}
+}
+
+func (c *echoCli) Send(m string) *string {
+	return &m
 }
