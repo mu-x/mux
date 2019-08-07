@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+
+	mycli "mycli/cli"
 )
 
 func main() {
@@ -22,12 +24,12 @@ func main() {
 	}
 
 	if opts.address == "" {
-		r := Communicate(opts.cli, bufio.NewReader(os.Stdin), bufio.NewWriter(os.Stdout))
+		r := mycli.Communicate(opts.cli, bufio.NewReader(os.Stdin), bufio.NewWriter(os.Stdout))
 		fmt.Print(r)
 		return
 	}
 
-	server, err := NewServer(opts.cli, opts.address)
+	server, err := mycli.NewServer(opts.cli, opts.address)
 	if err != nil {
 		fmt.Println("Unable to start server on", opts.address, "-", err)
 		return
@@ -40,7 +42,7 @@ func main() {
 }
 
 type options struct {
-	cli     Cli
+	cli     mycli.Cli
 	address string
 	verbose bool
 }
@@ -59,9 +61,9 @@ func parseOptions() (options, error) {
 			opts.address = args[1]
 			args = args[1:]
 		case "echo":
-			opts.cli = NewEchoCli()
+			opts.cli = mycli.NewEchoCli()
 		case "kv":
-			opts.cli = NewKeyValueCli()
+			opts.cli = mycli.NewKeyValueCli()
 		default:
 			return opts, fmt.Errorf("Error: wrong arg '%v', try -h", arg)
 		}
@@ -70,7 +72,7 @@ func parseOptions() (options, error) {
 		return opts, fmt.Errorf("Error: wrong args %v, try -h", args)
 	}
 	if opts.cli == nil {
-		opts.cli = NewEchoCli()
+		opts.cli = mycli.NewEchoCli()
 	}
 	return opts, nil
 }

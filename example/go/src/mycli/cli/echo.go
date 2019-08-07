@@ -1,4 +1,4 @@
-package main
+package mycli
 
 // NewEchoCli creates echo CLI.
 func NewEchoCli() Cli {

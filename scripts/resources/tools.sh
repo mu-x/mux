@@ -189,10 +189,14 @@ function mux_git_check() {
 function mux_local_PATH() {
     local dir=${1:-$HOME/bins}
     local ignore=${2:-gcc}
-    [ ! -d "$dir" ] && return 0
-    local path=$(find -L "$dir" -name bin -type d | sort -r | grep -v "$ignore" | tr '\n' ':' )
-    export PATH="$path$PATH"
-    [ -d "$dir/go" ] && export GOPATH="$dir/gopath"
+    if [ -d "$dir" ]; then
+        local path=$(find -L "$dir" -name bin -type d | sort -r | grep -v "$ignore" | tr '\n' ':' )
+        export PATH="$path$PATH"
+    fi
+    if which go; then
+        mkdir -p "$HOME/go"
+        [ "$MUX_HOME" ] && export GOPATH="$HOME/go:$MUX_HOME/example/go"
+    fi
 }
 
 # Change current directory to [diretory] on start if non-empty.
