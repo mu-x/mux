@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEchoCli(test *testing.T) {
-	cli := NewEchoCli()
+func TestSyncCli(test *testing.T) {
+	cli := NewSyncCli(NewEchoCli())
 	assert.Equal(test, "Echo", cli.Name())
 
 	for _, t := range []struct{ in, out string }{

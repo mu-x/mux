@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestKeyValue(test *testing.T) {
+func TestKeyValueCli(test *testing.T) {
 	cli := NewKeyValueCli()
 	assert.Equal(test, "Key-Value", cli.Name())
 
