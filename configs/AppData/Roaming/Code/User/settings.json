@@ -4,7 +4,7 @@
     "editor.wordWrapColumn": 100,
     "workbench.statusBar.visible": true,
     "editor.minimap.enabled": false,
-    "editor.tabSize": 2,
+    "editor.tabSize": 4,
     "editor.fontFamily": "'Ubuntu Mono', monospace",
     "workbench.sideBar.location": "left",
     "explorer.confirmDelete": false,

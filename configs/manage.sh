@@ -44,7 +44,7 @@ function silent_diff {
 }
 
 function merge {
-    check_files "$@" || true
+    check_files "$@" || touch "$@"
     meld "$@" >/dev/null 2>&1
 }
 
