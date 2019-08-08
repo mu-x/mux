@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"sdrace/game"
 )
@@ -19,10 +20,17 @@ func main() {
 	newBackground(controller)
 	newPlayer(controller)
 
-	log.Println("Game is loaded, start cycle...")
+	timeSinceBot := 100.0
+	fmt.Println("##### Start game loop...")
 	for {
+		timeSinceBot += controller.TimeDelta()
+		if timeSinceBot > 1.5 {
+			newBotCar(controller)
+			timeSinceBot = 0
+		}
+
 		if err := controller.RunFrame(); err != nil {
-			log.Println("Game over:", err)
+			fmt.Println("##### End game loop:", err)
 			return
 		}
 	}

@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 )
 
@@ -40,19 +41,26 @@ func NewObject(pool *objectPool, name string, g Geometry, ts []Trait) *Object {
 	}
 
 	pool.objects[obj] = true
+	log.Printf("New %v - %v", obj, obj.Geometry)
 	return obj
 }
 
 // Destroy removes all object's traits and removes it from the ObjectPool.
 func (obj *Object) Destroy() {
+	obj.Active = false
 	obj.EachTrait(func(t Trait) {
 		t.SetOwner(nil)
 		t.Destroy()
 	})
 
+	log.Printf("Destroyed %v - %v", obj, obj.Geometry)
 	if obj.pool != nil {
 		delete(obj.pool.objects, obj)
 	}
+}
+
+func (obj *Object) String() string {
+	return fmt.Sprintf("Obj(%v %p)", obj.Name, obj)
 }
 
 // EachTrait applies a function to each trait.
@@ -60,6 +68,15 @@ func (obj *Object) EachTrait(function func(t Trait)) {
 	for _, t := range obj.traits {
 		function(t)
 	}
+}
+
+// SameTrait returns a trait with the same actual type as tr.
+func (obj *Object) SameTrait(tr Trait) Trait {
+	if ownTr, ok := obj.traits[reflect.TypeOf(tr)]; ok {
+		return ownTr
+	}
+
+	return nil
 }
 
 func (obj *Object) addTrait(trait Trait) {

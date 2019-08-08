@@ -17,6 +17,7 @@ type move struct {
 	game.BaseTrait
 	speed game.Vector
 	mode  moveMode
+	box   *game.Geometry
 }
 
 // NewAutoMove moves object according to speed.
@@ -25,8 +26,8 @@ func NewAutoMove(speed game.Vector) game.Trait {
 }
 
 // NewKeyMove moves object according to user input with max speed.
-func NewKeyMove(speed game.Vector) game.Trait {
-	return &move{speed: speed, mode: keyMove}
+func NewKeyMove(speed game.Vector, box game.Geometry) game.Trait {
+	return &move{speed: speed, mode: keyMove, box: &box}
 }
 
 func (m *move) Update(c *game.Controller) {
@@ -35,8 +36,11 @@ func (m *move) Update(c *game.Controller) {
 		dist = dist.MulEach(calcKeyMove(c.UI.Input()))
 	}
 
-	v := &m.Owner().Vector
-	*v = v.Add(dist)
+	pos := &m.Owner().Vector
+	newPos := pos.Add(dist)
+	if m.box == nil || newPos.InGeometry(*m.box) {
+		*pos = newPos
+	}
 }
 
 func calcKeyMove(k game.Keys) game.Vector {

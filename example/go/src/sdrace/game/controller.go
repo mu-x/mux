@@ -23,8 +23,9 @@ type UI interface {
 
 // Controller controlls the game state.
 type Controller struct {
-	UI    UI
-	Speed float64
+	UI       UI
+	Speed    float64
+	GameOver bool
 
 	lastCycle    *time.Time
 	currentCycle *time.Time
@@ -34,9 +35,10 @@ type Controller struct {
 // NewController creates a controller.
 func NewController(ui UI) *Controller {
 	return &Controller{
-		UI:      ui,
-		Speed:   1,
-		objects: objectPool{map[*Object]bool{}},
+		UI:       ui,
+		Speed:    1,
+		GameOver: false,
+		objects:  objectPool{map[*Object]bool{}},
 	}
 }
 
@@ -61,8 +63,23 @@ func (c *Controller) NewObject(name string, g Geometry, ts []Trait) *Object {
 	return NewObject(&c.objects, name, g, ts)
 }
 
+// Objects returns all active objects.
+func (c *Controller) Objects() (obs []*Object) {
+	for obj := range c.objects.objects {
+		if obj.Active {
+			obs = append(obs, obj)
+		}
+	}
+
+	return obs
+}
+
 // RunFrame updates the game state.
 func (c *Controller) RunFrame() error {
+	if c.GameOver {
+		return errors.New("Game Over")
+	}
+
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 		if event.GetType() == sdl.QUIT {
 			return errors.New("Quit")
@@ -72,12 +89,19 @@ func (c *Controller) RunFrame() error {
 	now := time.Now()
 	c.lastCycle = c.currentCycle
 	c.currentCycle = &now
-	for obj := range c.objects.objects {
-		if obj.Active {
-			obj.EachTrait(func(t Trait) { t.Update(c) })
-		}
-	}
 
+	c.updateObjects()
 	c.UI.Present()
 	return nil
+}
+
+func (c *Controller) updateObjects() {
+	for _, obj := range c.Objects() {
+		obj.EachTrait(func(t Trait) {
+			// Traits may diactivate it's owner.
+			if obj.Active {
+				t.Update(c)
+			}
+		})
+	}
 }
