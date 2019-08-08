@@ -1,53 +1,29 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/veandco/go-sdl2/sdl"
+	"log"
+	"sdrace/game"
 )
 
-const gameName = "SD Race"
-const screenWidth = 300
-const screenHeight = 800
-
 func main() {
-	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
-		panic(err)
-	}
-
-	window, err := sdl.CreateWindow(
-		gameName, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		screenWidth, screenHeight, sdl.WINDOW_OPENGL)
+	ui, err := game.NewSdlUI("SD Race", game.Size{300, 800})
 	if err != nil {
-		panic(err)
+		log.Printf("Unable to init UI: %v", err)
+		return
 	}
-	defer window.Destroy()
+	defer ui.Destroy()
 
-	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
-	if err != nil {
-		panic(err)
-	}
-	defer renderer.Destroy()
+	controller := game.NewController(ui)
+	defer controller.Destroy()
 
-	road := newObject(renderer, "road", screenWidth, screenHeight)
-	defer road.Destroy()
+	newBackground(controller)
+	newPlayer(controller)
 
-	carWidth := int32(screenWidth / 4)
-	player := newObject(renderer, "porsche", carWidth, carWidth*2)
-	defer player.Destroy()
-
-	fmt.Println("Game is loaded, start cycle...")
+	log.Println("Game is loaded, start cycle...")
 	for {
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
-			case *sdl.QuitEvent:
-				return
-			}
+		if err := controller.RunFrame(); err != nil {
+			log.Println("Game over:", err)
+			return
 		}
-
-		renderer.Clear()
-		road.Draw()
-		player.Draw()
-		renderer.Present()
 	}
 }
