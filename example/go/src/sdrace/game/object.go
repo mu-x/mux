@@ -2,8 +2,9 @@ package game
 
 import (
 	"fmt"
-	"log"
 	"reflect"
+
+	"github.com/golang/glog"
 )
 
 // ObjectPool keeps track of all created objects.
@@ -42,7 +43,7 @@ func newObject(pool *objectPool, name string, g Geometry, ts []Trait) *Object {
 	}
 
 	pool.objects[obj] = true
-	log.Printf("New %v - %v in Pool(%v)", obj, obj.Geometry, len(pool.objects))
+	glog.V(2).Infof("New %v - %v in Pool(%v)", obj, obj.Geometry, len(pool.objects))
 	return obj
 }
 
@@ -56,9 +57,9 @@ func (obj *Object) Destroy() {
 
 	if obj.pool != nil {
 		delete(obj.pool.objects, obj)
-		log.Printf("Destroyed %v - %v in Pool(%v)", obj, obj.Geometry, len(obj.pool.objects))
+		glog.V(2).Infof("Destroyed %v - %v in Pool(%v)", obj, obj.Geometry, len(obj.pool.objects))
 	} else {
-		log.Printf("Destroyed %v - %v", obj, obj.Geometry)
+		glog.V(2).Infof("Destroyed %v - %v", obj, obj.Geometry)
 	}
 }
 

@@ -7,6 +7,6 @@ The SDL based Racing Game.
 Developed and tested on Ubuntu 16:
 ```
     apt install libsdl2{,-image,-mixer,-ttf,-gfx}-dev
-    go get github.com/veandco/go-sdl2/...
+    go get github.com/veandco/go-sdl2/... github.com/golang/glog
     go build && ./sdrace
 ```

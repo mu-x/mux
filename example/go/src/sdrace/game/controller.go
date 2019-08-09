@@ -2,8 +2,9 @@ package game
 
 import (
 	"errors"
-	"log"
 	"time"
+
+	"github.com/golang/glog"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -13,7 +14,7 @@ type Sprite = interface{}
 
 // UI communicator.
 type UI interface {
-	Init(name string, W, H float64) error
+	Init(name string, s Size) error
 	Destroy()
 
 	Size() Size
@@ -95,7 +96,7 @@ func (c *Controller) RunFrame() error {
 	c.lastCycle = c.currentCycle
 	c.currentCycle = &now
 	if frames, isT := c.fpsTimer.Check(c.TimeDelta()); isT {
-		log.Printf("FPS: %v", frames)
+		glog.V(1).Infof("FPS: %v", frames)
 	}
 
 	c.updateObjects()

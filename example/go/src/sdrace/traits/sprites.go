@@ -22,7 +22,7 @@ func NewScrollingSprite(s game.Sprite, ss float64) game.Trait {
 }
 
 func (st *sprite) Update(c *game.Controller) {
-	st.scrollPosition += st.scrollSpeed
+	st.scrollPosition += st.scrollSpeed * c.TimeDelta()
 	for st.scrollPosition >= c.UI.Size().H {
 		st.scrollPosition -= c.UI.Size().H
 	}

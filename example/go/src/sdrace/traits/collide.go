@@ -1,8 +1,9 @@
 package traits
 
 import (
-	"log"
 	"sdrace/game"
+
+	"github.com/golang/glog"
 )
 
 // Collision event description.
@@ -35,7 +36,7 @@ func (cd *collide) Update(c *game.Controller) {
 		rect := obj.Rect()
 		othRect := othObj.Rect()
 		if _, does := rect.Intersect(&othRect); does {
-			log.Printf("Collision detected: %v - %v", obj, othObj)
+			glog.V(1).Infof("Collision detected: %v - %v", obj, othObj)
 			cd.handler(Collision{obj, othObj})
 		}
 	}
