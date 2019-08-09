@@ -2,6 +2,7 @@ package game
 
 import (
 	"errors"
+	"log"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -12,12 +13,14 @@ type Sprite = interface{}
 
 // UI communicator.
 type UI interface {
+	Init(name string, W, H float64) error
 	Destroy()
+
 	Size() Size
 	Input() Keys
 
 	Sprite(name string) Sprite
-	Draw(s Sprite, r sdl.Rect)
+	Draw(s Sprite, g Geometry)
 	Present()
 }
 
@@ -30,6 +33,7 @@ type Controller struct {
 	lastCycle    *time.Time
 	currentCycle *time.Time
 	objects      objectPool
+	fpsTimer     Timer
 }
 
 // NewController creates a controller.
@@ -39,6 +43,7 @@ func NewController(ui UI) *Controller {
 		Speed:    1,
 		GameOver: false,
 		objects:  objectPool{map[*Object]bool{}},
+		fpsTimer: Timer{Timeout: 1},
 	}
 }
 
@@ -60,7 +65,7 @@ func (c *Controller) TimeDelta() float64 {
 
 // NewObject creates a new game object.
 func (c *Controller) NewObject(name string, g Geometry, ts []Trait) *Object {
-	return NewObject(&c.objects, name, g, ts)
+	return newObject(&c.objects, name, g, ts)
 }
 
 // Objects returns all active objects.
@@ -89,6 +94,9 @@ func (c *Controller) RunFrame() error {
 	now := time.Now()
 	c.lastCycle = c.currentCycle
 	c.currentCycle = &now
+	if frames, isT := c.fpsTimer.Check(c.TimeDelta()); isT {
+		log.Printf("FPS: %v", frames)
+	}
 
 	c.updateObjects()
 	c.UI.Present()
@@ -97,11 +105,14 @@ func (c *Controller) RunFrame() error {
 
 func (c *Controller) updateObjects() {
 	for _, obj := range c.Objects() {
-		obj.EachTrait(func(t Trait) {
-			// Traits may diactivate it's owner.
-			if obj.Active {
-				t.Update(c)
-			}
-		})
+		if obj.Prioritized {
+			obj.Update(c)
+		}
+	}
+
+	for _, obj := range c.Objects() {
+		if !obj.Prioritized {
+			obj.Update(c)
+		}
 	}
 }

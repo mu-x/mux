@@ -22,15 +22,16 @@ func (pool *objectPool) Destroy() {
 // Object is a separate entity in a game represented by a set of Traits.
 type Object struct {
 	Geometry
-	Name   string
-	Active bool
+	Name        string
+	Active      bool
+	Prioritized bool
 
 	pool   *objectPool
 	traits map[reflect.Type]Trait
 }
 
-// NewObject creates new object registred in the ObjectPool.
-func NewObject(pool *objectPool, name string, g Geometry, ts []Trait) *Object {
+// newObject creates new object registred in the ObjectPool.
+func newObject(pool *objectPool, name string, g Geometry, ts []Trait) *Object {
 	obj := &Object{
 		Geometry: g, Name: name, Active: true,
 		pool: pool, traits: map[reflect.Type]Trait{},
@@ -41,26 +42,38 @@ func NewObject(pool *objectPool, name string, g Geometry, ts []Trait) *Object {
 	}
 
 	pool.objects[obj] = true
-	log.Printf("New %v - %v", obj, obj.Geometry)
+	log.Printf("New %v - %v in Pool(%v)", obj, obj.Geometry, len(pool.objects))
 	return obj
 }
 
 // Destroy removes all object's traits and removes it from the ObjectPool.
 func (obj *Object) Destroy() {
 	obj.Active = false
-	obj.EachTrait(func(t Trait) {
+	for _, t := range obj.traits {
 		t.SetOwner(nil)
 		t.Destroy()
-	})
+	}
 
-	log.Printf("Destroyed %v - %v", obj, obj.Geometry)
 	if obj.pool != nil {
 		delete(obj.pool.objects, obj)
+		log.Printf("Destroyed %v - %v in Pool(%v)", obj, obj.Geometry, len(obj.pool.objects))
+	} else {
+		log.Printf("Destroyed %v - %v", obj, obj.Geometry)
 	}
 }
 
 func (obj *Object) String() string {
 	return fmt.Sprintf("Obj(%v %p)", obj.Name, obj)
+}
+
+// Update updates object's state.
+func (obj *Object) Update(c *Controller) {
+	for _, t := range obj.traits {
+		// Traits are allowed to change object's activity.
+		if obj.Active {
+			t.Update(c)
+		}
+	}
 }
 
 // EachTrait applies a function to each trait.

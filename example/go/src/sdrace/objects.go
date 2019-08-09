@@ -10,83 +10,92 @@ import (
 )
 
 const (
-	roadSpeedY   = 1000
-	playerSpeedX = 300
-	playerSpeedY = 300
-	botCarSpeedY = 500
+	gameName            = "SD Race"
+	gameW               = 300
+	gameH               = 800
+	roadSpeedY          = 450
+	playerSpeedX        = 300
+	playerSpeedY        = 300
+	botCarSpeedY        = 500
+	botCarSpawnInterval = 3
+	botCarSpawnRandom   = 50
 )
 
-type sizes struct {
-	ui    game.Size
-	laneW float64
-	car   game.Size
-}
+func runGame(ui game.UI) error {
+	if err := ui.Init(gameName, gameW, gameH); err != nil {
+		return err
+	}
+	defer ui.Destroy()
 
-func newSizes(c *game.Controller) (s sizes) {
-	s.ui = c.UI.Size()
-	s.laneW = s.ui.W / 3
-	s.car = game.Size{W: s.laneW * 0.7, H: s.laneW * 1.6}
-	return s
-}
+	c := game.NewController(ui)
+	defer c.Destroy()
 
-func (s *sizes) laneX(n int) float64 {
-	return s.laneW/2 + s.laneW*float64(n)
-}
+	uiS := c.UI.Size()
+	laneW := uiS.W / 3
+	carS := game.Size{W: laneW * 0.7, H: laneW * 1.6}
+	laneX := func(n int) float64 { return laneW/2 + laneW*float64(n) }
 
-// ---
-
-func newBackground(c *game.Controller) {
-	s := newSizes(c)
 	c.NewObject(
-		"road", s.ui.Geometry(),
-		[]game.Trait{traits.NewStaticSprite(c.UI.Sprite("road"))},
-	)
+		"road",
+		uiS.Geometry(),
+		[]game.Trait{traits.NewScrollingSprite(c.UI.Sprite("road"), roadSpeedY)},
+	).Prioritized = true //< Keep it behind everything.
 
 	newBorder := func(n string, g game.Geometry) {
 		c.NewObject("border_"+n, g, []game.Trait{traits.NewCollide(nil)})
 	}
 
-	newBorder("left", game.NewGeometry(-1, 0, 1, s.ui.H))
-	newBorder("right", game.NewGeometry(s.ui.W, -1, 1, s.ui.H))
-	newBorder("bot", game.NewGeometry(0, s.ui.H+s.car.H, s.ui.W, 1))
-}
+	newBorder("left", game.NewGeometry(-1, uiS.H/2, 1, uiS.H))
+	newBorder("right", game.NewGeometry(uiS.W, uiS.H/2, 1, uiS.H))
+	newBorder("bot", game.NewGeometry(uiS.W/2, uiS.H+carS.H, uiS.W, 1))
 
-func newPlayer(c *game.Controller) {
-	s := newSizes(c)
 	c.NewObject(
 		"player",
 		game.Geometry{
-			Vector: game.Vector{X: s.laneX(1), Y: s.ui.H - s.car.H},
-			Size:   s.car,
+			Vector: game.Vector{X: laneX(1), Y: uiS.H - carS.H},
+			Size:   carS,
 		},
 		[]game.Trait{
 			traits.NewStaticSprite(c.UI.Sprite("porsche")),
-			traits.NewKeyMove(game.Vector{X: playerSpeedX, Y: playerSpeedY}, s.ui.Geometry()),
+			traits.NewKeyMove(game.Vector{X: playerSpeedX, Y: playerSpeedY}, uiS.Geometry()),
 			traits.NewCollide(func(cl traits.Collision) {
 				log.Printf("The player %v has crashed", cl.Self)
 				c.GameOver = true
 			}),
 		},
 	)
-}
 
-func newBotCar(c *game.Controller) {
-	s := newSizes(c)
-	sprite := fmt.Sprintf("bot_%v", rand.Intn(4))
-	c.NewObject(
-		sprite,
-		game.Geometry{
-			Vector: game.Vector{X: s.laneX(rand.Intn(3)), Y: -s.car.H},
-			Size:   s.car,
-		},
-		[]game.Trait{
-			traits.NewStaticSprite(c.UI.Sprite(sprite)),
-			traits.NewAutoMove(game.Vector{X: 0, Y: botCarSpeedY}),
-			traits.NewCollide(func(cl traits.Collision) {
-				if strings.HasPrefix(cl.Other.Name, "border") {
-					cl.Self.Destroy()
-				}
-			}),
-		},
-	)
+	is := func(o *game.Object, p string) bool { return strings.HasPrefix(o.Name, p) }
+	spawnBotCar := func() {
+		sprite := fmt.Sprintf("bot_%v", rand.Intn(4))
+		c.NewObject(
+			sprite,
+			game.Geometry{
+				Vector: game.Vector{X: laneX(rand.Intn(3)), Y: -carS.H},
+				Size:   carS,
+			},
+			[]game.Trait{
+				traits.NewStaticSprite(c.UI.Sprite(sprite)),
+				traits.NewAutoMove(game.Vector{X: 0, Y: botCarSpeedY}),
+				traits.NewCollide(func(cl traits.Collision) {
+					if is(cl.Other, "border") || is(cl.Other, "bot_") {
+						cl.Self.Destroy()
+					}
+				}),
+			},
+		)
+	}
+
+	botSpawnTimer := game.Timer{Timeout: botCarSpawnInterval, Randimize: botCarSpawnRandom}
+	log.Printf("Start loop...")
+	for {
+		if _, isT := botSpawnTimer.Check(c.TimeDelta()); isT {
+			spawnBotCar()
+		}
+
+		if err := c.RunFrame(); err != nil {
+			log.Printf("End loop: %v", err)
+			return nil
+		}
+	}
 }

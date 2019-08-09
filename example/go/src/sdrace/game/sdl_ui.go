@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
@@ -13,28 +14,33 @@ type sdlUI struct {
 	sprites  map[string]*sdl.Texture
 }
 
-// NewSdlUI creates a UI with SDL on backend
-func NewSdlUI(name string, s Size) (UI, error) {
+// NewSdlUI creates ne UI.
+func NewSdlUI() UI {
+	return &sdlUI{sprites: map[string]*sdl.Texture{}}
+}
+
+func (u *sdlUI) Init(name string, W, H float64) error {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
-		return nil, fmt.Errorf("Failed to init SDL: %v", err)
+		return fmt.Errorf("Failed to init SDL: %v", err)
 	}
 
 	w, err := sdl.CreateWindow(
 		name, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		int32(s.W), int32(s.H), sdl.WINDOW_OPENGL)
+		int32(W), int32(H), sdl.WINDOW_OPENGL)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to create windows: %v", err)
+		return fmt.Errorf("Failed to create windows: %v", err)
 	}
 
 	r, err := sdl.CreateRenderer(w, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
 		w.Destroy()
-		return nil, fmt.Errorf("Failed to create renderer: %v", err)
+		return fmt.Errorf("Failed to create renderer: %v", err)
 	}
 
-	return &sdlUI{
-		window: w, renderer: r, sprites: map[string]*sdl.Texture{},
-	}, nil
+	u.window = w
+	u.renderer = r
+	u.sprites = map[string]*sdl.Texture{}
+	return nil
 }
 
 func (u *sdlUI) Destroy() {
@@ -73,15 +79,17 @@ func (u *sdlUI) Sprite(name string) Sprite {
 	}
 
 	u.sprites[name] = tx
+	log.Printf("Sprite %v is loaded", path)
 	return tx
 }
 
-func (u *sdlUI) Draw(s Sprite, r sdl.Rect) {
+func (u *sdlUI) Draw(s Sprite, g Geometry) {
 	tx := s.(*sdl.Texture)
 	if tx == nil {
 		panic("Unsupported texture provided")
 	}
 
+	r := g.Rect()
 	u.renderer.Copy(tx, nil, &r)
 }
 
