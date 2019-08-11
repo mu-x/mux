@@ -193,7 +193,7 @@ function mux_local_PATH() {
         local path=$(find -L "$dir" -name bin -type d | sort -r | grep -v "$ignore" | tr '\n' ':' )
         export PATH="$path$PATH"
     fi
-    if which go > /dev/null; then
+    if which go > /dev/null 2>&1; then
         mkdir -p "$HOME/go"
         [ "$MUX_HOME" ] && export GOPATH="$HOME/go:$MUX_HOME/example/go"
     fi

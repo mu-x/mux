@@ -46,6 +46,11 @@ if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
 fi
 
 if mux_is_windows; then
+    title Windows Tweaks
+    if mux_confirm "Apply windows tweaks?"; then
+        sed -i 's/set bell-style visible/set bell-style none/g' /etc/inputrc
+    fi
+
     title Install Windows Packages
     if mux_confirm "Install chocolatey with $PACKAGES?"; then
         if ! which choco >/dev/null 2>&1; then
