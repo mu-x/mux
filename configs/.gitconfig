@@ -14,4 +14,4 @@
 [difftool "meld"]
     cmd = meld "$LOCAL" "$REMOTE"
 [core]
-    excludesfile = /home/mux/.gitignore
+    excludesfile = ~/.gitignore
