@@ -1,23 +1,32 @@
 import {Point, Size} from './geometry.js'
 
 export class Game {
-  constructor(canvas, state) {
+  canvas: HTMLCanvasElement
+  screen: Size
+  world: World
+  preloader?: Component
+
+  private _resources: {}
+  private _resources_loading: number
+  private _lastFrameTime: number = 0
+
+  constructor(canvas) {
     this.canvas = canvas
     this.screen = new Size(canvas)
     this.world = new World()
-    this.resources = {}
-    this.resources_loading = 0
+    this._resources = {}
+    this._resources_loading = 0
   }
 
-  image(path) {
+  image(path: string) {
     return this._resource(Image, path)
   }
-  _resource(type, path) {
-    let res = this.resources[path]
+  _resource(type: any, path: string) {
+    let res = this._resources[path]
     if (res) {
-      if (res.type != type) {
+      if (res.type != type)
         throw Error(`File '${path}' is already loaded as '${res.type}'`)
-      }
+
       return res
     }
 
@@ -26,45 +35,51 @@ export class Game {
     res.src = path
     res.onload = () => {
       console.log('Loaded', type, 'from', path)
-      this.resources_loading -= 1
+      this._resources_loading -= 1
     }
 
     console.log('Loading', type, 'from', path, '...')
-    this.resources_loading += 1
-    this.resources[path] = res
+    this._resources_loading += 1
+    this._resources[path] = res
     return res
   }
 
-  run(now) {
-    if (this.world.state != State.ENABLED) {
+  run(now: number = 0) {
+    if (this.world.state != State.ENABLED)
       return console.log("Game Over, world state:", this.world.state)
-    }
 
-    let deltaTime = (now && this.lastTime) ? now - this.lastTime : 0;
-    this.lastTime = now
-    if (!this.resources_loading) {
+    let deltaTime = (now && this._lastFrameTime) ? now - this._lastFrameTime : 0;
+    this._lastFrameTime = now
+    if (!this._resources_loading)
       this.world.recursiveUpdate(deltaTime)
-    }
 
     let ctx = this.canvas.getContext('2d')
+    if (!ctx)
+      throw Error("Canvas does not have 2D context")
+
     this.world.recursiveDraw(ctx)
-    if (this.resources_loading && this.preloader) {
-      this.preloader.update()
+    if (this._resources_loading && this.preloader) {
+      this.preloader.draw(ctx)
     }
 
     requestAnimationFrame(now => this.run(now))
   }
 }
 
-export const State = {
-  ENABLED: "active",
-  DISABLED: "disabled",
-  DEAD: "dead",
+export enum State {
+  ENABLED = "active",
+  DISABLED = "disabled",
+  DEAD = "dead",
 }
 
 export class Component {
-  constructor(position, ...children) {
-    this.parent = null
+  state: State
+  parent?: Component
+  position?: Point
+
+  private _children: Component[]
+
+  constructor(position = {}, ...children: Component[]) {
     this.state = State.ENABLED
     this.position = new Point(position)
 
@@ -72,37 +87,38 @@ export class Component {
     children.forEach(c => this.addChild(c))
   }
 
-  get absPosition () {
-    return new Point(this.position).add((this.parent || {}).absPosition)
+  get absPosition(): Point {
+    return new Point(this.position).add(
+      this.parent ? this.parent.absPosition : new Point())
   }
 
-  addChild(child) {
+  addChild(child: Component) {
     console.log('Add component', child, 'to', this)
     child.parent = this
     this._children.push(child)
   }
-  addChildren(...children) {
+  addChildren(...children: Component[]) {
     children.forEach(c => this.addChild(c))
   }
 
-  update(dt) {
+  update(dt: number) {
     // To be overriden.
   }
-  recursiveUpdate(dt) {
-    if (this.State == State.ENABLED) {
+  recursiveUpdate(dt:number) {
+    if (this.state == State.ENABLED) {
       this.update(dt)
       this._children.forEach(c => c.recursiveUpdate(dt))
     }
-    if (this.State == State.DEAD && this.parent) {
+    if (this.state == State.DEAD && this.parent) {
       console.log('Remove dead component', this, 'from', this.parent)
       this.parent._children = this.parent._children.filter(c => c != this)
     }
   }
 
-  draw(ctx) {
+  draw(ctx: CanvasRenderingContext2D) {
     // To be overriden.
   }
-  recursiveDraw(ctx) {
+  recursiveDraw(ctx: CanvasRenderingContext2D) {
     if (this.state == State.ENABLED) {
       this.draw(ctx)
       this._children.forEach(c => c.recursiveDraw(ctx))
