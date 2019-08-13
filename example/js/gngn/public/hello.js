@@ -1,11 +1,11 @@
-import Game from './gngn/game.js'
-import {Rect, Text} from './gngn/visual.js'
+import {Game, Component} from './gngn/game.js'
+import {Aligment, Sprite, Text} from './gngn/visual.js'
 
 export default function run(canvas) {
   let game = new Game(canvas)
   game.world.addChildren(
-    new Rect('red', canvas.width, canvas.height),
-    new Text('blue', '30px Arial', 'Hello World!'),
+    new Sprite(game.image('images/road.png'), game.screen, Aligment.CORNER),
+    new Component(game.screen.center, new Text('Hello World!', 'blue', '30px Arial')),
   )
   game.run()
 }

@@ -1,8 +1,38 @@
-export default class Game {
-  constructor(canvas) {
+import {Point, Size} from './geometry.js'
+
+export class Game {
+  constructor(canvas, state) {
     this.canvas = canvas
+    this.screen = new Size(canvas)
     this.world = new World()
-    this.world.position = {x: canvas.width/2, y: canvas.height/2}
+    this.resources = {}
+    this.resources_loading = 0
+  }
+
+  image(path) {
+    return this._resource(Image, path)
+  }
+  _resource(type, path) {
+    let res = this.resources[path]
+    if (res) {
+      if (res.type != type) {
+        throw Error(`File '${path}' is already loaded as '${res.type}'`)
+      }
+      return res
+    }
+
+    res = new type()
+    res.type = type
+    res.src = path
+    res.onload = () => {
+      console.log('Loaded', type, 'from', path)
+      this.resources_loading -= 1
+    }
+
+    console.log('Loading', type, 'from', path, '...')
+    this.resources_loading += 1
+    this.resources[path] = res
+    return res
   }
 
   run(now) {
@@ -12,9 +42,15 @@ export default class Game {
 
     let deltaTime = (now && this.lastTime) ? now - this.lastTime : 0;
     this.lastTime = now
+    if (!this.resources_loading) {
+      this.world.recursiveUpdate(deltaTime)
+    }
 
-    this.world.recursiveUpdate(deltaTime)
-    this.world.recursiveDraw(this.canvas.getContext('2d'))
+    let ctx = this.canvas.getContext('2d')
+    this.world.recursiveDraw(ctx)
+    if (this.resources_loading && this.preloader) {
+      this.preloader.update()
+    }
 
     requestAnimationFrame(now => this.run(now))
   }
@@ -27,18 +63,17 @@ export const State = {
 }
 
 export class Component {
-  constructor(...children) {
+  constructor(position, ...children) {
     this.parent = null
     this.state = State.ENABLED
+    this.position = new Point(position)
 
     this._children = []
     children.forEach(c => this.addChild(c))
   }
 
   get absPosition () {
-    let p = (this.parent || {}).position || {x: 0, y: 0}
-    let s = this.position || {x: 0, y: 0}
-    return {x: s.x + p.x, y: s.y + p.y}
+    return new Point(this.position).add((this.parent || {}).absPosition)
   }
 
   addChild(child) {
