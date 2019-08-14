@@ -4,6 +4,6 @@
     "strict": true,
     "noImplicitAny": false,
     "sourceMap": true,
-    "outDir": "build"
+    "outDir": "public/scripts"
   }
 }
