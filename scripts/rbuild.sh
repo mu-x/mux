@@ -34,7 +34,7 @@ elif [ -d .hg ]; then
         hg update -C $BASE
 END
 else
-    mux_fail "You have to be in the root of VSC"
+    mux_fail You have to be in the root of VSC
 fi
 
 scp $PATCH $HOST:$PATCH

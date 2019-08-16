@@ -12,16 +12,23 @@ function mux_confirm() {
     done
 }
 
+# Prints message according to $COLOR.
+function mux_title() {
+    printf '\033[0;'${COLOR:-32}'m>>>'
+    printf ' %q' "$@"
+    printf "\033[0m\n" 1>&2
+}
+
 # Prints fatal error to stderr and exits.
 function mux_fail() {
     { set +x; } >/dev/null 2>&1
-    echo ERROR: "$@" >&2
+    COLOR=31 mux_title ERROR: "$@" >&2
     exit 1
 }
 
 # Traces command with args and runs it.
 function mux_trace_run() {
-    echo -e "\033[0;35m>>>" "$@" "\033[0m" 1>&2
+    COLOR=35 mux_title "$@"
     "$@"
 }
 
