@@ -2,16 +2,16 @@
 
 set -e -x
 
-CFLAGS="-Wall -Werror"
+CFLAGS="-std=c11 -Wall -Werror"
 
 rm -rf ./build
 mkdir ./build
 
 gcc cch/*.c \
-    $CFLAGS -fPIC -shared \
+    $CFLAGS -pthread -fPIC -shared \
     -o build/libcch.so
 
-gcc main.c \
+gcc ./main.c \
     $CFLAGS -L./build -lcch \
     -o build/cch
 
