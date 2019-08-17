@@ -15,6 +15,6 @@ gcc ./main.c \
     $CFLAGS -L./build -lcch \
     -o build/cch
 
-if [ "$@" ]; then
+if [[ "x" != "x$@" ]]; then
     LD_LIBRARY_PATH=./build ./build/cch "$@"
 fi

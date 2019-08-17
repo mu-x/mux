@@ -2,40 +2,33 @@
 #define CCH_SERVER_H
 
 #include <netinet/in.h>
-#include <arpa/inet.h>
 #include <pthread.h>
 
-#define CCH_MAX_CLIENTS 100
-#define CCH_BUFFER_SIZE 1024
+#include "utils.h"
 
-#define thread_local __thread
-#define CCH_FREE_P(STRUCT, FUNC) void FUNC ## p (struct STRUCT** p) { if (*p) FUNC(*p); *p = NULL; }
+// TODO: Allow to configure.
+#define CCH_MAX_CLIENTS 1024
 
-const char* addr_str(const struct sockaddr_in* addr);
-
+/**
+ * TCP Chat server for telnet-like clients.
+ * Usage: cch_server_serve(cch_server_init(0))
+ */
 struct cch_server {
     int fd;
     struct sockaddr_in addr;
 
     pthread_mutex_t mutex;
-    struct cch_server_connection* connections[CCH_MAX_CLIENTS];
+    struct _cch_sconn* connections[CCH_MAX_CLIENTS];
 };
 
+/** Creates a server, bound to port. */
 struct cch_server* cch_server_init(in_port_t port);
+
+/** Servers client connections untill interrupt. */
 void cch_server_serve(struct cch_server* server);
+
+/** Close connections, free resoutrces. */
 void cch_server_free(struct cch_server* server);
-CCH_FREE_P(cch_server, cch_server_free);
-
-struct cch_server_connection {
-    struct cch_server* server;
-    int fd;
-    struct sockaddr_in addr;
-    pthread_t thread;
-};
-
-struct cch_server_connection* cch_server_connection_init(int fd, struct cch_server* s);
-void cch_server_connection_serve(struct cch_server_connection* c);
-void cch_server_connection_free(struct cch_server_connection* c);
-CCH_FREE_P(cch_server_connection, cch_server_connection_free);
+#define cch_server_freep(p) CCH_FREEP(cch_server, p)
 
 #endif // CCH_SERVER_H

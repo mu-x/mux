@@ -5,17 +5,24 @@
 
 #include "cch/server.h"
 
-int main(int argc, char** argv) {
+int main(int argc, const char** argv) {
+    const char* binary = *argv;
+    ++argv;
+
     in_port_t port = 0;
-    if (argv[1]) {
-        if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
-            printf("Usage: %s [port]\n", argv[0]);
+    for (; *argv; ++argv) {
+        if (strcmp(*argv, "-h") == 0 || strcmp(*argv, "--help") == 0) {
+            printf("Usage: %s [-v] [port]\n", binary);
             return 0;
         }
+        if (strcmp(*argv, "-v") == 0 || strcmp(*argv, "--verbose") == 0) {
+            cch_log_enabled = 1;
+            continue;
+        }
 
-        port = htons(atoi(argv[1]));
-        if (port == 0) {
-            printf("Wrong port number '%s', see -h\n", argv[1]);
+        port = htons(atoi(*argv));
+        if (!port) {
+            printf("Wrong port number '%s', see -h\n", *argv);
             return 1;
         }
     }
@@ -26,6 +33,7 @@ int main(int argc, char** argv) {
         return 2;
     }
 
+    printf("Start server on %s\n", cch_addr_str(&server->addr));
     cch_server_serve(server);
     cch_server_freep(&server);
     return 0;
