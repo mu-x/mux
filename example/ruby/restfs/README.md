@@ -4,7 +4,7 @@
 
 Ubuntu
 ```
-sudo apt install ruby-full ruby-bundler
+snap install ruby
 bundle install
 ```
 
