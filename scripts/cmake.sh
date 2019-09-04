@@ -10,6 +10,9 @@ Options:
     G   cmake generate flags to set
     FG  force cmake generate (enabled on G)
     K   keep current terminal output
+Examples:
+    B=./build G="-Dparameter=value" $0
+    $0 some_module_ut --gtest_filter="SomeTest*"
 END
 exit 0; fi
 
@@ -25,7 +28,11 @@ if [ "$1" ]; then
 fi
 
 GENERATE_FLAGS=($G)
-BUILD_DIR=${B:-"$PWD-build"}
+
+SOURCE_DIR="$PWD"
+mux_is_windows && SOURCE_DIR=../$(basename "$PWD")
+
+BUILD_DIR=${B:-"$SOURCE_DIR-build"}
 [ "$C" ] && mux_trace_run rm -r "$BUILD_DIR"
 
 BUILD_FLAGS="--build $BUILD_DIR"
@@ -48,21 +55,23 @@ if [ "$CHANGE_ID" != "$BUILD_ID" ] || [ "$GENERATE_FLAGS" ] || [ "$FORCE_GENERAT
     if mux_is_windows; then
         GENERATE_FLAGS+=(-Ax64 -Thost=x64)
     else
-        GENERATE_FLAGS+=(-GNinja)
+        GENERATE_FLAGS+=(-GNinja -DCMAKE_CXX_FLAGS=' -fdiagnostics-color=always')
     fi
-    GENERATE_FLAGS+=(-DCMAKE_CXX_FLAGS=' -fdiagnostics-color=always')
 fi
 
 if [ "$GENERATE_FLAGS" ]; then
-	SRC_DIR="$PWD"
     echo $CHANGE_ID > "$BUILD_DIR"/ChangeId.txt
 	cd "$BUILD_DIR"
-	mux_trace_run cmake "$SRC_DIR" "${GENERATE_FLAGS[@]}"
+	mux_trace_run cmake "$SOURCE_DIR" "${GENERATE_FLAGS[@]}"
 	cd -
 fi
 
-THREAD_COUNT=$(( $(nproc) - ${MUX_THREAD_SAVE:-2} ))
-mux_trace_run cmake $BUILD_FLAGS -- -j "$THREAD_COUNT"
+if mux_is_linux; then
+    THREAD_COUNT=$(( $(nproc) - ${MUX_THREAD_SAVE:-2} ))
+    BUILD_FLAGS+=" -- -j $THREAD_COUNT"
+fi
+
+mux_trace_run cmake $BUILD_FLAGS
 
 if [[ "$@" ]]; then
     BINARY_PATH=$(find "$BUILD_DIR" -name "$TARGET" -type f)

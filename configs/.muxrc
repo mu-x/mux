@@ -7,7 +7,7 @@ export PYTHONPATH+=":$MUX_HOME/example/python"
 export LESS=FRX
 
 if mux_is_windows; then
-    export PATH="/bin:/usr/bin:/usr/local/bin:$PATH"
+    export PATH="/usr/local/bin:/usr/bin/bin:$PATH"
     export PATH="$PATH:/c/Program Files (x86)/Meld"
 fi
 

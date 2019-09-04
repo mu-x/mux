@@ -16,7 +16,7 @@ USER_URL="$1"
 shift
 
 if mux_is_windows; then
-    URL="$USER_URL"
+    URL=$(cygpath -w "$USER_URL" || echo "$USER_URL")
 
     if [ "$(file "$URL" | grep text)" ]; then
         TOOLS="notepad++ notepad"
