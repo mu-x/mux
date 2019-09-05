@@ -32,5 +32,13 @@
     "key": "ctrl+shift+c",
     "command": "workbench.action.terminal.copySelection",
     "when": "terminalFocus && terminalTextSelected"
-  }
+  },
+  {
+    "key": "ctrl+shift+w",
+    "command": "-workbench.action.closeWindow"
+  },
+  {
+    "key": "ctrl+shift+w",
+    "command": "workbench.action.closeGroup"
+  },
 ]
