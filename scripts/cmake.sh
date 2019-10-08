@@ -74,7 +74,7 @@ fi
 mux_trace_run cmake $BUILD_FLAGS
 
 if [[ "$@" ]]; then
-    BINARY_PATH=$(find "$BUILD_DIR" -name "$TARGET" -type f)
+    BINARY_PATH=$(find "$BUILD_DIR" -name "$TARGET" -type f | head -1)
     [[ "x" == "x$BINARY_PATH" ]] && mux_fail No executable $BUILD_DIR .. $TARGET
     mux_trace_run "$BINARY_PATH" "$@"
 fi
