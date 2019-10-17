@@ -71,6 +71,7 @@ function mux_bash_history() {
     export HISTCONTROL=ignoredups:erasedups
     export HISTSIZE=$1
     export HISTFILESIZE=$1
+    export HISTIGNORE='sh /tmp/*:env sh /tmp/*'
     shopt -s histappend
     if ! mux_is_osx; then
         # Work around for OS X Bug

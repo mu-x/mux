@@ -19,4 +19,10 @@
   "search.location": "sidebar",
   "explorer.confirmDragAndDrop": false,
   "javascript.updateImportsOnFileMove.enabled": "always",
+  "cSpell.userWords": [
+    "deserialize",
+    "deserialized",
+    "rtsp",
+    "mjpeg",
+  ],
 }

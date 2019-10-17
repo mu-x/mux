@@ -39,6 +39,6 @@
   },
   {
     "key": "ctrl+shift+w",
-    "command": "workbench.action.closeGroup"
+    "command": "workbench.action.closeOtherEditors"
   },
 ]
