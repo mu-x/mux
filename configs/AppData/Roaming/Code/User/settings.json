@@ -19,6 +19,7 @@
   "search.location": "sidebar",
   "explorer.confirmDragAndDrop": false,
   "javascript.updateImportsOnFileMove.enabled": "always",
+  "debug.onTaskErrors": "debugAnyway",
   "cSpell.userWords": [
     "deserialize",
     "deserialized",

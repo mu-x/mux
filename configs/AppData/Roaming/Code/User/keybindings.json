@@ -41,4 +41,14 @@
     "key": "ctrl+shift+w",
     "command": "workbench.action.closeOtherEditors"
   },
+  {
+    "key": "ctrl+down",
+    "command": "workbench.action.terminal.resizePaneDown",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+up",
+    "command": "workbench.action.terminal.resizePaneUp",
+    "when": "terminalFocus"
+  },
 ]
