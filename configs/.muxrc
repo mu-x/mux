@@ -27,6 +27,7 @@ alias meld="mux_silent_run meld"
 alias pycharm="mux_silent_run pycharm"
 alias thg="mux_silent_run thg"
 alias wireshark="USE_SUDO=1 mux_silent_run wireshark"
+alias gitc="mux_silent_run git cola"
 
 if [ $(basename $SHELL) == bash ]; then
     COLOR=${MUX_HOST_COLOR:-34}
