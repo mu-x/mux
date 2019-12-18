@@ -23,19 +23,16 @@ configs/manage.sh sync
 
 if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
     mux_title Update Ubuntu Repository
-        if mux_confirm "Check for ubuntu packages updates?"; then
-        sudo apt-get update
+    mux_confirm "Check for ubuntu packages updates?" && sudo apt-get update
 
-        mux_title Install Ubuntu Packages
-        sudo apt-get install \
-            tmux build-essential git-gui vim-gtk p7zip sshfs sshpass silversearcher-ag
-        grep 18.04 /etc/os-release && sudo apt-get install \
-            gnome-tweaks gnome-shell-extension-dash-to-panel
+    mux_title Install Ubuntu Packages
+    sudo apt-get install tmux vim-gtk p7zip sshfs sshpass silversearcher-ag nmap net-tools
+    grep 18.04 /etc/os-release && sudo apt-get install \
+        gnome-tweaks gnome-shell-extension-dash-to-panel
 
-        mux_title Install Development Packages
-        mux_confirm "Install VSCode?" && sudo snap install code --classic
-        sudo apt-get install meld
-    fi
+    mux_title Install Development Packages
+    sudo apt-get install build-essential meld git-cola
+    mux_confirm "Install VSCode?" && sudo snap install code --classic
 fi
 
 if mux_is_windows; then
