@@ -42,7 +42,7 @@ if mux_is_windows; then
     fi
 
     mux_title Install Windows Packages
-    if mux_confirm "Install chocolatey with $PACKAGES?"; then
+    if mux_confirm "Install chocolatey with packages?"; then
         if ! which choco >/dev/null 2>&1; then
             mux_title Install Chocolatey
             powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command \
