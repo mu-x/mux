@@ -10,6 +10,8 @@ Options:
     G   cmake generate flags to set
     FG  force cmake generate (enabled on G)
     K   keep current terminal output
+    TC  number of threads to build on, eg -j, overrides TS
+    TS  threads to save, default ${MUX_THREAD_SAVE:-2}
 Examples:
     B=./build G="-Dparameter=value" $0
     $0 some_module_ut --gtest_filter="SomeTest*"
@@ -67,7 +69,7 @@ if [ "$GENERATE_FLAGS" ]; then
 fi
 
 if mux_is_linux; then
-    THREAD_COUNT=$(( $(nproc) - ${MUX_THREAD_SAVE:-2} ))
+    THREAD_COUNT=${TC:-$(( $(nproc) - ${TS:-${MUX_THREAD_SAVE:-2}} ))}
     BUILD_FLAGS+=" -- -j $THREAD_COUNT"
 fi
 
