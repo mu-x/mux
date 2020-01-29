@@ -29,6 +29,10 @@
 #if defined(BOOST)
     #include <boost/thread.hpp>
     #include <boost/optional.hpp>
+    #include <boost/core/demangle.hpp>
+
+    std::ostream& operator<<(std::ostream& s, const std::type_info& i)
+    { return s << boost::core::demangle(i.name()); }
 #endif // defined(BOOST)
 
 #if defined(QT)
