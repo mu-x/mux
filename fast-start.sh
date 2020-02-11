@@ -26,7 +26,7 @@ if cat /etc/os-release 2>/dev/null | grep -q Ubuntu; then
     mux_confirm "Check for ubuntu packages updates?" && sudo apt-get update
 
     mux_title Install Ubuntu Packages
-    sudo apt-get install tmux vim-gtk p7zip sshfs sshpass silversearcher-ag nmap net-tools
+    sudo apt-get install tmux vim-gtk p7zip-full sshfs sshpass silversearcher-ag nmap net-tools
     grep 18.04 /etc/os-release && sudo apt-get install \
         gnome-tweaks gnome-shell-extension-dash-to-panel
 
