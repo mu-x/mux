@@ -117,16 +117,21 @@ function mux_tmux() {
 }
 
 function mux_is_linux() {
-    uname | grep -q Linux
+    uname -s | grep -q Linux
 }
 
 function mux_is_osx() {
     uname | grep -q Darwin
 }
 
-# Figures out if it is a bash on windows.
+# Figures out if it is a Cygwin or Git Bash on windows.
 function mux_is_windows() {
     uname -s | grep -q "CYGWIN\|MINGW\|MSYS"
+}
+
+# Figures out if it is a Windows Subsystem for Linux.
+function mux_is_wsl() {
+    uname -r | grep -q "Microsoft"
 }
 
 # Prints current process parents stack.

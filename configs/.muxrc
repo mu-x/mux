@@ -12,6 +12,10 @@ else
     export PYTHONPATH+=":$MUX_HOME/example/python"
 fi
 
+if mux_is_wsl && [ ! $DISPLAY ]; then
+    export DISPLAY=:0
+fi
+
 alias la="ls -a"
 alias ll="ls -l"
 mux_is_osx && alias ls="ls -G"
