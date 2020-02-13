@@ -7,6 +7,11 @@ Usage:
 END
 exit 0; fi
 
+if [ $(whoami) != root ]; then
+    sudo D=$D C=$C CH=$CH $0
+    exit $?
+fi
+
 set -e
 [ "$X" ] && set -x
 source "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/resources/tools.sh"
@@ -15,7 +20,6 @@ DIR=${D:-"$HOME/.openvpn"}
 CONFIGS=*$C*.ovpn
 CONTROL_HOST=${CH:-ya.ru}
 
-[ $(whoami) != root ] && mux_fail Root permissions are required
 cd $DIR
 IFS=', ' read -r -a CONFIGS <<< $(echo $CONFIGS)
 [ "${#CONFIGS[@]}" == 0 ] && mux_fail No configs in $DIR
@@ -40,7 +44,7 @@ while true; do
     }
     trap onCtrlC SIGINT
     while pgrep openvpn >/dev/null; do
-        if [[ $(ping -c 2 -q -W 2 $CONTROL_HOST | grep transm | awk '{print $4}') == 0 ]]; then
+        if ! ping -c 2 $CONTROL_HOST >/dev/null 2>&1; then
             mux_trace_run pkill -KILL openvpn
             break
         fi
