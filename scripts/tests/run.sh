@@ -17,5 +17,9 @@ do
     mux_trace_run mux-$s -h
 done
 
+# for test in $ROOT_DIR/tests/*_test*; do
+#     mux_trace_run $test
+# done
+
 mux_title All tests passed
 
