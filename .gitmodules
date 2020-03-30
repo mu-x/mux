@@ -1,6 +1,0 @@
-[submodule "example/python/qt5printers"]
-	path = example/python/qt5printers
-	url = https://github.com/Lekensteyn/qt5printers
-[submodule "example/cpp/catch2"]
-	path = example/cpp/catch2
-	url = https://github.com/catchorg/Catch2

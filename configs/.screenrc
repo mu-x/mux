@@ -1,7 +1,0 @@
-startup_message off
-caption string '%{+b}%t%{-} %h%='
-
-split -v
-screen
-focus
-screen
